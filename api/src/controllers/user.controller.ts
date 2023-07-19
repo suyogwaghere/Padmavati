@@ -1,7 +1,7 @@
 import { authenticate, AuthenticationBindings } from '@loopback/authentication';
 import { inject } from '@loopback/core';
-import { repository } from '@loopback/repository';
-import { get, post, requestBody } from '@loopback/rest';
+import { Filter, repository } from '@loopback/repository';
+import { get, getJsonSchemaRef, getModelSchemaRef, HttpErrors, param, post,   response, patch, requestBody } from '@loopback/rest';
 import { UserProfile } from '@loopback/security';
 import * as _ from 'lodash';
 import { PermissionKeys } from '../authorization/permission-keys';
@@ -27,39 +27,50 @@ export class SignupController {
 
   ) {}
 
-  @post('/users/signup', {
+  @post('/register', {
     responses: {
       '200': {
-        description: 'Token',
+        description: 'User',
         content: {
-          'application/json': {
-            schema: {
-              type: 'object',
-              properties: {
-                token: {
-                  type: 'string',
-                },
-              },
-            },
-          },
+          schema: getJsonSchemaRef(User),
         },
       },
     },
   })
+  async register(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(User, {
+            exclude: ['id'],
+          }),
+        },
+      },
+    })
+    userData: Omit<User, 'id'>,
+  ) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email: userData.email,
+      },
+    });
+    if (user) {
+      throw new HttpErrors.BadRequest('Email Already Exists');
+    }
 
-  async signup(@requestBody() userData: User): Promise<Pick<User, "id" | "email" | "name"  | "getId" | "getIdObject" | "toJSON" | "toObject">>{
-    validateCredentials(_.pick(userData, ['email', 'password']))
-    userData.permissions = [PermissionKeys.EMPLOYEE];
+    validateCredentials(_.pick(userData, ['email', 'password']));
+    userData.permissions = [PermissionKeys.SUPER_ADMIN];
     userData.password = await this.hasher.hashPassword(userData.password);
-
-
     const savedUser = await this.userRepository.create(userData);
     const savedUserData = _.omit(savedUser, 'password');
-    // delete savedUser.password;
-    return savedUserData;
-  }
 
-  @post("/users/login",  {
+    return Promise.resolve({
+      success: true,
+      userData: savedUserData,
+      message: `User with mail ${userData.email} is registered successfully`,
+    });
+  }
+  @post("/login",  {
     responses: {
       200: {
         description: 'Token',
@@ -96,4 +107,85 @@ export class SignupController {
   ): Promise<UserProfile> {
     return Promise.resolve(currentUser);
   }
+
+  @get('/api/users/list')
+  @response(200, {
+    description: 'Array of Users model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(User, {
+            includeRelations: true,
+          }),
+        },
+      },
+    },
+  })
+  async find(@param.filter(User) filter?: Filter<User>): Promise<User[]> {
+    filter = {
+      ...filter,
+      fields: {
+        password: false,
+        // otp: false,
+        // otpExpireAt: false
+      },
+    };
+    return this.userRepository.find(filter);
+  }
+
+  @authenticate({
+    strategy: 'jwt',
+    options: {required: [PermissionKeys.SUPER_ADMIN]},
+  })
+  @get('/api/users/{id}', {
+    responses: {
+      '200': {
+        description: 'User Details',
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(User),
+          },
+        },
+      },
+    },
+  })
+  async getSingleUser(@param.path.number('id') id: number): Promise<any> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: id,
+      },
+      fields: {
+        password: false,
+        // otp: false,
+        // otpExpireAt: false,
+      },
+    });
+    return Promise.resolve({
+      ...user,
+    });
+  }
+
+  @authenticate({
+    strategy: 'jwt',
+    options: {required: [PermissionKeys.SUPER_ADMIN]},
+  })
+  @patch('/api/users/{id}')
+  @response(204, {
+    description: 'User PATCH success',
+  })
+  async updateById(
+    @param.path.number('id') id: number,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(User, {partial: true}),
+        },
+      },
+    })
+    user: User,
+  ): Promise<void> {
+    await this.userRepository.updateById(id, user);
+  }
+
 }
