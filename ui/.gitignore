@@ -8,6 +8,12 @@ node_modules
 # testing
 coverage
 
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
 # production
 .next
 .swc
