@@ -1,16 +1,21 @@
-import {BootMixin} from '@loopback/boot';
-import {ApplicationConfig} from '@loopback/core';
+import { AuthenticationComponent, registerAuthenticationStrategy } from '@loopback/authentication';
+import { BootMixin } from '@loopback/boot';
+import { ApplicationConfig } from '@loopback/core';
+import { RepositoryMixin } from '@loopback/repository';
+import { RestApplication } from '@loopback/rest';
 import {
   RestExplorerBindings,
   RestExplorerComponent,
 } from '@loopback/rest-explorer';
-import {RepositoryMixin} from '@loopback/repository';
-import {RestApplication} from '@loopback/rest';
-import {ServiceMixin} from '@loopback/service-proxy';
+import { ServiceMixin } from '@loopback/service-proxy';
 import path from 'path';
-import {MySequence} from './sequence';
+import { JWTStrategy } from './authentication-strategies/jwt-strategy';
+import { MySequence } from './sequence';
+import { BcryptHasher } from './services/hash.password.bcrypt';
+import { JWTService } from './services/jwt-service';
+import { MyUserService } from './services/user-service';
 
-export {ApplicationConfig};
+export { ApplicationConfig };
 
 export class PadmavatiApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -18,6 +23,10 @@ export class PadmavatiApplication extends BootMixin(
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
+    // Set up binding for the component
+    this.setUpBindings();
+    this.component(AuthenticationComponent);
+    registerAuthenticationStrategy(this, JWTStrategy);
     // Set up the custom sequence
     this.sequence(MySequence);
 
@@ -40,5 +49,13 @@ export class PadmavatiApplication extends BootMixin(
         nested: true,
       },
     };
+  }
+  setUpBindings():  void {
+    this.bind('services.hasher').toClass(BcryptHasher);
+    this.bind('services.hasher.rounds').to(10);
+    this.bind('services.user.service').toClass(MyUserService);
+    this.bind('services.jwt.service').toClass(JWTService);
+    this.bind('authentication.jwt.secret').to('138asda8213');
+    this.bind('authentication.jwt.expiresIn').to('7h');
   }
 }
