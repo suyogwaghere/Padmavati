@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
 // routes
 import { paths } from 'src/routes/paths';
+// auth
+import { useAuthContext } from 'src/auth/hooks';
 // components
-import { useLocales } from 'src/locales';
 import SvgColor from 'src/components/svg-color';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -47,7 +49,7 @@ const ICONS = {
 
 export function useNavData() {
   const { t } = useLocales();
-
+  const { logout, user } = useAuthContext();
   const data = useMemo(
     () => [
       // OVERVIEW
@@ -85,7 +87,90 @@ export function useNavData() {
           // },
 
           // USER
+          // {
+          //   title: t('user'),
+          //   path: paths.dashboard.user.root,
+          //   icon: ICONS.user,
+          //   children: [
+          //     { title: t('list'), path: paths.dashboard.user.root },
+          //     { title: t('create'), path: paths.dashboard.user.new },
+          //   ],
+          // },
 
+          // LEDGERS
+
+          {
+            title: t('Parties'),
+            path: paths.dashboard.ledger.root,
+            icon: ICONS.ledger,
+            children: [
+              { title: t('list'), path: paths.dashboard.ledger.root },
+              // { title: t('create'), path: paths.dashboard.product.new },
+            ],
+          },
+
+          // PRODUCT
+
+          {
+            title: t('product'),
+            path: paths.dashboard.product.root,
+            icon: ICONS.product,
+            children: [
+              { title: t('list'), path: paths.dashboard.product.root },
+              // { title: t('create'), path: paths.dashboard.product.new },
+            ],
+          },
+          {
+            title: t('Vouchers'),
+            path: paths.dashboard.voucher.root,
+            icon: ICONS.invoice,
+            children: [
+              { title: t('list'), path: paths.dashboard.voucher.root },
+              { title: t('create'), path: paths.dashboard.voucher.new },
+            ],
+          },
+        ],
+      },
+    ],
+    [t]
+  );
+  const dataAdmin = useMemo(
+    () => [
+      // OVERVIEW
+      // ----------------------------------------------------------------------
+      {
+        subheader: 'overview',
+        items: [{ title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard }],
+      },
+
+      // MANAGEMENT
+      // ----------------------------------------------------------------------
+      {
+        subheader: 'management',
+        items: [
+          // CATEGORY
+          // {
+          //   title: t('category'),
+          //   path: paths.dashboard.category.root,
+          //   icon: ICONS.blog,
+          //   children: [
+          //     { title: t('list'), path: paths.dashboard.category.root },
+          //     { title: t('create'), path: paths.dashboard.category.new },
+          //   ],
+          // },
+
+          // BRAND
+          // {
+          //   title: t('brands'),
+          //   path: paths.dashboard.brand.root,
+          //   icon: ICONS.job,
+          //   children: [
+          //     { title: t('list'), path: paths.dashboard.brand.root },
+          //     { title: t('create'), path: paths.dashboard.brand.new },
+          //   ],
+          // },
+
+          // USER
           {
             title: t('user'),
             path: paths.dashboard.user.root,
@@ -134,5 +219,5 @@ export function useNavData() {
     [t]
   );
 
-  return data;
+  return user.permissions.includes('admin') ? dataAdmin : data;
 }
