@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 // scroll bar
 import 'simplebar-react/dist/simplebar.min.css';
 
@@ -6,6 +7,8 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 
 // ----------------------------------------------------------------------
 
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 // routes
 import Router from 'src/routes/sections';
 // theme
@@ -18,46 +21,39 @@ import MotionLazy from 'src/components/animate/motion-lazy';
 import { SettingsProvider, SettingsDrawer } from 'src/components/settings';
 // auth
 import { AuthProvider, AuthConsumer } from 'src/auth/context/jwt';
+import { SnackbarProvider } from './components/snackbar';
 
 // ----------------------------------------------------------------------
 
 export default function App() {
-  const charAt = `
-
-  ░░░    ░░░ 
-  ▒▒▒▒  ▒▒▒▒ 
-  ▒▒ ▒▒▒▒ ▒▒ 
-  ▓▓  ▓▓  ▓▓ 
-  ██      ██ 
-  
-  `;
-
-  console.info(`%c${charAt}`, 'color: #5BE49B');
-
   useScrollToTop();
 
   return (
     <AuthProvider>
-      <SettingsProvider
-        defaultSettings={{
-          themeMode: 'light', // 'light' | 'dark'
-          themeDirection: 'ltr', //  'rtl' | 'ltr'
-          themeContrast: 'default', // 'default' | 'bold'
-          themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
-          themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
-          themeStretch: false,
-        }}
-      >
-        <ThemeProvider>
-          <MotionLazy>
-            <SettingsDrawer />
-            <ProgressBar />
-            <AuthConsumer>
-              <Router />
-            </AuthConsumer>
-          </MotionLazy>
-        </ThemeProvider>
-      </SettingsProvider>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <SettingsProvider
+          defaultSettings={{
+            themeMode: 'light', // 'light' | 'dark'
+            themeDirection: 'ltr', //  'rtl' | 'ltr'
+            themeContrast: 'default', // 'default' | 'bold'
+            themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
+            themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
+            themeStretch: false,
+          }}
+        >
+          <ThemeProvider>
+            <MotionLazy>
+              <SnackbarProvider>
+                <SettingsDrawer />
+                <ProgressBar />
+                <AuthConsumer>
+                  <Router />
+                </AuthConsumer>
+              </SnackbarProvider>
+            </MotionLazy>
+          </ThemeProvider>
+        </SettingsProvider>
+      </LocalizationProvider>
     </AuthProvider>
   );
 }

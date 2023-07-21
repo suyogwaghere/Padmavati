@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 // routes
 import { paths } from 'src/routes/paths';
 // components
+import { useLocales } from 'src/locales';
 import SvgColor from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
@@ -31,6 +32,7 @@ const ICONS = {
   banking: icon('ic_banking'),
   booking: icon('ic_booking'),
   invoice: icon('ic_invoice'),
+  ledger: icon('ic_ledger'),
   product: icon('ic_product'),
   calendar: icon('ic_calendar'),
   disabled: icon('ic_disabled'),
@@ -44,17 +46,15 @@ const ICONS = {
 // ----------------------------------------------------------------------
 
 export function useNavData() {
+  const { t } = useLocales();
+
   const data = useMemo(
     () => [
       // OVERVIEW
       // ----------------------------------------------------------------------
       {
-        subheader: 'overview v5.1.0',
-        items: [
-          { title: 'one', path: paths.dashboard.root, icon: ICONS.dashboard },
-          { title: 'two', path: paths.dashboard.two, icon: ICONS.ecommerce },
-          { title: 'three', path: paths.dashboard.three, icon: ICONS.analytics },
-        ],
+        subheader: 'overview',
+        items: [{ title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard }],
       },
 
       // MANAGEMENT
@@ -62,20 +62,76 @@ export function useNavData() {
       {
         subheader: 'management',
         items: [
+          // CATEGORY
+          // {
+          //   title: t('category'),
+          //   path: paths.dashboard.category.root,
+          //   icon: ICONS.blog,
+          //   children: [
+          //     { title: t('list'), path: paths.dashboard.category.root },
+          //     { title: t('create'), path: paths.dashboard.category.new },
+          //   ],
+          // },
+
+          // BRAND
+          // {
+          //   title: t('brands'),
+          //   path: paths.dashboard.brand.root,
+          //   icon: ICONS.job,
+          //   children: [
+          //     { title: t('list'), path: paths.dashboard.brand.root },
+          //     { title: t('create'), path: paths.dashboard.brand.new },
+          //   ],
+          // },
+
+          // USER
+
           {
-            title: 'user',
-            path: paths.dashboard.group.root,
+            title: t('user'),
+            path: paths.dashboard.user.root,
             icon: ICONS.user,
             children: [
-              { title: 'four', path: paths.dashboard.group.root },
-              { title: 'five', path: paths.dashboard.group.five },
-              { title: 'six', path: paths.dashboard.group.six },
+              { title: t('list'), path: paths.dashboard.user.root },
+              { title: t('create'), path: paths.dashboard.user.new },
+            ],
+          },
+
+          // LEDGERS
+
+          {
+            title: t('Parties'),
+            path: paths.dashboard.ledger.root,
+            icon: ICONS.ledger,
+            children: [
+              { title: t('list'), path: paths.dashboard.ledger.root },
+              // { title: t('create'), path: paths.dashboard.product.new },
+            ],
+          },
+
+          // PRODUCT
+
+          {
+            title: t('product'),
+            path: paths.dashboard.product.root,
+            icon: ICONS.product,
+            children: [
+              { title: t('list'), path: paths.dashboard.product.root },
+              // { title: t('create'), path: paths.dashboard.product.new },
+            ],
+          },
+          {
+            title: t('Vouchers'),
+            path: paths.dashboard.voucher.root,
+            icon: ICONS.invoice,
+            children: [
+              { title: t('list'), path: paths.dashboard.voucher.root },
+              { title: t('create'), path: paths.dashboard.voucher.new },
             ],
           },
         ],
       },
     ],
-    []
+    [t]
   );
 
   return data;

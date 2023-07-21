@@ -17,7 +17,6 @@ export default axiosInstance;
 
 export const fetcher = async (args) => {
   const [url, config] = Array.isArray(args) ? args : [args];
-
   const res = await axiosInstance.get(url, { ...config });
 
   return res.data;
@@ -30,9 +29,9 @@ export const endpoints = {
   kanban: '/api/kanban',
   calendar: '/api/calendar',
   auth: {
-    me: '/api/auth/me',
-    login: '/api/auth/login',
-    register: '/api/auth/register',
+    me: '/me',
+    login: '/login',
+    register: '/register',
   },
   mail: {
     list: '/api/mail/list',
@@ -45,9 +44,36 @@ export const endpoints = {
     latest: '/api/post/latest',
     search: '/api/post/search',
   },
+  ledger: {
+    list: '/api/ledgers/list',
+    details: '/api/ledger/details',
+    search: '/api/ledger/search',
+    sync: '/api/ledgers/sync',
+  },
   product: {
-    list: '/api/product/list',
+    list: '/api/products/list',
     details: '/api/product/details',
     search: '/api/product/search',
+    sync: '/api/products/sync',
+  },
+  category: {
+    list: '/api/category/list',
+    details: (id) => `/api/categories/${id}`,
+    search: '/api/category/search',
+  },
+  brand: {
+    list: '/api/brands/list',
+    details: (id) => `/api/brands/${id}`,
+    search: '/api/brands/search',
+  },
+  user: {
+    list: '/api/users/list',
+    details: (id) => `/api/users/${id}`,
+    search: '/api/user/search',
+  },
+  voucher: {
+    list: '/api/vouchers/list',
+    details: (id) => `/api/vouchers/${id}`,
+    search: '/api/vouchers/search',
   },
 };

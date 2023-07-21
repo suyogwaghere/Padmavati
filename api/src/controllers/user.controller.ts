@@ -1,7 +1,7 @@
 import { authenticate, AuthenticationBindings } from '@loopback/authentication';
 import { inject } from '@loopback/core';
 import { Filter, repository } from '@loopback/repository';
-import { get, getJsonSchemaRef, getModelSchemaRef, HttpErrors, param, post,   response, patch, requestBody } from '@loopback/rest';
+import { get, getJsonSchemaRef, getModelSchemaRef, HttpErrors, param, patch, post, requestBody, response } from '@loopback/rest';
 import { UserProfile } from '@loopback/security';
 import * as _ from 'lodash';
 import { PermissionKeys } from '../authorization/permission-keys';
@@ -26,7 +26,10 @@ export class SignupController {
     public jwtService: JWTService,
 
   ) {}
-
+  @authenticate({
+    strategy: 'jwt',
+    options: {required: [PermissionKeys.SUPER_ADMIN]},
+  })
   @post('/register', {
     responses: {
       '200': {
@@ -59,7 +62,7 @@ export class SignupController {
     }
 
     validateCredentials(_.pick(userData, ['email', 'password']));
-    userData.permissions = [PermissionKeys.SUPER_ADMIN];
+    userData.permissions = [PermissionKeys.EMPLOYEE];
     userData.password = await this.hasher.hashPassword(userData.password);
     const savedUser = await this.userRepository.create(userData);
     const savedUserData = _.omit(savedUser, 'password');
@@ -79,7 +82,7 @@ export class SignupController {
             schema: {
               type: 'object',
               properties: {
-                token: {
+                accessToken: {
                   type: 'string',
                 }
               }
@@ -91,15 +94,19 @@ export class SignupController {
   })
   async login(
     @requestBody(CredentialsRequestBody) credentials: Credentials,
-  ): Promise<{token: string}> {
+  ): Promise<{}> {
     // make sure user exist, password should be valid
     const user = await this.userService.verifyCredentials(credentials);
     const userProfile = this.userService.convertToUserProfile(user);
+    const userData = _.omit(user, 'password');
     const token = await this.jwtService.generateToken(userProfile);
-    return Promise.resolve({token});
+    return Promise.resolve({
+      accessToken: token,
+      user: {...userData, displayName: userData.name},
+    });
   }
 
-  @get('/users/me')
+  @get('/me')
   @authenticate('jwt')
   async me(
     @inject(AuthenticationBindings.CURRENT_USER)
@@ -150,6 +157,7 @@ export class SignupController {
       },
     },
   })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getSingleUser(@param.path.number('id') id: number): Promise<any> {
     const user = await this.userRepository.findOne({
       where: {

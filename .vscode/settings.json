@@ -3,5 +3,10 @@
         "datasources",
         "hasher",
         "isemail"
-    ]
+    ],
+      "eslint.workingDirectories": [
+    "./api",
+    "./ui",
+  ],
+
 }

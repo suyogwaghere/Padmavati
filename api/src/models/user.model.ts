@@ -37,12 +37,23 @@ export class User extends Entity {
   })
   updatedAt?: Date;
 
-    @property.array(String, {
+  @property.array(String, {
     name: 'permissions',
   })
   permissions: String[];
 
+ @property({
+    type: 'string',
+    required: true,
+  })
+  contactNo: string;
 
+  @property({
+    type: 'boolean',
+    required: true,
+  })
+  isActive: boolean;
+  
   constructor(data?: Partial<User>) {
     super(data);
   }

@@ -13,7 +13,7 @@
     "airbnb/hooks",
     "prettier"
   ],
-  "parser": "@babel/eslint-parser",
+  "parser": "@babel/eslint-parser",//@babel/eslint-parser
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",

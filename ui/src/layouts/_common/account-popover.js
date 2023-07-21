@@ -1,17 +1,14 @@
 import { m } from 'framer-motion';
 // @mui
-import { alpha } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 // routes
 import { useRouter } from 'src/routes/hook';
-// hooks
-import { useMockedUser } from 'src/hooks/use-mocked-user';
 // auth
 import { useAuthContext } from 'src/auth/hooks';
 // components
@@ -40,9 +37,7 @@ const OPTIONS = [
 export default function AccountPopover() {
   const router = useRouter();
 
-  const { user } = useMockedUser();
-
-  const { logout } = useAuthContext();
+  const { logout, user } = useAuthContext();
 
   const popover = usePopover();
 
@@ -101,7 +96,7 @@ export default function AccountPopover() {
           </Typography>
         </Box>
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+        {/* <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Stack sx={{ p: 1 }}>
           {OPTIONS.map((option) => (
@@ -109,7 +104,7 @@ export default function AccountPopover() {
               {option.label}
             </MenuItem>
           ))}
-        </Stack>
+        </Stack> */}
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 

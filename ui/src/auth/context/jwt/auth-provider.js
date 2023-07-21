@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useEffect, useReducer, useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useReducer } from 'react';
 // utils
 import axios, { endpoints } from 'src/utils/axios';
 //
@@ -57,13 +57,13 @@ export function AuthProvider({ children }) {
   const initialize = useCallback(async () => {
     try {
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
-
+      console.log(isValidToken(accessToken));
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
         const response = await axios.get(endpoints.auth.me);
 
-        const { user } = response.data;
+        const user = response.data;
 
         dispatch({
           type: 'INITIAL',
@@ -104,6 +104,11 @@ export function AuthProvider({ children }) {
     const response = await axios.post(endpoints.auth.login, data);
 
     const { accessToken, user } = response.data;
+
+    const hasAdminPermission = user;
+    if (!hasAdminPermission) {
+      throw new Error('You do not have admin permission.');
+    }
 
     setSession(accessToken);
 
