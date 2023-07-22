@@ -106,13 +106,22 @@ export class SignupController {
     });
   }
 
+
   @get('/me')
   @authenticate('jwt')
-  async me(
+  async whoAmI(
     @inject(AuthenticationBindings.CURRENT_USER)
-    currentUser: UserProfile,
-  ): Promise<UserProfile> {
-    return Promise.resolve(currentUser);
+    currnetUser: UserProfile,
+  ): Promise<{}> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: currnetUser.id,
+      },
+    });
+    return Promise.resolve({
+      ...user,
+      displayName: user?.name,
+    });
   }
 
   @get('/api/users/list')
