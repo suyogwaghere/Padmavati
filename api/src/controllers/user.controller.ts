@@ -118,8 +118,9 @@ export class SignupController {
         id: currnetUser.id,
       },
     });
+    const userData = _.omit(user, 'password');
     return Promise.resolve({
-      ...user,
+      ...userData,
       displayName: user?.name,
     });
   }
