@@ -16,11 +16,11 @@ import ThemeProvider from 'src/theme';
 // hooks
 import { useScrollToTop } from 'src/hooks/use-scroll-to-top';
 // components
-import ProgressBar from 'src/components/progress-bar';
 import MotionLazy from 'src/components/animate/motion-lazy';
-import { SettingsProvider, SettingsDrawer } from 'src/components/settings';
+import ProgressBar from 'src/components/progress-bar';
+import { SettingsDrawer, SettingsProvider } from 'src/components/settings';
 // auth
-import { AuthProvider, AuthConsumer } from 'src/auth/context/jwt';
+import { AuthConsumer, AuthProvider } from 'src/auth/context/jwt';
 import { SnackbarProvider } from './components/snackbar';
 
 // ----------------------------------------------------------------------
@@ -33,11 +33,11 @@ export default function App() {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <SettingsProvider
           defaultSettings={{
-            themeMode: 'light', // 'light' | 'dark'
+            themeMode: 'dark', // 'light' | 'dark'
             themeDirection: 'ltr', //  'rtl' | 'ltr'
-            themeContrast: 'default', // 'default' | 'bold'
+            themeContrast: 'bold', // 'default' | 'bold'
             themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
-            themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
+            themeColorPresets: 'blue', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
             themeStretch: false,
           }}
         >
