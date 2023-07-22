@@ -1,20 +1,30 @@
 // @mui
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useTheme } from '@mui/material/styles';
 // _mock
+import { _appAuthors, _appInstalled, _appInvoices, _appRelated } from 'src/_mock';
 // components
 // assets
 import { useAuthContext } from 'src/auth/hooks';
 import { useSettingsContext } from 'src/components/settings';
 import { SeoIllustration } from '../../../../assets/illustrations';
 //
+import AppAreaInstalled from '../app-area-installed';
+import AppCurrentDownload from '../app-current-download';
+import AppNewInvoice from '../app-new-invoice';
+import AppTopAuthors from '../app-top-authors';
+import AppTopInstalledCountries from '../app-top-installed-countries';
+import AppTopRelated from '../app-top-related';
 import AppWelcome from '../app-welcome';
+import AppWidget from '../app-widget';
+import AppWidgetSummary from '../app-widget-summary';
 
 // ----------------------------------------------------------------------
 
-export default function OverviewAppView() {
+export default function OverviewAppViewAdmin() {
   const { user } = useAuthContext();
 
   const theme = useTheme();
@@ -36,7 +46,7 @@ export default function OverviewAppView() {
             }
           />
         </Grid>
-        {/* 
+
         <Grid xs={12} md={4}>
           <AppWidgetSummary
             title="Total Active Users"
@@ -184,7 +194,7 @@ export default function OverviewAppView() {
               }}
             />
           </Stack>
-        </Grid> */}
+        </Grid>
       </Grid>
     </Container>
   );
