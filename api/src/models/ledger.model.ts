@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {Entity, model, property} from '@loopback/repository';
+import { Entity, model, property } from '@loopback/repository';
 
 @model()
 export class Ledger extends Entity {
@@ -21,6 +21,12 @@ export class Ledger extends Entity {
     required: true,
   })
   group: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  guid: string;
 
   @property({
     type: 'number',

@@ -11,8 +11,16 @@ class MixedRepository extends repository {
     entity.createdAt = new Date();
     entity.updatedAt = new Date();
     return super.create(entity, options);
-  }
+  } 
 
+    async createAll(entities: DataObject<E>[], options?: Options): Promise<E[]> {
+      const currentTime = new Date();
+      entities.forEach(entity => {
+        entity.createdAt = currentTime;
+        entity.updatedAt = currentTime;
+      });
+      return super.createAll(entities, options);
+    }
   async updateAll(
     data: DataObject<E>,
     where?: Where<E>,

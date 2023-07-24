@@ -1,27 +1,36 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { inject } from '@loopback/context';
 import {
   Count,
   CountSchema,
+  DefaultTransactionalRepository,
   Filter,
   FilterExcludingWhere,
+  IsolationLevel,
   repository,
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
   del,
+  get,
+  getJsonSchemaRef,
+  getModelSchemaRef,
+  HttpErrors,
+  param,
+  patch,
+  post,
+  put,
   requestBody,
   response,
 } from '@loopback/rest';
-import {Ledger} from '../models';
-import {LedgerRepository} from '../repositories';
+import { MysqlDataSource } from '../datasources';
+import { Ledger } from '../models';
+import { LedgerRepository } from '../repositories';
 
 export class LedgerController {
   constructor(
+     @inject('datasources.Mysql')
+    public dataSource: MysqlDataSource,
     @repository(LedgerRepository)
     public ledgerRepository : LedgerRepository,
   ) {}
@@ -75,7 +84,67 @@ export class LedgerController {
   ): Promise<Ledger[]> {
     return this.ledgerRepository.find(filter);
   }
+  // ///////////////////////////////////
+  @post('/api/ledgers/sync', {
+    responses: {
+      '200': {
+        description: 'User',
+        content: {
+          schema: getJsonSchemaRef(Ledger),
+        },
+      },
+    },
+  })
 
+    async syncLedgers( @requestBody() ledgerData: any) {
+        try {
+    //          const request = this.request; // Import the Request object
+    //   const parsedData: any = await bodyPaser.json(request); // Parse the request body directly
+    const parsedData = await ledgerData.ledger;
+    console.log("parsedData ",parsedData);
+            
+            const repo = new DefaultTransactionalRepository(Ledger, this.dataSource);
+            const tx = await repo.beginTransaction(IsolationLevel.READ_COMMITTED);
+           try {
+               await this.ledgerRepository.deleteAll(undefined, { transaction: tx, });
+               const finalMappedObject: Ledger[] = parsedData.map(
+                    (ledger: any) => {
+                        const mappedProduct: Ledger = new Ledger();
+                        mappedProduct.name = ledger.name || ' ';
+                        mappedProduct.group = ledger.group || ' ';
+                        mappedProduct.guid = ledger.guid || ' ';
+                        mappedProduct.openingValue = ledger.openingValue || 0;
+                        mappedProduct.address = ledger.address ||' ';
+                        mappedProduct.country = ledger.country || ' ';
+                        mappedProduct.state = ledger.state || ' ';
+                        mappedProduct.gstIn = ledger.gstIn || ' ';
+                        mappedProduct.whatsapp_no = ledger.whatsapp_no || ' ';
+                        mappedProduct.mobile_no = ledger.mobile_no || ' ';
+                        mappedProduct.pincode = ledger.pincode || 0;
+                        mappedProduct.station = ledger.station || ' ';
+
+                        return mappedProduct;
+                    },
+                );
+               await this.ledgerRepository.createAll(finalMappedObject, { transaction: tx, });
+            await tx.commit();
+            return {
+            success: true,
+            message: `Products synced successfully`,
+            };
+           } catch (err) {
+               console.log('Error ', err);
+               
+            await tx.rollback();
+            throw new Error(
+            'Error synchronizing products. Transaction rolled back.',
+            );
+        }
+    } catch (error) {
+      throw new HttpErrors.PreconditionFailed(error.message);
+    }  
+  }
+  // ///////////////////////////////////
   @patch('/ledgers')
   @response(200, {
     description: 'Ledger PATCH success count',
