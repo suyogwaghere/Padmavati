@@ -73,3 +73,17 @@ export const setSession = (accessToken) => {
     delete axios.defaults.headers.common.Authorization;
   }
 };
+export const setRole = (userRole) => {
+  if (userRole) {
+    sessionStorage.setItem('userRole', userRole);
+
+    // axios.defaults.headers.common.Authorization = `Bearer ${userRole}`;
+
+    // This function below will handle when token is expired
+    // const { exp } = jwtDecode(userRole); // ~3 days by minimals server
+    // tokenExpired(exp);
+  } else {
+    sessionStorage.removeItem('userRole');
+    // delete axios.defaults.headers.common.Authorization;
+  }
+};

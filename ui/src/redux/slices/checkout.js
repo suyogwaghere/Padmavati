@@ -1,6 +1,7 @@
 import sum from 'lodash/sum';
 import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { createSlice } from '@reduxjs/toolkit';
 
 // ----------------------------------------------------------------------

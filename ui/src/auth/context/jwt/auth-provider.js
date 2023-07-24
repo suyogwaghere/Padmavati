@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useReducer } from 'react';
 import axios, { endpoints } from 'src/utils/axios';
 //
 import { AuthContext } from './auth-context';
-import { isValidToken, setSession } from './utils';
+import { isValidToken, setRole, setSession } from './utils';
 
 // ----------------------------------------------------------------------
 
@@ -50,6 +50,7 @@ const reducer = (state, action) => {
 // ----------------------------------------------------------------------
 
 const STORAGE_KEY = 'accessToken';
+const ROLE_KEY = 'userRole';
 
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -57,10 +58,12 @@ export function AuthProvider({ children }) {
   const initialize = useCallback(async () => {
     try {
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
-      console.log(isValidToken(accessToken));
+      const userRole = sessionStorage.getItem(ROLE_KEY);
+      console.log('Local storage 1 ', isValidToken(accessToken));
+      console.log('Local storage 2 ', isValidToken(userRole));
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
-
+        setRole(userRole);
         const response = await axios.get(endpoints.auth.me);
 
         const user = response.data;
@@ -105,12 +108,13 @@ export function AuthProvider({ children }) {
 
     const { accessToken, user } = response.data;
 
-    const hasAdminPermission = user;
+    const hasAdminPermission = user.permissions[0];
     if (!hasAdminPermission) {
       throw new Error('You do not have admin permission.');
     }
-
+    setRole(hasAdminPermission);
     setSession(accessToken);
+    // setSession(hasAdminPermission);
 
     dispatch({
       type: 'LOGIN',
@@ -146,6 +150,7 @@ export function AuthProvider({ children }) {
   // LOGOUT
   const logout = useCallback(async () => {
     setSession(null);
+    setRole(null);
     dispatch({
       type: 'LOGOUT',
     });

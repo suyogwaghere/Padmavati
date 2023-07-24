@@ -1,6 +1,9 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { configureStore } from '@reduxjs/toolkit';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { useDispatch as useAppDispatch, useSelector as useAppSelector } from 'react-redux';
-import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE, persistStore } from 'redux-persist';
 import { rootReducer } from './root-reducer';
 
 // ----------------------------------------------------------------------

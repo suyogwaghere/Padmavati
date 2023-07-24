@@ -1,6 +1,9 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { persistReducer } from 'redux-persist';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import storage from 'redux-persist/lib/storage';
 // slices
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { combineReducers } from 'redux';
 import checkoutReducer from './slices/checkout';
 

@@ -2,30 +2,34 @@ import { Constructor, inject } from '@loopback/core';
 import { DefaultCrudRepository } from '@loopback/repository';
 import { MysqlDataSource } from '../datasources';
 import { TimeStampRepositoryMixin } from '../mixins/timestamp-repository-mixin';
-import { Product, ProductRelations } from '../models';
+import { Ledger, LedgerRelations } from '../models';
 
-export class ProductRepository extends TimeStampRepositoryMixin<
-  Product,
-  typeof Product.prototype.id,
+
+
+export class LedgerRepository extends TimeStampRepositoryMixin<
+  Ledger,
+  typeof Ledger.prototype.id,
   Constructor<
-    DefaultCrudRepository<Product, typeof Product.prototype.id, ProductRelations>
+    DefaultCrudRepository<Ledger, typeof Ledger.prototype.id, LedgerRelations>
   >
 >(DefaultCrudRepository) {
   constructor(
     @inject('datasources.Mysql') dataSource: MysqlDataSource,
   ) {
-    super(Product, dataSource);
+    super(Ledger, dataSource);
   }
 }
 
-// export class ProductRepository extends DefaultCrudRepository<
-//   Product,
-//   typeof Product.prototype.id,
-//   ProductRelations
+// export class LedgerRepository extends DefaultCrudRepository<
+//   Ledger,
+//   typeof Ledger.prototype.id,
+//   LedgerRelations
 // > {
 //   constructor(
 //     @inject('datasources.Mysql') dataSource: MysqlDataSource,
 //   ) {
-//     super(Product, dataSource);
+//     super(Ledger, dataSource);
 //   }
-// }
+// }?
+
+

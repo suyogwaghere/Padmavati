@@ -38,7 +38,7 @@ const authJwt = {
     {
       path: 'register',
       element: (
-        <AuthClassicLayout title="Aarya">
+        <AuthClassicLayout title="Padmavti">
           <JwtRegisterPage />
         </AuthClassicLayout>
       ),

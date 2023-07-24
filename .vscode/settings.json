@@ -1,8 +1,15 @@
 {
     "cSpell.words": [
-        "datasources",
-        "hasher",
-        "isemail"
+      "datasources",
+      "ecommerce",
+      "hasher",
+      "hookform",
+      "Iconify",
+      "isemail",
+      "kanban",
+      "Padmavti",
+      "Paser",
+      "persistor"
     ],
       "eslint.workingDirectories": [
     "./api",
