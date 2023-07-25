@@ -1,10 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import PropTypes from 'prop-types';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
+import Autocomplete from '@mui/material/Autocomplete';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
@@ -16,7 +17,9 @@ import { paths } from 'src/routes/paths';
 import { useResponsive } from 'src/hooks/use-responsive';
 // _mock
 // components
+// import  from '@mui/material/';
 import { IconButton, InputAdornment } from '@mui/material';
+import TextField from '@mui/material/TextField';
 import { RHFTextField } from 'src/components/hook-form';
 import FormProvider from 'src/components/hook-form/form-provider';
 import Iconify from 'src/components/iconify/iconify';
@@ -26,8 +29,10 @@ import { useRouter } from 'src/routes/hook';
 import axiosInstance from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
-
+const options = ['admin', 'customer'];
 export default function UserNewEditForm({ currentUser }) {
+  const [val, setVal] = useState(options[0]);
+  const [inputValue, setInputValue] = useState('');
   const router = useRouter();
 
   const mdUp = useResponsive('up', 'md');
@@ -37,6 +42,7 @@ export default function UserNewEditForm({ currentUser }) {
   const password = useBoolean();
 
   const NewUserSchema = Yup.object().shape({
+    // permissions: Yup.string().required('Please Select User a Permission'),
     name: Yup.string().required('User Name is required'),
     email: Yup.string().email('Email must be a valid email address').required('email is required'),
     password: Yup.string()
@@ -94,6 +100,7 @@ export default function UserNewEditForm({ currentUser }) {
           name: data.name,
           email: data.email,
           contactNo: data.contactNo,
+          permissions: [val],
         };
         await axiosInstance
           .patch(`/api/users/${currentUser.id}`, inputData)
@@ -117,7 +124,7 @@ export default function UserNewEditForm({ currentUser }) {
           password: data.password,
           contactNo: data.contactNo,
           isActive: true,
-          permissions: ['sales'],
+          permissions: [val],
         };
         await axiosInstance
           .post(`/register`, inputData)
@@ -160,6 +167,23 @@ export default function UserNewEditForm({ currentUser }) {
           {!mdUp && <CardHeader title="Details" />}
 
           <Stack spacing={3} sx={{ p: 3 }}>
+            {!currentUser ? (
+              <Autocomplete
+                value={val}
+                onChange={(event, newValue) => {
+                  setVal(newValue);
+                }}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                  setInputValue(newInputValue);
+                }}
+                id="controllable-states-demo"
+                options={options}
+                sx={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="User Type" />}
+              />
+            ) : null}
+
             <RHFTextField name="name" label="Name" />
             {/* !currentUser.permissions.includes('admin')  */}
             {currentUser ? (

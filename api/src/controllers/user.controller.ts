@@ -1,30 +1,42 @@
-import { authenticate, AuthenticationBindings } from '@loopback/authentication';
-import { inject } from '@loopback/core';
-import { Filter, repository } from '@loopback/repository';
-import { get, getJsonSchemaRef, getModelSchemaRef, HttpErrors, param, patch, post, requestBody, response } from '@loopback/rest';
-import { UserProfile } from '@loopback/security';
+import {authenticate, AuthenticationBindings} from '@loopback/authentication';
+import {inject} from '@loopback/core';
+import {Filter, repository} from '@loopback/repository';
+import {
+  get,
+  getJsonSchemaRef,
+  getModelSchemaRef,
+  HttpErrors,
+  param,
+  patch,
+  post,
+  requestBody,
+  response,
+} from '@loopback/rest';
+import {UserProfile} from '@loopback/security';
 import * as _ from 'lodash';
-import { PermissionKeys } from '../authorization/permission-keys';
-import { PasswordHasherBindings, TokenServiceBindings, UserServiceBindings } from '../keys';
-import { User } from '../models';
-import { Credentials, UserRepository } from '../repositories';
-import { BcryptHasher } from '../services/hash.password.bcrypt';
-import { JWTService } from '../services/jwt-service';
-import { MyUserService } from '../services/user-service';
-import { validateCredentials } from '../services/validator';
-import { CredentialsRequestBody } from './specs/user.controller.spec';
+import {PermissionKeys} from '../authorization/permission-keys';
+import {
+  PasswordHasherBindings,
+  TokenServiceBindings,
+  UserServiceBindings,
+} from '../keys';
+import {User} from '../models';
+import {Credentials, UserRepository} from '../repositories';
+import {BcryptHasher} from '../services/hash.password.bcrypt';
+import {JWTService} from '../services/jwt-service';
+import {MyUserService} from '../services/user-service';
+import {validateCredentials} from '../services/validator';
+import {CredentialsRequestBody} from './specs/user.controller.spec';
 export class SignupController {
-
   constructor(
     @repository(UserRepository)
     public userRepository: UserRepository,
-  @inject(PasswordHasherBindings.PASSWORD_HASHER)
-  public hasher: BcryptHasher,
-  @inject(UserServiceBindings.USER_SERVICE)
-  public userService: MyUserService,
-  @inject(TokenServiceBindings.TOKEN_SERVICE)
+    @inject(PasswordHasherBindings.PASSWORD_HASHER)
+    public hasher: BcryptHasher,
+    @inject(UserServiceBindings.USER_SERVICE)
+    public userService: MyUserService,
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
     public jwtService: JWTService,
-
   ) {}
   @authenticate({
     strategy: 'jwt',
@@ -33,7 +45,7 @@ export class SignupController {
   @post('/register', {
     responses: {
       '200': {
-        description: 'User',
+        description: 'Register User',
         content: {
           schema: getJsonSchemaRef(User),
         },
@@ -62,7 +74,6 @@ export class SignupController {
     }
 
     validateCredentials(_.pick(userData, ['email', 'password']));
-    userData.permissions = [PermissionKeys.EMPLOYEE];
     userData.password = await this.hasher.hashPassword(userData.password);
     const savedUser = await this.userRepository.create(userData);
     const savedUserData = _.omit(savedUser, 'password');
@@ -73,7 +84,7 @@ export class SignupController {
       message: `User with mail ${userData.email} is registered successfully`,
     });
   }
-  @post("/login",  {
+  @post('/login', {
     responses: {
       200: {
         description: 'Token',
@@ -84,13 +95,13 @@ export class SignupController {
               properties: {
                 accessToken: {
                   type: 'string',
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   })
   async login(
     @requestBody(CredentialsRequestBody) credentials: Credentials,
@@ -105,7 +116,6 @@ export class SignupController {
       user: {...userData, displayName: userData.name},
     });
   }
-
 
   @get('/me')
   @authenticate('jwt')
@@ -205,5 +215,4 @@ export class SignupController {
   ): Promise<void> {
     await this.userRepository.updateById(id, user);
   }
-
 }

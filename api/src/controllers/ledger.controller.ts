@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { inject } from '@loopback/context';
+import {authenticate} from '@loopback/authentication';
+import {inject} from '@loopback/context';
 import {
   Count,
   CountSchema,
@@ -23,16 +24,17 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import { MysqlDataSource } from '../datasources';
-import { Ledger } from '../models';
-import { LedgerRepository } from '../repositories';
+import {PermissionKeys} from '../authorization/permission-keys';
+import {MysqlDataSource} from '../datasources';
+import {Ledger} from '../models';
+import {LedgerRepository} from '../repositories';
 
 export class LedgerController {
   constructor(
-     @inject('datasources.Mysql')
+    @inject('datasources.Mysql')
     public dataSource: MysqlDataSource,
     @repository(LedgerRepository)
-    public ledgerRepository : LedgerRepository,
+    public ledgerRepository: LedgerRepository,
   ) {}
 
   @post('/ledgers')
@@ -61,9 +63,7 @@ export class LedgerController {
     description: 'Ledger model count',
     content: {'application/json': {schema: CountSchema}},
   })
-  async count(
-    @param.where(Ledger) where?: Where<Ledger>,
-  ): Promise<Count> {
+  async count(@param.where(Ledger) where?: Where<Ledger>): Promise<Count> {
     return this.ledgerRepository.count(where);
   }
 
@@ -79,70 +79,71 @@ export class LedgerController {
       },
     },
   })
-  async find(
-    @param.filter(Ledger) filter?: Filter<Ledger>,
-  ): Promise<Ledger[]> {
+  async find(@param.filter(Ledger) filter?: Filter<Ledger>): Promise<Ledger[]> {
     return this.ledgerRepository.find(filter);
   }
   // ///////////////////////////////////
+  @authenticate({
+    strategy: 'jwt',
+    options: {required: [PermissionKeys.SUPER_ADMIN]},
+  })
   @post('/api/ledgers/sync', {
     responses: {
       '200': {
-        description: 'User',
+        description: 'Ledger sync successful',
         content: {
           schema: getJsonSchemaRef(Ledger),
         },
       },
     },
   })
+  async syncLedgers(@requestBody() ledgerData: any) {
+    try {
+      //          const request = this.request; // Import the Request object
+      //   const parsedData: any = await bodyPaser.json(request); // Parse the request body directly
+      const parsedData = await ledgerData.ledger;
+      console.log('parsedData ', parsedData);
 
-    async syncLedgers( @requestBody() ledgerData: any) {
-        try {
-    //          const request = this.request; // Import the Request object
-    //   const parsedData: any = await bodyPaser.json(request); // Parse the request body directly
-    const parsedData = await ledgerData.ledger;
-    console.log("parsedData ",parsedData);
-            
-            const repo = new DefaultTransactionalRepository(Ledger, this.dataSource);
-            const tx = await repo.beginTransaction(IsolationLevel.READ_COMMITTED);
-           try {
-               await this.ledgerRepository.deleteAll(undefined, { transaction: tx, });
-               const finalMappedObject: Ledger[] = parsedData.map(
-                    (ledger: any) => {
-                        const mappedProduct: Ledger = new Ledger();
-                        mappedProduct.name = ledger.name || ' ';
-                        mappedProduct.group = ledger.group || ' ';
-                        mappedProduct.guid = ledger.guid || ' ';
-                        mappedProduct.openingValue = ledger.openingValue || 0;
-                        mappedProduct.address = ledger.address ||' ';
-                        mappedProduct.country = ledger.country || ' ';
-                        mappedProduct.state = ledger.state || ' ';
-                        mappedProduct.gstIn = ledger.gstIn || ' ';
-                        mappedProduct.whatsapp_no = ledger.whatsapp_no || ' ';
-                        mappedProduct.mobile_no = ledger.mobile_no || ' ';
-                        mappedProduct.pincode = ledger.pincode || 0;
-                        mappedProduct.station = ledger.station || ' ';
+      const repo = new DefaultTransactionalRepository(Ledger, this.dataSource);
+      const tx = await repo.beginTransaction(IsolationLevel.READ_COMMITTED);
+      try {
+        await this.ledgerRepository.deleteAll(undefined, {transaction: tx});
+        const finalMappedObject: Ledger[] = parsedData.map((ledger: any) => {
+          const mappedProduct: Ledger = new Ledger();
+          mappedProduct.name = ledger.name || ' ';
+          mappedProduct.group = ledger.group || ' ';
+          mappedProduct.guid = ledger.guid || ' ';
+          mappedProduct.openingValue = ledger.openingValue || 0;
+          mappedProduct.address = ledger.address || ' ';
+          mappedProduct.country = ledger.country || ' ';
+          mappedProduct.state = ledger.state || ' ';
+          mappedProduct.gstIn = ledger.gstIn || ' ';
+          mappedProduct.whatsapp_no = ledger.whatsapp_no || ' ';
+          mappedProduct.mobile_no = ledger.mobile_no || ' ';
+          mappedProduct.pincode = ledger.pincode || 0;
+          mappedProduct.station = ledger.station || ' ';
 
-                        return mappedProduct;
-                    },
-                );
-               await this.ledgerRepository.createAll(finalMappedObject, { transaction: tx, });
-            await tx.commit();
-            return {
-            success: true,
-            message: `Products synced successfully`,
-            };
-           } catch (err) {
-               console.log('Error ', err);
-               
-            await tx.rollback();
-            throw new Error(
-            'Error synchronizing products. Transaction rolled back.',
-            );
-        }
+          return mappedProduct;
+        });
+        await this.ledgerRepository.createAll(finalMappedObject, {
+          transaction: tx,
+        });
+        await tx.commit();
+        return {
+          success: true,
+          message: `Products synced successfully`,
+        };
+      } catch (err) {
+        console.log('Error ', err);
+
+        await tx.rollback();
+        throw new Error(
+          'Error synchronizing products. Transaction rolled back.',
+        );
+      }
     } catch (error) {
       throw new HttpErrors.PreconditionFailed(error.message);
-    }  
+    }
   }
   // ///////////////////////////////////
   @patch('/ledgers')
@@ -175,7 +176,8 @@ export class LedgerController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Ledger, {exclude: 'where'}) filter?: FilterExcludingWhere<Ledger>
+    @param.filter(Ledger, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Ledger>,
   ): Promise<Ledger> {
     return this.ledgerRepository.findById(id, filter);
   }

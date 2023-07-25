@@ -1,44 +1,42 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
-import { authenticate } from '@loopback/authentication';
+import {authenticate} from '@loopback/authentication';
 import {
-    Count,
-    CountSchema,
-    DefaultTransactionalRepository,
-    Filter,
-    IsolationLevel,
-    repository,
-    Where
+  Count,
+  CountSchema,
+  DefaultTransactionalRepository,
+  Filter,
+  IsolationLevel,
+  repository,
+  Where,
 } from '@loopback/repository';
 import {
-    del,
-    get,
-    getJsonSchemaRef,
-    getModelSchemaRef,
-    HttpErrors,
-    param,
-    patch,
-    post,
-    requestBody,
-    response
+  del,
+  get,
+  getJsonSchemaRef,
+  getModelSchemaRef,
+  HttpErrors,
+  param,
+  patch,
+  post,
+  requestBody,
+  response,
 } from '@loopback/rest';
-import { PermissionKeys } from '../authorization/permission-keys';
+import {PermissionKeys} from '../authorization/permission-keys';
 // import { MysqlDataSource } from '../datasources';
-import { inject } from '@loopback/context';
-import { MysqlDataSource } from '../datasources';
-import { Product } from '../models';
-import { ProductRepository } from '../repositories';
+import {inject} from '@loopback/context';
+import {MysqlDataSource} from '../datasources';
+import {Product} from '../models';
+import {ProductRepository} from '../repositories';
 
 export class ProductController {
   constructor(
     @inject('datasources.Mysql')
     public dataSource: MysqlDataSource,
     @repository(ProductRepository)
-      public productRepository: ProductRepository,
-    // @inject(RestBindings.Http.REQUEST) private request: Request, // Import Request
-    // @inject('service.tally.service')
-    // public tallyPostService: TallyHttpCallService,
-  ) {}
+    public productRepository: ProductRepository, // @inject(RestBindings.Http.REQUEST) private request: Request, // Import Request // @inject('service.tally.service')
+  ) // public tallyPostService: TallyHttpCallService,
+  {}
 
   @authenticate({
     strategy: 'jwt',
@@ -104,131 +102,69 @@ export class ProductController {
     return this.productRepository.count(where);
   }
 
-//   @authenticate({
-//     strategy: 'jwt',
-//     options: {required: [PermissionKeys.SUPER_ADMIN]},
-//   })
-//   @post('/api/products/sync')
-//   async syncProducts(): Promise<any> {
-//     try {
-//       // const tallyXml = STOCK_ITEM_XML();
-//       // const res: any = await this.tallyPostService.postTallyXML(tallyXml);
-//       // const parsedXmlData = await this.tallyPostService.parseXmlToObjects(res);
-//       const repo = new DefaultTransactionalRepository(Product, this.dataSource);
-//       const tx = await repo.beginTransaction(IsolationLevel.READ_COMMITTED);
-
-//       try {
-//         await this.productRepository.deleteAll(undefined, {
-//           transaction: tx,
-//         });
-
-//         // const finalMappedObject: Product[] = parsedXmlData.map(
-//         //   (product: any) => {
-//         //     const mappedProduct: Product = new Product();
-//         //     mappedProduct.guid = product.GUID;
-//         //     mappedProduct.alterid = product.ALTERID;
-//         //     mappedProduct.name = product.NAME;
-//         //     mappedProduct.parent = product.PARENT || ' ';
-//         //     mappedProduct._parent = product._PARENT || ' ';
-//         //     mappedProduct.alias = product.ALIAS || null;
-//         //     mappedProduct.uom = product.UOM;
-//         //     mappedProduct._uom = product._UOM || ' ';
-//         //     mappedProduct.opening_balance = product.OPENINGBALANCE || 0;
-//         //     mappedProduct.opening_rate = product.OPENINGRATE || 0;
-//         //     mappedProduct.opening_value = product.OPENINGVALUE || 0;
-//         //     mappedProduct.gst_nature_of_goods = product.NATUREOFGOODS || null;
-//         //     mappedProduct.gst_hsn_code = product.HSNCODE || null;
-//         //     mappedProduct.gst_taxability = product.TAXABILITY || null;
-
-//         //     return mappedProduct;
-//         //   },
-//         // );
-
-//         // await this.productRepository.createAll(finalMappedObject, {
-//         //   transaction: tx,
-//         // });
-
-//         await tx.commit();
-
-//         // Return success response
-//         return {
-//           success: true,
-//           message: 'Sync successful',
-//         };
-//       } catch (err) {
-//         await tx.rollback();
-//         throw new Error(
-//           'Error synchronizing products. Transaction rolled back.',
-//         );
-//       }
-//     } catch (error) {
-//       throw new HttpErrors.PreconditionFailed(error.message);
-//     }
-//   }
-
-    /////////////////////////////
-    @authenticate({
-        strategy: 'jwt',
-        options: { required: [PermissionKeys.SUPER_ADMIN] },
-    })
-    @post('/api/products/sync', {
+  //Get sync products
+  @authenticate({
+    strategy: 'jwt',
+    options: {required: [PermissionKeys.SUPER_ADMIN]},
+  })
+  @post('/api/products/sync', {
     responses: {
       '200': {
-        description: 'User',
+        description: 'Product Sync Success',
         content: {
           schema: getJsonSchemaRef(Product),
         },
       },
     },
   })
-    async syncProducts( @requestBody() productData: any) {
-        try {
-    //          const request = this.request; // Import the Request object
-    //   const parsedData: any = await bodyPaser.json(request); // Parse the request body directly
-    const parsedData = await productData.product;
-    console.log("parsedData ",parsedData);
-            
-            const repo = new DefaultTransactionalRepository(Product, this.dataSource);
-            const tx = await repo.beginTransaction(IsolationLevel.READ_COMMITTED);
-           try {
-               await this.productRepository.deleteAll(undefined, { transaction: tx, });
-               const finalMappedObject: Product[] = parsedData.map(
-                    (product: any) => {
-                        const mappedProduct: Product = new Product();
-                        mappedProduct.parentId = product.parentId || ' ';
-                        mappedProduct.parentName = product.parentName || ' ';
-                        mappedProduct.productName = product.productName || ' ';
-                        mappedProduct.uom = product.uom || ' ';
-                        mappedProduct.stock = product.stock || 0;
-                        mappedProduct.sellPrice = product.sellPrice || 0;
-                        mappedProduct.purchasePrice = product.purchasePrice || 0;
-                        mappedProduct.openingBalance = product.openingBalance || 0;
-                        mappedProduct.openingValue = product.openingValue || 0;
-                        mappedProduct.taxRate = product.taxRate || 0;
-                        mappedProduct.gst_hsn_code = product.gst_hsn_code || null;
+  async syncProducts(@requestBody() productData: any) {
+    try {
+      //          const request = this.request; // Import the Request object
+      //   const parsedData: any = await bodyPaser.json(request); // Parse the request body directly
+      const parsedData = await productData.product;
+      console.log('parsedData ', parsedData);
 
-                        return mappedProduct;
-                    },
-                );
-               await this.productRepository.createAll(finalMappedObject, { transaction: tx, });
-            await tx.commit();
-            return {
-            success: true,
-            message: `Products synced successfully`,
-            };
-           } catch (err) {
-               console.log('Error ', err);
-               
-            await tx.rollback();
-            throw new Error(
-            'Error synchronizing products. Transaction rolled back.',
-            );
-        }
+      const repo = new DefaultTransactionalRepository(Product, this.dataSource);
+      const tx = await repo.beginTransaction(IsolationLevel.READ_COMMITTED);
+      try {
+        await this.productRepository.deleteAll(undefined, {transaction: tx});
+        const finalMappedObject: Product[] = parsedData.map((product: any) => {
+          const mappedProduct: Product = new Product();
+          mappedProduct.parentId = product.parentId || ' ';
+          mappedProduct.parentName = product.parentName || ' ';
+          mappedProduct.productName = product.productName || ' ';
+          mappedProduct.uom = product.uom || ' ';
+          mappedProduct.stock = product.stock || 0;
+          mappedProduct.sellPrice = product.sellPrice || 0;
+          mappedProduct.purchasePrice = product.purchasePrice || 0;
+          mappedProduct.openingBalance = product.openingBalance || 0;
+          mappedProduct.openingValue = product.openingValue || 0;
+          mappedProduct.taxRate = product.taxRate || 0;
+          mappedProduct.gst_hsn_code = product.gst_hsn_code || null;
+
+          return mappedProduct;
+        });
+        await this.productRepository.createAll(finalMappedObject, {
+          transaction: tx,
+        });
+        await tx.commit();
+        return {
+          success: true,
+          message: `Products synced successfully`,
+        };
+      } catch (err) {
+        console.log('Error ', err);
+
+        await tx.rollback();
+        throw new Error(
+          'Error synchronizing products. Transaction rolled back.',
+        );
+      }
     } catch (error) {
       throw new HttpErrors.PreconditionFailed(error.message);
-    }  
+    }
   }
-    ////////////////////////////?
+  ////////////////////////////?
   //Get all products
   @authenticate({
     strategy: 'jwt',
@@ -240,7 +176,7 @@ export class ProductController {
   ): Promise<Product[]> {
     return this.productRepository.find(filter);
   }
-    
+
   //Find product by ID
   @authenticate({
     strategy: 'jwt',
@@ -256,12 +192,10 @@ export class ProductController {
     // if (!product) {
     //   throw new HttpErrors.NotFound('Product not found');
     // }
-
     // Retrieve variations using the junction table
     // const productVariations = await this.productRepository
     //   .variations(id)
     //   .find();
-
     // // Map the variations to the product object
     // const updatedVariationsWithJunctionData = await Promise.all(
     //   productVariations.map(async res => {
@@ -285,10 +219,9 @@ export class ProductController {
     //     }
     //   }),
     // );
-
     // return product;
   }
-    
+
   //Update product by ID
   @authenticate({
     strategy: 'jwt',
@@ -347,7 +280,7 @@ export class ProductController {
     //   throw err;
     // }
   }
-    
+
   //Delete product by ID
   @authenticate({
     strategy: 'jwt',
@@ -361,29 +294,29 @@ export class ProductController {
     await this.productRepository.deleteById(guid);
   }
 
-//   @authenticate({
-//     strategy: 'jwt',
-//     options: {required: [PermissionKeys.SUPER_ADMIN]},
-//   })
-//   @get('/api/products/parents')
-//   async getProductParents(
-//     @param.filter(Product) filter?: Filter<Product>,
-//   ): Promise<any> {
-//     // const products = await this.productRepository.find(filter);
+  //   @authenticate({
+  //     strategy: 'jwt',
+  //     options: {required: [PermissionKeys.SUPER_ADMIN]},
+  //   })
+  //   @get('/api/products/parents')
+  //   async getProductParents(
+  //     @param.filter(Product) filter?: Filter<Product>,
+  //   ): Promise<any> {
+  //     // const products = await this.productRepository.find(filter);
 
-//     // Create a Set to store unique parent values
-//     const uniqueParents = new Set<string>();
+  //     // Create a Set to store unique parent values
+  //     const uniqueParents = new Set<string>();
 
-//     // Filter out duplicates and store unique parents in the Set
-//     // products.forEach(product => uniqueParents.add(product.parent));
+  //     // Filter out duplicates and store unique parents in the Set
+  //     // products.forEach(product => uniqueParents.add(product.parent));
 
-//     // Convert the Set back to an array
-//     const uniqueParentsArray = Array.from(uniqueParents);
+  //     // Convert the Set back to an array
+  //     const uniqueParentsArray = Array.from(uniqueParents);
 
-//     return uniqueParentsArray.map(parent => {
-//       return {
-//         parent,
-//       };
-//     });
-//   }
+  //     return uniqueParentsArray.map(parent => {
+  //       return {
+  //         parent,
+  //       };
+  //     });
+  //   }
 }
