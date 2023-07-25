@@ -1,32 +1,36 @@
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
 // @mui
-import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import MenuItem from '@mui/material/MenuItem';
-import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
+import MenuItem from '@mui/material/MenuItem';
 import TableCell from '@mui/material/TableCell';
-import IconButton from '@mui/material/IconButton';
-import ListItemText from '@mui/material/ListItemText';
-import LinearProgress from '@mui/material/LinearProgress';
+import TableRow from '@mui/material/TableRow';
 // utils
-import { fCurrency } from 'src/utils/format-number';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { Typography } from '@mui/material';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 export default function LedgerTableRow({ row, selected, onSelectRow, onDeleteRow, onEditRow }) {
-  const { name, opening_balance } = row;
+  const {
+    l_ID,
+    name,
+    group,
+    openingValue,
+    address,
+    country,
+    state,
+    gstIn,
+    whatsapp_no,
+    mobile_no,
+    pincode,
+    station,
+  } = row;
 
   const confirm = useBoolean();
 
@@ -40,21 +44,51 @@ export default function LedgerTableRow({ row, selected, onSelectRow, onDeleteRow
         </TableCell>
 
         <TableCell>
+          <Typography variant="subtitle">{l_ID}</Typography>
+        </TableCell>
+        <TableCell>
           <Typography variant="subtitle">{name}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{group}</Typography>
         </TableCell>
 
         <TableCell>
           <Typography variant="subtitle">{`${
             // eslint-disable-next-line no-nested-ternary
-            opening_balance > 0
-              ? `${opening_balance} Cr`
-              : opening_balance === 0
-              ? opening_balance
-              : `${Math.abs(opening_balance)} Dr`
+            openingValue > 0
+              ? `${openingValue} Cr`
+              : openingValue === 0
+              ? openingValue
+              : `${Math.abs(openingValue)} Dr`
           }`}</Typography>
         </TableCell>
-
-        {/* <TableCell align="right">
+        <TableCell>
+          <Typography variant="subtitle">{address}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{country}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{state}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{gstIn}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{whatsapp_no}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{mobile_no}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{pincode}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{station}</Typography>
+        </TableCell>
+        {/*
+         <TableCell align="right">
             <IconButton color={popover.open ? 'primary' : 'default'} onClick={popover.onOpen}>
               <Iconify icon="eva:more-vertical-fill" />
             </IconButton>

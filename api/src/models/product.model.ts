@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Entity, model, property } from '@loopback/repository';
+import {Entity, model, property} from '@loopback/repository';
 
 @model()
 export class Product extends Entity {
@@ -10,13 +10,12 @@ export class Product extends Entity {
   })
   id?: number;
 
-   @property({
+  @property({
     type: 'string',
     required: true,
   })
-   parentId?: string;
-  
-  
+  parentId?: string;
+
   @property({
     type: 'string',
     required: true,
@@ -29,19 +28,19 @@ export class Product extends Entity {
   })
   productName?: string;
 
-@property({
+  @property({
     type: 'string',
     required: true,
   })
-uom: string;
-  
+  uom: string;
+
   @property({
     type: 'number',
     required: true,
   })
   stock: number;
 
-   @property({
+  @property({
     type: 'number',
     required: true,
     default: 0,
@@ -50,7 +49,7 @@ uom: string;
     scale: 2,
   })
   sellPrice?: number;
-  
+
   @property({
     type: 'number',
     required: true,
@@ -60,7 +59,7 @@ uom: string;
     scale: 2,
   })
   purchasePrice?: number;
-  
+
   @property({
     type: 'number',
     required: true,
@@ -70,7 +69,7 @@ uom: string;
     scale: 2,
   })
   openingBalance?: number;
-  
+
   @property({
     type: 'number',
     required: true,
@@ -81,7 +80,10 @@ uom: string;
   })
   openingValue?: number;
 
- 
+  @property({
+    type: 'string',
+  })
+  image?: string;
 
   @property({
     type: 'number',

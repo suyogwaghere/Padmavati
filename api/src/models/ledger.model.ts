@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Entity, model, property } from '@loopback/repository';
+import {Entity, model, property} from '@loopback/repository';
 
 @model()
 export class Ledger extends Entity {
@@ -9,6 +9,12 @@ export class Ledger extends Entity {
     generated: true,
   })
   id?: number;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  l_ID: string;
 
   @property({
     type: 'string',
@@ -85,8 +91,8 @@ export class Ledger extends Entity {
     required: true,
   })
   station: string;
-  
-@property({
+
+  @property({
     type: 'date',
   })
   createdAt?: Date;

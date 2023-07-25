@@ -1,27 +1,21 @@
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
 // @mui
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import MenuItem from '@mui/material/MenuItem';
-import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import TableCell from '@mui/material/TableCell';
-import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
 import ListItemText from '@mui/material/ListItemText';
-import LinearProgress from '@mui/material/LinearProgress';
+import MenuItem from '@mui/material/MenuItem';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
 // utils
-import { fCurrency } from 'src/utils/format-number';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { Typography } from '@mui/material';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +27,18 @@ export default function ProductTableRow({
   onEditRow,
   onViewRow,
 }) {
-  const { name, opening_rate, uom, opening_value, parent, quantity, available, inventoryType } = row;
+  const {
+    productName,
+    parentName,
+    stock,
+    uom,
+    openingBalance,
+    openingValue,
+    purchasePrice,
+    sellPrice,
+    taxRate,
+    gst_hsn_code,
+  } = row;
 
   const confirm = useBoolean();
 
@@ -57,25 +62,40 @@ export default function ProductTableRow({
                 onClick={onViewRow}
                 sx={{ cursor: 'pointer' }}
               >
-                {name}
+                {productName}
               </Link>
             }
             secondary={
               <Box component="div" sx={{ typography: 'body2', color: 'text.disabled' }}>
-                {parent}
+                {parentName}
               </Box>
             }
           />
         </TableCell>
 
         <TableCell>
+          <Typography variant="subtitle">{stock}</Typography>
+        </TableCell>
+        <TableCell>
           <Typography variant="subtitle">{uom}</Typography>
         </TableCell>
         <TableCell>
-          <Typography variant="subtitle">{opening_rate}</Typography>
+          <Typography variant="subtitle">{openingBalance}</Typography>
         </TableCell>
         <TableCell>
-          <Typography variant="subtitle">{opening_value}</Typography>
+          <Typography variant="subtitle">{openingValue}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{purchasePrice}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{sellPrice}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{taxRate}</Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle">{gst_hsn_code}</Typography>
         </TableCell>
 
         {/* <TableCell align="right">

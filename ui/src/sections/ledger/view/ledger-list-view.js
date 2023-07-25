@@ -1,52 +1,61 @@
 import isEqual from 'lodash/isEqual';
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // @mui
-import Card from '@mui/material/Card';
-import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
+import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
-import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
+import Tooltip from '@mui/material/Tooltip';
 // routes
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
 import { RouterLink } from 'src/routes/components';
+import { useRouter } from 'src/routes/hook';
+import { paths } from 'src/routes/paths';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // _mock
-import { PRODUCT_STOCK_OPTIONS } from 'src/_mock';
 // api
 // components
-import { useSettingsContext } from 'src/components/settings';
-import {
-  useTable,
-  getComparator,
-  emptyRows,
-  TableNoData,
-  TableSkeleton,
-  TableEmptyRows,
-  TableHeadCustom,
-  TableSelectedAction,
-  TablePaginationCustom,
-} from 'src/components/table';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { useSettingsContext } from 'src/components/settings';
+import {
+  TableEmptyRows,
+  TableHeadCustom,
+  TableNoData,
+  TablePaginationCustom,
+  TableSelectedAction,
+  TableSkeleton,
+  emptyRows,
+  getComparator,
+  useTable,
+} from 'src/components/table';
 //
-import axiosInstance, { endpoints } from 'src/utils/axios';
-import { useSnackbar } from 'src/components/snackbar';
 import { useGetLedgers } from 'src/api/ledger';
+import { useSnackbar } from 'src/components/snackbar';
+import axiosInstance, { endpoints } from 'src/utils/axios';
 import BrandTableRow from '../ledger-table-row';
 import BrandTableToolbar from '../ledger-table-toolbar';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+  { id: 'L_ID', label: 'L_id' },
   { id: 'name', label: 'Name' },
-  { id: 'opening_balance', label: 'Current Balance', width: 160 },
+  { id: 'group', label: 'Group', width: 160 },
+  { id: 'openingValue', label: 'Current Balance', width: 160 },
+  { id: 'address', label: 'Address ', width: 160 },
+  { id: 'country', label: 'Country', width: 160 },
+  { id: 'state', label: 'State', width: 160 },
+  { id: 'gstIn', label: 'GST-IN', width: 160 },
+  { id: 'whatsapp_no', label: 'WhatsApp No', width: 160 },
+  { id: 'mobile_no', label: 'Mobile No', width: 160 },
+  { id: 'pincode', label: 'Pincode', width: 160 },
+  { id: 'station', label: 'Station', width: 160 },
 ];
 
 const defaultFilters = {
@@ -75,6 +84,7 @@ export default function LedgerListView() {
   useEffect(() => {
     if (ledgers.length) {
       setTableData(ledgers);
+      console.log('ledgers ', ledgers);
     }
   }, [ledgers]);
 
@@ -164,7 +174,7 @@ export default function LedgerListView() {
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
             {
-              name: 'Parties',
+              name: 'Ledger',
               href: paths.dashboard.ledger.root,
             },
             { name: 'List' },

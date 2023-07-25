@@ -1,19 +1,16 @@
 {
-    "cSpell.words": [
-      "datasources",
-      "ecommerce",
-      "hasher",
-      "hookform",
-      "Iconify",
-      "isemail",
-      "kanban",
-      "Padmavti",
-      "Paser",
-      "persistor"
-    ],
-      "eslint.workingDirectories": [
-    "./api",
-    "./ui",
+  "cSpell.words": [
+    "datasources",
+    "ecommerce",
+    "hasher",
+    "hookform",
+    "Iconify",
+    "isemail",
+    "kanban",
+    "Padmavti",
+    "Paser",
+    "persistor",
+    "pincode"
   ],
-
+  "eslint.workingDirectories": ["./api", "./ui"]
 }

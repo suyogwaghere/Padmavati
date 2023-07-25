@@ -34,9 +34,8 @@ export class ProductController {
     @inject('datasources.Mysql')
     public dataSource: MysqlDataSource,
     @repository(ProductRepository)
-    public productRepository: ProductRepository, // @inject(RestBindings.Http.REQUEST) private request: Request, // Import Request // @inject('service.tally.service')
-  ) // public tallyPostService: TallyHttpCallService,
-  {}
+    public productRepository: ProductRepository, // @inject(RestBindings.Http.REQUEST) private request: Request, // Import Request // @inject('service.tally.service') // public tallyPostService: TallyHttpCallService,
+  ) {}
 
   @authenticate({
     strategy: 'jwt',
@@ -141,6 +140,7 @@ export class ProductController {
           mappedProduct.openingValue = product.openingValue || 0;
           mappedProduct.taxRate = product.taxRate || 0;
           mappedProduct.gst_hsn_code = product.gst_hsn_code || null;
+          mappedProduct.image = product.image || ' ';
 
           return mappedProduct;
         });

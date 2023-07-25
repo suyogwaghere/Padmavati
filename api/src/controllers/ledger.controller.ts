@@ -67,21 +67,31 @@ export class LedgerController {
     return this.ledgerRepository.count(where);
   }
 
-  @get('/ledgers')
-  @response(200, {
-    description: 'Array of Ledger model instances',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(Ledger, {includeRelations: true}),
-        },
-      },
-    },
+  //Get all products
+  @authenticate({
+    strategy: 'jwt',
+    options: {required: [PermissionKeys.SUPER_ADMIN]},
   })
+  @get('/api/ledgers/list')
   async find(@param.filter(Ledger) filter?: Filter<Ledger>): Promise<Ledger[]> {
     return this.ledgerRepository.find(filter);
   }
+
+  // @get('/ledgers')
+  // @response(200, {
+  //   description: 'Array of Ledger model instances',
+  //   content: {
+  //     'application/json': {
+  //       schema: {
+  //         type: 'array',
+  //         items: getModelSchemaRef(Ledger, {includeRelations: true}),
+  //       },
+  //     },
+  //   },
+  // })
+  // async find(@param.filter(Ledger) filter?: Filter<Ledger>): Promise<Ledger[]> {
+  //   return this.ledgerRepository.find(filter);
+  // }
   // ///////////////////////////////////
   @authenticate({
     strategy: 'jwt',
@@ -122,6 +132,7 @@ export class LedgerController {
           mappedProduct.mobile_no = ledger.mobile_no || ' ';
           mappedProduct.pincode = ledger.pincode || 0;
           mappedProduct.station = ledger.station || ' ';
+          mappedProduct.l_ID = ledger.l_ID || ' ';
 
           return mappedProduct;
         });
