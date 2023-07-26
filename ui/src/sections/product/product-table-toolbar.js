@@ -27,25 +27,25 @@ export default function ProductTableToolbar({
     [onFilters]
   );
 
-  const handleFilterStock = useCallback(
-    (event) => {
-      onFilters(
-        'stock',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
-      );
-    },
-    [onFilters]
-  );
+  // const handleFilterStock = useCallback(
+  //   (event) => {
+  //     onFilters(
+  //       'stock',
+  //       typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
+  //     );
+  //   },
+  //   [onFilters]
+  // );
 
-  const handleFilterPublish = useCallback(
-    (event) => {
-      onFilters(
-        'publish',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
-      );
-    },
-    [onFilters]
-  );
+  // const handleFilterPublish = useCallback(
+  //   (event) => {
+  //     onFilters(
+  //       'publish',
+  //       typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
+  //     );
+  //   },
+  //   [onFilters]
+  // );
 
   return (
     <>

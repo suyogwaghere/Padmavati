@@ -59,8 +59,6 @@ export function AuthProvider({ children }) {
     try {
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
       const userRole = sessionStorage.getItem(ROLE_KEY);
-      console.log('Local storage 1 ', isValidToken(accessToken));
-      console.log('Local storage 2 ', isValidToken(userRole));
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
         setRole(userRole);

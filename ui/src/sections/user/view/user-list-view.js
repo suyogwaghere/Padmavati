@@ -66,7 +66,7 @@ export default function UserListView() {
 
   const table = useTable();
 
-  const { logout, user } = useAuthContext();
+  const { user } = useAuthContext();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -85,7 +85,8 @@ export default function UserListView() {
       const updatedUsers = users.filter((obj) => !obj.email.includes(user.email));
       setTableData(updatedUsers);
     }
-  }, [users, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [users]);
 
   const dataFiltered = applyFilter({
     inputData: tableData,

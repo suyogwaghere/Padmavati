@@ -11,7 +11,6 @@ import TableContainer from '@mui/material/TableContainer';
 import Tooltip from '@mui/material/Tooltip';
 // routes
 import { RouterLink } from 'src/routes/components';
-import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -65,7 +64,7 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function LedgerListView() {
-  const router = useRouter();
+  // const router = useRouter();
 
   const table = useTable();
 
