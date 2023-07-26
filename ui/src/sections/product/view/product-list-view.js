@@ -63,7 +63,7 @@ const PUBLISH_OPTIONS = [
 ];
 
 const defaultFilters = {
-  name: '',
+  productName: '',
   publish: [],
   stock: [],
 };
@@ -178,10 +178,7 @@ export default function ProductListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            {
-              name: 'Product',
-              href: paths.dashboard.product.root,
-            },
+            { name: 'Product', href: paths.dashboard.product.root },
             { name: 'List' },
           ]}
           action={
@@ -336,7 +333,7 @@ export default function ProductListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters }) {
-  const { name, stock, publish } = filters;
+  const { productName } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -348,19 +345,19 @@ function applyFilter({ inputData, comparator, filters }) {
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (name) {
+  if (productName) {
     inputData = inputData.filter(
-      (product) => product.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (product) => product.productName.toLowerCase().indexOf(productName.toLowerCase()) !== -1
     );
   }
 
-  if (stock.length) {
-    inputData = inputData.filter((product) => stock.includes(product.inventoryType));
-  }
+  // if (stock.length) {
+  //   inputData = inputData.filter((product) => stock.includes(product.inventoryType));
+  // }
 
-  if (publish.length) {
-    inputData = inputData.filter((product) => publish.includes(product.publish));
-  }
+  // if (publish.length) {
+  //   inputData = inputData.filter((product) => publish.includes(product.publish));
+  // }
 
   return inputData;
 }

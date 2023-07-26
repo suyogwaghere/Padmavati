@@ -84,7 +84,6 @@ export default function LedgerListView() {
   useEffect(() => {
     if (ledgers.length) {
       setTableData(ledgers);
-      console.log('ledgers ', ledgers);
     }
   }, [ledgers]);
 
