@@ -2,16 +2,16 @@
 import PropTypes from 'prop-types';
 import { useCallback } from 'react';
 // @mui
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import { DatePicker } from '@mui/x-date-pickers';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import MenuItem from '@mui/material/MenuItem';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import { DatePicker } from '@mui/x-date-pickers';
 // components
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import Iconify from 'src/components/iconify';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
@@ -98,9 +98,9 @@ export default function VoucherTableToolbar({
             }}
           />
 
-          <IconButton onClick={popover.onOpen}>
+          {/* <IconButton onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          </IconButton> */}
         </Stack>
 
         {canReset && (

@@ -25,9 +25,26 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function VoucherTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
-  const { party_name, products, status, id, createdAt, is_synced, totalQuantity, totalAmount } =
-    row;
+export default function VoucherTableRow({
+  row,
+  selected,
+  onViewRow,
+  onSelectRow,
+  onDeleteRow,
+  onEditRow,
+  onSyncVoucher,
+}) {
+  const {
+    party_name,
+    products,
+    status,
+    id,
+    createdAt,
+    date,
+    is_synced,
+    totalQuantity,
+    totalAmount,
+  } = row;
 
   const confirm = useBoolean();
 
@@ -62,11 +79,10 @@ export default function VoucherTableRow({ row, selected, onViewRow, onSelectRow,
           secondaryTypographyProps={{ component: 'span', color: 'text.disabled' }}
         />
       </TableCell>
-
       <TableCell>
         <ListItemText
-          primary={format(new Date(createdAt), 'dd MMM yyyy')}
-          secondary={format(new Date(createdAt), 'p')}
+          primary={format(new Date(date), 'dd MMM yyyy')}
+          // secondary={format(new Date(createdAt), 'p')}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -86,7 +102,18 @@ export default function VoucherTableRow({ row, selected, onViewRow, onSelectRow,
           {(is_synced === 1 && 'synced') || (is_synced === 0 && 'not synced') || ''}
         </Label>
       </TableCell>
-
+      <TableCell>
+        <ListItemText
+          primary={format(new Date(createdAt), 'dd MMM yyyy')}
+          secondary={format(new Date(createdAt), 'p')}
+          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          secondaryTypographyProps={{
+            mt: 0.5,
+            component: 'span',
+            typography: 'caption',
+          }}
+        />
+      </TableCell>
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
           color={collapse.value ? 'inherit' : 'default'}
@@ -109,7 +136,7 @@ export default function VoucherTableRow({ row, selected, onViewRow, onSelectRow,
 
   const renderSecondary = (
     <TableRow>
-      <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
+      <TableCell sx={{ p: 0, border: 'none' }} colSpan={10}>
         <Collapse
           in={collapse.value}
           timeout="auto"
@@ -164,7 +191,7 @@ export default function VoucherTableRow({ row, selected, onViewRow, onSelectRow,
         arrow="right-top"
         sx={{ width: 140 }}
       >
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
@@ -173,9 +200,9 @@ export default function VoucherTableRow({ row, selected, onViewRow, onSelectRow,
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
-        </MenuItem>
+        </MenuItem> */}
 
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             onViewRow();
             popover.onClose();
@@ -183,7 +210,28 @@ export default function VoucherTableRow({ row, selected, onViewRow, onSelectRow,
         >
           <Iconify icon="solar:eye-bold" />
           View
+        </MenuItem> */}
+
+        <MenuItem
+          onClick={() => {
+            onEditRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="material-symbols:edit" />
+          Edit
         </MenuItem>
+        {row.is_synced === 0 ? (
+          <MenuItem
+            onClick={() => {
+              onSyncVoucher();
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="ic:outline-sync" />
+            Sync to Tally
+          </MenuItem>
+        ) : null}
       </CustomPopover>
 
       <ConfirmDialog
@@ -205,6 +253,8 @@ VoucherTableRow.propTypes = {
   onDeleteRow: PropTypes.func,
   onSelectRow: PropTypes.func,
   onViewRow: PropTypes.func,
+  onEditRow: PropTypes.func,
+  onSyncVoucher: PropTypes.func,
   row: PropTypes.object,
   selected: PropTypes.bool,
 };

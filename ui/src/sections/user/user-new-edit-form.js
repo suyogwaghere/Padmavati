@@ -8,6 +8,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Autocomplete from '@mui/material/Autocomplete';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
+import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -20,22 +21,22 @@ import { useResponsive } from 'src/hooks/use-responsive';
 // import  from '@mui/material/';
 import { IconButton, InputAdornment } from '@mui/material';
 import TextField from '@mui/material/TextField';
-import { RHFTextField } from 'src/components/hook-form';
+import { useGetLedgers } from 'src/api/ledger';
+import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import FormProvider from 'src/components/hook-form/form-provider';
 import Iconify from 'src/components/iconify/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useRouter } from 'src/routes/hook';
 import axiosInstance from 'src/utils/axios';
-
 // ----------------------------------------------------------------------
-const options = ['admin', 'customer'];
+const userOptions = ['admin', 'customer'];
 export default function UserNewEditForm({ currentUser }) {
-  const [val, setVal] = useState(options[0]);
+  const [val, setVal] = useState(userOptions[0]);
   const [inputValue, setInputValue] = useState('');
   const router = useRouter();
-
   const mdUp = useResponsive('up', 'md');
+  const { ledgers, ledgersLoading, ledgersEmpty, refreshLedgers } = useGetLedgers();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -178,12 +179,24 @@ export default function UserNewEditForm({ currentUser }) {
                   setInputValue(newInputValue);
                 }}
                 id="controllable-states-demo"
-                options={options}
+                options={userOptions}
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="User Type" />}
               />
             ) : null}
-
+            <RHFSelect
+              fullWidth
+              name="party_name"
+              label="Party A/c Name"
+              InputLabelProps={{ shrink: true }}
+              PaperPropsSx={{ textTransform: 'capitalize' }}
+            >
+              {ledgers.map((option) => (
+                <MenuItem key={option.name} value={option.guid}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </RHFSelect>
             <RHFTextField name="name" label="Name" />
             {/* !currentUser.permissions.includes('admin')  */}
             {currentUser ? (

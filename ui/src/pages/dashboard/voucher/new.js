@@ -1,18 +1,18 @@
 import { Helmet } from 'react-helmet-async';
-import { ProductCreateView } from 'src/sections/product/view';
-import { UserCreateView } from 'src/sections/user/view';
+import { VoucherCreateView } from 'src/sections/voucher/view';
 // sections
 
 // ----------------------------------------------------------------------
 
-export default function UserCreatePage() {
+export default function VoucherCreatePage() {
   return (
     <>
       <Helmet>
         <title> Dashboard: Create a new product</title>
       </Helmet>
 
-      <UserCreateView />
+      <VoucherCreateView />
+      {/* <UserCreateView /> */}
     </>
   );
 }

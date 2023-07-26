@@ -13,7 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
 // routes
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
+import { usePathname, useRouter } from 'src/routes/hook';
 // _mock
 import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
 // utils
@@ -40,10 +40,11 @@ import {
 } from 'src/components/table';
 //
 import { useGetVouchers } from 'src/api/voucher';
+import axiosInstance from 'src/utils/axios';
+import { useSnackbar } from 'notistack';
 import VoucherTableToolbar from '../voucher-table-toolbar';
 import VoucherTableFiltersResult from '../voucher-table-filters-result';
 import VoucherTableRow from '../voucher-table-row';
-
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }];
@@ -51,31 +52,33 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }];
 const TABLE_HEAD = [
   { id: 'id', label: 'Order', width: 116 },
   { id: 'name', label: 'Customer' },
-  { id: 'createdAt', label: 'Date', width: 140 },
+  { id: 'date', label: 'Voucher Date', width: 140 },
   { id: 'totalQuantity', label: 'Quantity', width: 140 },
   { id: 'totalAmount', label: 'Price', width: 140 },
   { id: 'is_synced', label: 'Synced', width: 110 },
+  { id: 'createdAt', label: 'Created At', width: 140 },
   { id: '', width: 88 },
 ];
 
 const defaultFilters = {
   party_name: '',
   status: 'all',
-  startDate: null,
-  endDate: null,
+  startDate: new Date(),
+  endDate: new Date(),
 };
 
 // ----------------------------------------------------------------------
 
 export default function VoucherListView() {
-  const table = useTable({ defaultOrderBy: 'orderNumber' });
+  const table = useTable({ defaultOrderBy: 'id', defaultOrder: 'desc' });
 
   const settings = useSettingsContext();
 
   const router = useRouter();
 
+  const pathname = usePathname();
   const confirm = useBoolean();
-
+  const { enqueueSnackbar } = useSnackbar();
   const [tableData, setTableData] = useState([]);
 
   const { vouchers, vouchersLoading, vouchersEmpty, refreshVouchers } = useGetVouchers();
@@ -139,14 +142,48 @@ export default function VoucherListView() {
   }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
+    setFilters({
+      party_name: '',
+      status: 'all',
+      startDate: null,
+      endDate: null,
+    });
   }, []);
 
   const handleViewRow = useCallback(
     (id) => {
+      router.push(paths.dashboard.voucher.details(id));
+    },
+    [router]
+  );
+
+  const handleEditRow = useCallback(
+    (id) => {
       router.push(paths.dashboard.voucher.edit(id));
     },
     [router]
+  );
+
+  const handleSyncVoucher = useCallback(
+    async (voucher) => {
+      await axiosInstance.post('/api/vouchers/syncToTally', voucher).then((res) => {
+        const { data } = res;
+
+        console.log(typeof data.HEADER.STATUS[0]);
+
+        console.log(data.HEADER.STATUS[0]);
+
+        if (data.HEADER.STATUS[0] === '1') {
+          refreshVouchers();
+          enqueueSnackbar('voucher synced successfully!');
+        } else {
+          enqueueSnackbar('Voucher sync failed!', {
+            variant: 'error',
+          });
+        }
+      });
+    },
+    [enqueueSnackbar, refreshVouchers]
   );
 
   const handleFilterStatus = useCallback(
@@ -165,26 +202,28 @@ export default function VoucherListView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <CustomBreadcrumbs
-          heading="List"
-          links={[
-            {
-              name: 'Dashboard',
-              href: paths.dashboard.root,
-            },
-            {
-              name: 'Voucher',
-              href: paths.dashboard.voucher.root,
-            },
-            { name: 'List' },
-          ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
+        {pathname === '/dashboard' ? null : (
+          <CustomBreadcrumbs
+            heading="List"
+            links={[
+              {
+                name: 'Dashboard',
+                href: paths.dashboard.root,
+              },
+              {
+                name: 'Voucher',
+                href: paths.dashboard.voucher.root,
+              },
+              { name: 'List' },
+            ]}
+            sx={{
+              mb: { xs: 3, md: 5 },
+            }}
+          />
+        )}
 
         <Card>
-          <Tabs
+          {/* <Tabs
             value={filters.status}
             onChange={handleFilterStatus}
             sx={{
@@ -224,7 +263,7 @@ export default function VoucherListView() {
                 }
               />
             ))}
-          </Tabs>
+          </Tabs> */}
 
           <VoucherTableToolbar
             filters={filters}
@@ -275,12 +314,12 @@ export default function VoucherListView() {
                   rowCount={tableData.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      tableData.map((row) => row.id)
-                    )
-                  }
+                  onSelectAllRows={(checked) => {
+                    const syncedRows = tableData.filter((row) => row.is_synced === 0);
+                    const syncedIds = syncedRows.map((row) => row.id);
+
+                    table.onSelectAllRows(checked, syncedIds);
+                  }}
                 />
 
                 <TableBody>
@@ -303,6 +342,12 @@ export default function VoucherListView() {
                             onSelectRow={() => table.onSelectRow(row.id)}
                             onDeleteRow={() => handleDeleteRow(row.id)}
                             onViewRow={() => handleViewRow(row.id)}
+                            onEditRow={() => {
+                              handleEditRow(row.id);
+                            }}
+                            onSyncVoucher={() => {
+                              handleSyncVoucher(row);
+                            }}
                           />
                         ))}
                     </>
