@@ -102,10 +102,6 @@ export class ProductController {
   }
 
   //Get sync products
-  @authenticate({
-    strategy: 'jwt',
-    options: {required: [PermissionKeys.SUPER_ADMIN]},
-  })
   @post('/api/products/sync', {
     responses: {
       '200': {

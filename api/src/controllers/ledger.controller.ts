@@ -93,10 +93,7 @@ export class LedgerController {
   //   return this.ledgerRepository.find(filter);
   // }
   // ///////////////////////////////////
-  @authenticate({
-    strategy: 'jwt',
-    options: {required: [PermissionKeys.SUPER_ADMIN]},
-  })
+
   @post('/api/ledgers/sync', {
     responses: {
       '200': {
