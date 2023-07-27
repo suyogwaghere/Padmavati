@@ -139,14 +139,14 @@ export class LedgerController {
         await tx.commit();
         return {
           success: true,
-          message: `Products synced successfully`,
+          message: `Ledgers synced successfully`,
         };
       } catch (err) {
         console.log('Error ', err);
 
         await tx.rollback();
         throw new Error(
-          'Error synchronizing products. Transaction rolled back.',
+          'Error synchronizing ledgers. Transaction rolled back.',
         );
       }
     } catch (error) {
