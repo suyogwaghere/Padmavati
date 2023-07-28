@@ -128,13 +128,17 @@ export class ProductController {
           mappedProduct.parentId = product.parentId || ' ';
           mappedProduct.parentName = product.parentName || ' ';
           mappedProduct.productName = product.productName || ' ';
+          mappedProduct.productId = product.productId || ' ';
           mappedProduct.uom = product.uom || ' ';
           mappedProduct.stock = product.stock || 0;
+          mappedProduct.discount = product.discount || 0;
           mappedProduct.sellPrice = product.sellPrice || 0;
           mappedProduct.purchasePrice = product.purchasePrice || 0;
           mappedProduct.openingBalance = product.openingBalance || 0;
           mappedProduct.openingValue = product.openingValue || 0;
           mappedProduct.taxRate = product.taxRate || 0;
+          mappedProduct.sgst = product.sgst || ' ';
+          mappedProduct.cgst = product.cgst || ' ';
           mappedProduct.gst_hsn_code = product.gst_hsn_code || null;
           mappedProduct.image = product.image || ' ';
 

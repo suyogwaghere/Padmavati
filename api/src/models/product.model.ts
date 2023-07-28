@@ -32,6 +32,12 @@ export class Product extends Entity {
     type: 'string',
     required: true,
   })
+  productId?: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
   uom: string;
 
   @property({
@@ -39,6 +45,12 @@ export class Product extends Entity {
     required: true,
   })
   stock: number;
+
+  @property({
+    type: 'number',
+    required: true,
+  })
+  discount: number;
 
   @property({
     type: 'number',
@@ -95,6 +107,14 @@ export class Product extends Entity {
     type: 'string',
   })
   gst_hsn_code?: string;
+  @property({
+    type: 'string',
+  })
+  sgst?: string;
+  @property({
+    type: 'string',
+  })
+  cgst?: string;
 
   @property({
     type: 'date',
