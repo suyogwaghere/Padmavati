@@ -139,7 +139,7 @@ export class LedgerController {
         await tx.commit();
         return {
           success: true,
-          message: `Ledgers synced successfully`,
+          message: `Ledgers synced successfully.  _`,
         };
       } catch (err) {
         console.log('Error ', err);
