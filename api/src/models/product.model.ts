@@ -98,10 +98,10 @@ export class Product extends Entity {
   image?: string;
 
   @property({
-    type: 'number',
+    type: 'string',
     required: true,
   })
-  taxRate?: number;
+  taxRate?: string;
 
   @property({
     type: 'string',

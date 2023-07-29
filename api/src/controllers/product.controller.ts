@@ -136,7 +136,7 @@ export class ProductController {
           mappedProduct.purchasePrice = product.purchasePrice * 1 || 0;
           mappedProduct.openingBalance = product.openingBalance * 1 || 0;
           mappedProduct.openingValue = product.openingValue * 1 || 0;
-          mappedProduct.taxRate = product.taxRate * 1 || 0;
+          mappedProduct.taxRate = product.taxRate || ' ';
           mappedProduct.sgst = product.sgst || ' ';
           mappedProduct.cgst = product.cgst || ' ';
           mappedProduct.gst_hsn_code = product.gst_hsn_code || ' ';
