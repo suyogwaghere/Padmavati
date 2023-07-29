@@ -120,14 +120,14 @@ export class LedgerController {
           mappedProduct.name = ledger.name || ' ';
           mappedProduct.group = ledger.group || ' ';
           mappedProduct.guid = ledger.guid || ' ';
-          mappedProduct.openingValue = ledger.openingValue || 0;
+          mappedProduct.openingValue = ledger.openingValue * 1 || 0;
           mappedProduct.address = ledger.address || ' ';
           mappedProduct.country = ledger.country || ' ';
           mappedProduct.state = ledger.state || ' ';
           mappedProduct.gstIn = ledger.gstIn || ' ';
           mappedProduct.whatsapp_no = ledger.whatsapp_no || ' ';
           mappedProduct.mobile_no = ledger.mobile_no || ' ';
-          mappedProduct.pincode = ledger.pincode || 0;
+          mappedProduct.pincode = ledger.pincode * 1 || 0;
           mappedProduct.station = ledger.station || ' ';
           mappedProduct.l_ID = ledger.l_ID || ' ';
 

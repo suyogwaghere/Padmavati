@@ -130,16 +130,16 @@ export class ProductController {
           mappedProduct.productName = product.productName || ' ';
           mappedProduct.productId = product.productId || ' ';
           mappedProduct.uom = product.uom || ' ';
-          mappedProduct.stock = product.stock || 0;
-          mappedProduct.discount = product.discount || 0;
-          mappedProduct.sellPrice = product.sellPrice || 0;
-          mappedProduct.purchasePrice = product.purchasePrice || 0;
-          mappedProduct.openingBalance = product.openingBalance || 0;
-          mappedProduct.openingValue = product.openingValue || 0;
-          mappedProduct.taxRate = product.taxRate || 0;
+          mappedProduct.stock = product.stock * 1 || 0;
+          mappedProduct.discount = product.discount * 1 || 0;
+          mappedProduct.sellPrice = product.sellPrice * 1 || 0;
+          mappedProduct.purchasePrice = product.purchasePrice * 1 || 0;
+          mappedProduct.openingBalance = product.openingBalance * 1 || 0;
+          mappedProduct.openingValue = product.openingValue * 1 || 0;
+          mappedProduct.taxRate = product.taxRate * 1 || 0;
           mappedProduct.sgst = product.sgst || ' ';
           mappedProduct.cgst = product.cgst || ' ';
-          mappedProduct.gst_hsn_code = product.gst_hsn_code || null;
+          mappedProduct.gst_hsn_code = product.gst_hsn_code || ' ';
           mappedProduct.image = product.image || ' ';
 
           return mappedProduct;
