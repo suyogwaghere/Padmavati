@@ -60,6 +60,15 @@ export class Product extends Entity {
     precision: 30,
     scale: 2,
   })
+  MRP?: number;
+  @property({
+    type: 'number',
+    required: true,
+    default: 0,
+    dataType: 'decimal',
+    precision: 30,
+    scale: 2,
+  })
   sellPrice?: number;
 
   @property({
@@ -98,23 +107,23 @@ export class Product extends Entity {
   image?: string;
 
   @property({
-    type: 'string',
+    type: 'number',
     required: true,
   })
-  taxRate?: string;
+  taxRate?: number;
 
   @property({
     type: 'string',
   })
   gst_hsn_code?: string;
   @property({
-    type: 'string',
+    type: 'number',
   })
-  sgst?: string;
+  sgst?: number;
   @property({
-    type: 'string',
+    type: 'number',
   })
-  cgst?: string;
+  cgst?: number;
 
   @property({
     type: 'date',
