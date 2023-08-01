@@ -39,7 +39,6 @@ export class ProductController {
 
   @authenticate({
     strategy: 'jwt',
-    options: {required: [PermissionKeys.SUPER_ADMIN]},
   })
   @post('/api/products')
   @response(200, {
@@ -90,7 +89,6 @@ export class ProductController {
 
   @authenticate({
     strategy: 'jwt',
-    options: {required: [PermissionKeys.SUPER_ADMIN]},
   })
   @get('/api/products/count')
   @response(200, {
@@ -122,6 +120,15 @@ export class ProductController {
       const repo = new DefaultTransactionalRepository(Product, this.dataSource);
       const tx = await repo.beginTransaction(IsolationLevel.READ_COMMITTED);
       try {
+        // function extractTaxRate(taxRate: string) {
+        //   // Remove "GST" and "%" from the string
+        //   const taxRateWithoutGST = taxRate.replace(/GST|%/g, '');
+
+        //   // Convert the remaining numerical data to a number
+        //   const numericalTaxRate = Number(taxRateWithoutGST);
+
+        //   return numericalTaxRate;
+        // }
         await this.productRepository.deleteAll(undefined, {transaction: tx});
         const finalMappedObject: Product[] = parsedData.map((product: any) => {
           const mappedProduct: Product = new Product();
@@ -130,15 +137,16 @@ export class ProductController {
           mappedProduct.productName = product.productName || ' ';
           mappedProduct.productId = product.productId || ' ';
           mappedProduct.uom = product.uom || ' ';
-          mappedProduct.stock = product.stock * 1 || 0;
-          mappedProduct.discount = product.discount * 1 || 0;
-          mappedProduct.sellPrice = product.sellPrice * 1 || 0;
-          mappedProduct.purchasePrice = product.purchasePrice * 1 || 0;
-          mappedProduct.openingBalance = product.openingBalance * 1 || 0;
-          mappedProduct.openingValue = product.openingValue * 1 || 0;
-          mappedProduct.taxRate = product.taxRate || ' ';
-          mappedProduct.sgst = product.sgst || ' ';
-          mappedProduct.cgst = product.cgst || ' ';
+          mappedProduct.stock = product.stock || 0;
+          mappedProduct.discount = product.discount || 0;
+          mappedProduct.MRP = product.MRP || 0;
+          mappedProduct.sellPrice = product.sellPrice || 0;
+          mappedProduct.purchasePrice = product.purchasePrice || 0;
+          mappedProduct.openingBalance = product.openingBalance || 0;
+          mappedProduct.openingValue = product.openingValue || 0;
+          mappedProduct.taxRate = product.taxRate || 0;
+          mappedProduct.sgst = product.sgst || 0;
+          mappedProduct.cgst = product.cgst || 0;
           mappedProduct.gst_hsn_code = product.gst_hsn_code || ' ';
           mappedProduct.image = product.image || ' ';
 
@@ -168,7 +176,6 @@ export class ProductController {
   //Get all products
   @authenticate({
     strategy: 'jwt',
-    options: {required: [PermissionKeys.SUPER_ADMIN]},
   })
   @get('/api/products/list')
   async find(
@@ -225,7 +232,6 @@ export class ProductController {
   //Update product by ID
   @authenticate({
     strategy: 'jwt',
-    options: {required: [PermissionKeys.SUPER_ADMIN]},
   })
   @patch('/api/products/{id}')
   @response(204, {
@@ -284,7 +290,6 @@ export class ProductController {
   //Delete product by ID
   @authenticate({
     strategy: 'jwt',
-    options: {required: [PermissionKeys.SUPER_ADMIN]},
   })
   @del('/api/products/{id}')
   @response(204, {
