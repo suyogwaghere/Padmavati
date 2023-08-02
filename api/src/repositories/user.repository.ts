@@ -1,8 +1,10 @@
-import { Constructor, inject } from '@loopback/core';
-import { DefaultCrudRepository } from '@loopback/repository';
-import { MysqlDataSource } from '../datasources';
-import { User, UserRelations } from '../models';
-import { TimeStampRepositoryMixin } from '../mixins/timestamp-repository-mixin';
+import {Constructor, inject, Getter} from '@loopback/core';
+import {DefaultCrudRepository, repository, BelongsToAccessor} from '@loopback/repository';
+import {MysqlDataSource} from '../datasources';
+import {TimeStampRepositoryMixin} from '../mixins/timestamp-repository-mixin';
+import {User, UserRelations, Ledger} from '../models';
+import {LedgerRepository} from './ledger.repository';
+
 export type Credentials = {
   email: string;
   password: string;
@@ -15,10 +17,12 @@ export class UserRepository extends TimeStampRepositoryMixin<
     DefaultCrudRepository<User, typeof User.prototype.id, UserRelations>
   >
 >(DefaultCrudRepository) {
-  constructor(
-    @inject('datasources.Mysql') dataSource: MysqlDataSource,
-  ) {
+
+  public readonly ledger: BelongsToAccessor<Ledger, typeof User.prototype.id>;
+
+  constructor(@inject('datasources.Mysql') dataSource: MysqlDataSource, @repository.getter('LedgerRepository') protected ledgerRepositoryGetter: Getter<LedgerRepository>,) {
     super(User, dataSource);
+    this.ledger = this.createBelongsToAccessorFor('ledger', ledgerRepositoryGetter,);
+    this.registerInclusionResolver('ledger', this.ledger.inclusionResolver);
   }
 }
-

@@ -24,7 +24,6 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {PermissionKeys} from '../authorization/permission-keys';
 import {MysqlDataSource} from '../datasources';
 import {Ledger} from '../models';
 import {LedgerRepository} from '../repositories';
@@ -70,7 +69,6 @@ export class LedgerController {
   //Get all products
   @authenticate({
     strategy: 'jwt',
-    options: {required: [PermissionKeys.SUPER_ADMIN]},
   })
   @get('/api/ledgers/list')
   async find(@param.filter(Ledger) filter?: Filter<Ledger>): Promise<Ledger[]> {

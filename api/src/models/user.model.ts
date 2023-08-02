@@ -1,4 +1,5 @@
-import { Entity, model, property } from '@loopback/repository';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {Ledger} from './ledger.model';
 
 @model()
 export class User extends Entity {
@@ -42,7 +43,7 @@ export class User extends Entity {
   })
   permissions: String[];
 
- @property({
+  @property({
     type: 'string',
     required: true,
   })
@@ -53,7 +54,10 @@ export class User extends Entity {
     required: true,
   })
   isActive: boolean;
-  
+
+  @belongsTo(() => Ledger)
+  ledgerId: number;
+
   constructor(data?: Partial<User>) {
     super(data);
   }
