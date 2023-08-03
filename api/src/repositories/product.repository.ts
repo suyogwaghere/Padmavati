@@ -18,4 +18,10 @@ export class ProductRepository extends TimeStampRepositoryMixin<
   constructor(@inject('datasources.Mysql') dataSource: MysqlDataSource) {
     super(Product, dataSource);
   }
+  async searchByName(query: string): Promise<Product[]> {
+    const querys = `
+    SELECT * FROM product WHERE productName LIKE '%${query}%'
+  `;
+    return this.dataSource.execute(querys);
+  }
 }

@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import PropTypes from 'prop-types';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 // @mui
@@ -25,7 +25,13 @@ import VoucherNewEditStatusDate from './voucher-new-edit-status-date';
 
 export default function VoucherNewEditForm({ currentVoucher }) {
   const router = useRouter();
+  const [selectedParent, setSelectedParent] = useState();
 
+  console.log(
+    '🚀 ~ file: voucher-new-edit-form.js:30 ~ VoucherNewEditForm ~ selectedParent:',
+    selectedParent
+  );
+  // selectedParent={selectedParent}
   const loadingSave = useBoolean();
 
   const loadingSend = useBoolean();
@@ -150,7 +156,7 @@ export default function VoucherNewEditForm({ currentVoucher }) {
   return (
     <FormProvider methods={methods}>
       <Card>
-        <VoucherNewEditStatusDate />
+        <VoucherNewEditStatusDate setSelectedParent />
 
         <VoucherNewEditDetails />
       </Card>

@@ -6,35 +6,30 @@ import { AuthGuard } from 'src/auth/guard';
 import DashboardLayout from 'src/layouts/dashboard';
 // components
 import { LoadingScreen } from 'src/components/loading-screen';
-import BrandEditPage from 'src/pages/dashboard/brand/edit';
-import BrandCreatePage from 'src/pages/dashboard/brand/new';
-import UserEditPage from 'src/pages/dashboard/user/edit';
-import UserListPage from 'src/pages/dashboard/user/list';
-import UserCreatePage from 'src/pages/dashboard/user/new';
-import VoucherEditPage from 'src/pages/dashboard/voucher/edit';
-import VoucherCreatePage from 'src/pages/dashboard/voucher/new';
-import VoucherEditView from 'src/sections/voucher/view/voucher-edit-view';
-import VoucherListView from '../../sections/voucher/view/voucher-list-view';
-
+// voucher
+// import VoucherEditPage from 'src/pages/dashboard/voucher/edit';
+// import VoucherCreatePage from 'src/pages/dashboard/voucher/new';
+import {
+  VoucherCreateView,
+  VoucherDetailsView,
+  VoucherEditView,
+  VoucherListView,
+} from '../../sections/voucher/view';
 // ----------------------------------------------------------------------
 
+// OVERVIEW
 const IndexPage = lazy(() => import('src/pages/dashboard/app'));
-
 // LEDGER
-const LedgerListPage = lazy(() => import('src/pages/dashboard/ledger/list'));
-
+const LedgerListPage = lazy(() => import('../../pages/dashboard/ledger/list'));
 // PRODUCT
-const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
-const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
-const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
+const ProductListPage = lazy(() => import('src/pages/product/list'));
+const ProductCheckoutPage = lazy(() => import('src/pages/product/checkout'));
+// USER
+const UserListPage = lazy(() => import('src/pages/dashboard/user/list'));
+const UserCreatePage = lazy(() => import('src/pages/dashboard/user/new'));
+const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
 
-// Category
-const CategoryListPage = lazy(() => import('src/pages/dashboard/category/list'));
-const CategoryCreatePage = lazy(() => import('src/pages/dashboard/category/new'));
-const CategoryEditPage = lazy(() => import('src/pages/dashboard/category/edit'));
-
-// Brands
-const BrandListPage = lazy(() => import('src/pages/dashboard/brand/list'));
+// BLANK PAGE
 
 // ----------------------------------------------------------------------
 
@@ -53,22 +48,12 @@ export const dashboardRoutes = [
     children: [
       { element: <IndexPage />, index: true },
       {
-        path: 'category',
+        path: 'user',
         children: [
-          { element: <CategoryListPage />, index: true },
-          { path: 'list', element: <CategoryListPage /> },
-          { path: 'new', element: <CategoryCreatePage /> },
-          { path: ':id/edit', element: <CategoryEditPage /> },
-        ],
-      },
-
-      {
-        path: 'brand',
-        children: [
-          { element: <BrandListPage />, index: true },
-          { path: 'brand', element: <BrandListPage /> },
-          { path: 'new', element: <BrandCreatePage /> },
-          { path: ':id/edit', element: <BrandEditPage /> },
+          { element: <UserListPage />, index: true },
+          { path: 'list', element: <UserListPage /> },
+          { path: 'new', element: <UserCreatePage /> },
+          { path: ':id/edit', element: <UserEditPage /> },
         ],
       },
       {
@@ -76,17 +61,7 @@ export const dashboardRoutes = [
         children: [
           { element: <ProductListPage />, index: true },
           { path: 'list', element: <ProductListPage /> },
-          { path: 'new', element: <ProductCreatePage /> },
-          { path: ':id/edit', element: <ProductEditPage /> },
-        ],
-      },
-      {
-        path: 'User',
-        children: [
-          { element: <UserListPage />, index: true },
-          { path: 'list', element: <UserListPage /> },
-          { path: 'new', element: <UserCreatePage /> },
-          { path: ':id/edit', element: <UserEditPage /> },
+          { path: 'checkout', element: <ProductCheckoutPage /> },
         ],
       },
       {
@@ -97,12 +72,12 @@ export const dashboardRoutes = [
         ],
       },
       {
-        path: 'Voucher',
+        path: 'voucher',
         children: [
           { element: <VoucherListView />, index: true },
           { path: 'list', element: <VoucherListView /> },
-          { path: 'new', element: <VoucherCreatePage /> },
-          { path: ':id', element: <VoucherEditPage /> },
+          { path: 'new', element: <VoucherCreateView /> },
+          { path: ':id', element: <VoucherDetailsView /> },
           { path: ':id/edit', element: <VoucherEditView /> },
         ],
       },

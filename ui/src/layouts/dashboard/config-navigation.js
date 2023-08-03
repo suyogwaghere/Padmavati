@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
 // routes
 import { paths } from 'src/routes/paths';
+// locales
+import { useLocales } from 'src/locales';
 // components
 import SvgColor from 'src/components/svg-color';
-import { useLocales } from 'src/locales';
-
+// auth
+import { useAuthContext } from 'src/auth/hooks';
 // ----------------------------------------------------------------------
 
 const icon = (name) => (
@@ -47,78 +49,60 @@ const ICONS = {
 
 export function useNavData() {
   const { t } = useLocales();
+  const { user } = useAuthContext();
   const ROLE_KEY = 'userRole';
   const userRole = sessionStorage.getItem(ROLE_KEY);
   const data = useMemo(
     () => [
       // OVERVIEW
       // ----------------------------------------------------------------------
-      {
-        subheader: 'overview',
-        items: [{ title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard }],
-      },
+      // {
+      //   subheader: 'overview',
+      //   items: [{ title: 'Dashboard', path: paths.dashboard.root, icon: ICONS.dashboard }],
+      // },
+      // USER
+      // ----------------------------------------------------------------------
+      // {
+      //   subheader: 'Account',
+      //   items: [
+      //     {
+      //       title: 'Account',
+      //       path: paths.dashboard.root,
+      //       icon: ICONS.dashboard,
+      //       children: [
+      //         {
+      //           title: t('User'),
+      //           path: '',
+      //           children: [
+      //             { title: user?.displayName, path: '' },
+      //             { title: user?.email, path: '' },
+      //           ],
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
 
       // MANAGEMENT
       // ----------------------------------------------------------------------
       {
         subheader: 'management',
         items: [
-          // CATEGORY
-          // {
-          //   title: t('category'),
-          //   path: paths.dashboard.category.root,
-          //   icon: ICONS.blog,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.category.root },
-          //     { title: t('create'), path: paths.dashboard.category.new },
-          //   ],
-          // },
-
-          // BRAND
-          // {
-          //   title: t('brands'),
-          //   path: paths.dashboard.brand.root,
-          //   icon: ICONS.job,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.brand.root },
-          //     { title: t('create'), path: paths.dashboard.brand.new },
-          //   ],
-          // },
-
-          // USER
-          // {
-          //   title: t('user'),
-          //   path: paths.dashboard.user.root,
-          //   icon: ICONS.user,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.user.root },
-          //     { title: t('create'), path: paths.dashboard.user.new },
-          //   ],
-          // },
-
-          // LEDGERS
-
-          // {
-          //   title: t('Parties'),
-          //   path: paths.dashboard.ledger.root,
-          //   icon: ICONS.ledger,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.ledger.root },
-          //     // { title: t('create'), path: paths.dashboard.product.new },
-          //   ],
-          // },
-
           // PRODUCT
 
-          // {
-          //   title: t('product'),
-          //   path: paths.dashboard.product.root,
-          //   icon: ICONS.product,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.product.root },
-          //     // { title: t('create'), path: paths.dashboard.product.new },
-          //   ],
-          // },
+          {
+            title: t('product'),
+            path: paths.dashboard.product.root,
+            icon: ICONS.product,
+            children: [
+              { title: t('list'), path: paths.dashboard.product.root },
+              // { title: t('create'), path: paths.dashboard.product.new },
+              // { title: t('details'), path: paths.dashboard.product.demo.details },
+              // { title: t('create'), path: paths.dashboard.product.new },
+              { title: t('checkout'), path: paths.dashboard.product.checkout },
+              // { title: t('edit'), path: paths.dashboard.product.demo.edit },
+            ],
+          },
           {
             title: t('Vouchers'),
             path: paths.dashboard.voucher.root,
@@ -131,7 +115,8 @@ export function useNavData() {
         ],
       },
     ],
-    [t]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, user?.displayName, user?.email]
   );
   const dataAdmin = useMemo(
     () => [
@@ -147,28 +132,6 @@ export function useNavData() {
       {
         subheader: 'management',
         items: [
-          // CATEGORY
-          // {
-          //   title: t('category'),
-          //   path: paths.dashboard.category.root,
-          //   icon: ICONS.blog,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.category.root },
-          //     { title: t('create'), path: paths.dashboard.category.new },
-          //   ],
-          // },
-
-          // BRAND
-          // {
-          //   title: t('brands'),
-          //   path: paths.dashboard.brand.root,
-          //   icon: ICONS.job,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.brand.root },
-          //     { title: t('create'), path: paths.dashboard.brand.new },
-          //   ],
-          // },
-
           // USER
           {
             title: t('user'),
@@ -191,7 +154,6 @@ export function useNavData() {
               // { title: t('create'), path: paths.dashboard.product.new },
             ],
           },
-
           // PRODUCT
 
           {
@@ -201,6 +163,10 @@ export function useNavData() {
             children: [
               { title: t('list'), path: paths.dashboard.product.root },
               // { title: t('create'), path: paths.dashboard.product.new },
+              // { title: t('details'), path: paths.dashboard.product.demo.details },
+              // { title: t('create'), path: paths.dashboard.product.new },
+              { title: t('checkout'), path: paths.dashboard.product.checkout },
+              // { title: t('edit'), path: paths.dashboard.product.demo.edit },
             ],
           },
           {

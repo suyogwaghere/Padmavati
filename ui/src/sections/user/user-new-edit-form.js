@@ -5,11 +5,11 @@ import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 // @mui
 import LoadingButton from '@mui/lab/LoadingButton';
-import Autocomplete from '@mui/material/Autocomplete';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 // routes
@@ -18,9 +18,9 @@ import { paths } from 'src/routes/paths';
 import { useResponsive } from 'src/hooks/use-responsive';
 // _mock
 // components
-// import  from '@mui/material/';
+// import TextField from '@mui/material/';
 import { IconButton, InputAdornment } from '@mui/material';
-import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import { useGetLedgers } from 'src/api/ledger';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import FormProvider from 'src/components/hook-form/form-provider';
@@ -33,10 +33,19 @@ import axiosInstance from 'src/utils/axios';
 const userOptions = ['admin', 'customer'];
 export default function UserNewEditForm({ currentUser }) {
   const [val, setVal] = useState(userOptions[0]);
+  const [userType, setUserType] = useState('');
+  const [partyId, setPartyId] = useState(0);
+  const [val1, setValue] = useState();
+  const { ledgers } = useGetLedgers();
+
+  // console.log('🚀 ~ file: user-new-edit-form.js:37 ~ UserNewEditForm ~ val1:', val1);
+
   const [inputValue, setInputValue] = useState('');
+
+  // console.log('🚀 ~ file: user-new-edit-form.js:41 ~ UserNewEditForm ~ inputValue:', inputValue);
+
   const router = useRouter();
   const mdUp = useResponsive('up', 'md');
-  const { ledgers, ledgersLoading, ledgersEmpty, refreshLedgers } = useGetLedgers();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -94,14 +103,15 @@ export default function UserNewEditForm({ currentUser }) {
   }, [currentUser, defaultValues, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data);
+    console.log('data ', data);
     try {
       if (currentUser) {
         const inputData = {
           name: data.name,
+          ledgerId: partyId,
           email: data.email,
           contactNo: data.contactNo,
-          permissions: [val],
+          // permissions: [userType],
         };
         await axiosInstance
           .patch(`/api/users/${currentUser.id}`, inputData)
@@ -121,11 +131,12 @@ export default function UserNewEditForm({ currentUser }) {
       } else {
         const inputData = {
           name: data.name,
+          ledgerId: partyId,
           email: data.email,
           password: data.password,
           contactNo: data.contactNo,
           isActive: true,
-          permissions: [val],
+          permissions: [userType],
         };
         await axiosInstance
           .post(`/register`, inputData)
@@ -169,7 +180,28 @@ export default function UserNewEditForm({ currentUser }) {
 
           <Stack spacing={3} sx={{ p: 3 }}>
             {!currentUser ? (
-              <Autocomplete
+              <RHFSelect
+                sx={{ width: 300 }}
+                name="user_type"
+                label="User Type"
+                value={val}
+                InputLabelProps={{ shrink: true }}
+                // onChange={handleInputData}
+                onChange={(event, newInputValue) => {
+                  // setInputValue(newInputValue.props.value);
+                  setVal(newInputValue.props.value);
+                  setUserType(newInputValue.props.value);
+                }}
+                PaperPropsSx={{ textTransform: 'capitalize' }}
+              >
+                {userOptions.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+            ) : null}
+            {/* <Autocomplete
                 value={val}
                 onChange={(event, newValue) => {
                   setVal(newValue);
@@ -182,21 +214,27 @@ export default function UserNewEditForm({ currentUser }) {
                 options={userOptions}
                 sx={{ width: 300 }}
                 renderInput={(params) => <TextField {...params} label="User Type" />}
-              />
-            ) : null}
-            <RHFSelect
+              /> */}
+
+            <Autocomplete
+              // name={`items[${index}].productName`}
+              // size="small"
+              value={val1}
               fullWidth
               name="party_name"
               label="Party A/c Name"
-              InputLabelProps={{ shrink: true }}
-              PaperPropsSx={{ textTransform: 'capitalize' }}
-            >
-              {ledgers.map((option) => (
-                <MenuItem key={option.name} value={option.guid}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </RHFSelect>
+              onChange={(event, newValue) => {
+                setValue(newValue);
+              }}
+              inputValue={inputValue}
+              onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue);
+              }}
+              options={ledgers ? ledgers.map((ledger) => ledger.name) : []}
+              getOptionLabel={(option) => option.id}
+              isOptionEqualToValue={(option, value) => option === value.name}
+              renderInput={(params) => <TextField {...params} label="Party A/c Name" />}
+            />
             <RHFTextField name="name" label="Name" />
             {/* !currentUser.permissions.includes('admin')  */}
             {currentUser ? (
@@ -216,7 +254,6 @@ export default function UserNewEditForm({ currentUser }) {
                 label="Email"
               />
             )}
-
             {!currentUser ? (
               <RHFTextField
                 name="password"

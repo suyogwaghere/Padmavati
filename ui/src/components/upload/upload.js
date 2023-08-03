@@ -1,16 +1,15 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import PropTypes from 'prop-types';
+import { useDropzone } from 'react-dropzone';
 // @mui
+import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { alpha } from '@mui/material/styles';
 // assets
 import { UploadIllustration } from 'src/assets/illustrations';
 //
-import { useDropzone } from 'react-dropzone';
 import Iconify from '../iconify';
 //
 import RejectionFiles from './errors-rejection-files';

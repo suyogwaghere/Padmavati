@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import hljs from 'highlight.js';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import 'highlight.js/styles/base16/tomorrow-night.css';
 
 // ----------------------------------------------------------------------

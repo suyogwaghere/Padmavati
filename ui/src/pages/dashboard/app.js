@@ -1,7 +1,9 @@
+import { lazy } from 'react';
 import { Helmet } from 'react-helmet-async';
 // sections
-import { OverviewAppView, OverviewAppViewAdmin } from 'src/sections/overview/app/view';
+import { OverviewAppViewAdmin } from 'src/sections/overview/app/view';
 
+const ProductListPage = lazy(() => import('src/pages/product/list'));
 // ----------------------------------------------------------------------
 
 export default function OverviewAppPage() {
@@ -12,8 +14,8 @@ export default function OverviewAppPage() {
       <Helmet>
         <title> Dashboard: App</title>
       </Helmet>
-      {/* <OverviewAppView /> */}
-      {userRole.includes('admin') ? <OverviewAppViewAdmin /> : <OverviewAppView />}
+
+      {userRole.includes('admin') ? <OverviewAppViewAdmin /> : <ProductListPage />}
     </>
   );
 }

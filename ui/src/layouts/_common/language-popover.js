@@ -3,6 +3,8 @@ import { m } from 'framer-motion';
 // @mui
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
+// locales
+import { useLocales } from 'src/locales';
 // components
 import Iconify from 'src/components/iconify';
 import { varHover } from 'src/components/animate';
@@ -10,42 +12,18 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export const allLangs = [
-  {
-    label: 'English',
-    value: 'en',
-    icon: 'flagpack:gb-nir',
-  },
-  {
-    label: 'French',
-    value: 'fr',
-    icon: 'flagpack:fr',
-  },
-  {
-    label: 'Vietnamese',
-    value: 'vi',
-    icon: 'flagpack:vn',
-  },
-  {
-    label: 'Chinese',
-    value: 'cn',
-    icon: 'flagpack:cn',
-  },
-  {
-    label: 'Arabic',
-    value: 'ar',
-    icon: 'flagpack:sa',
-  },
-];
-
 export default function LanguagePopover() {
+  const locales = useLocales();
+
   const popover = usePopover();
 
-  const currentLang = allLangs[0];
-
-  const handleChangeLang = useCallback(() => {
-    popover.onClose();
-  }, [popover]);
+  const handleChangeLang = useCallback(
+    (newLang) => {
+      locales.onChangeLang(newLang);
+      popover.onClose();
+    },
+    [locales, popover]
+  );
 
   return (
     <>
@@ -63,15 +41,15 @@ export default function LanguagePopover() {
           }),
         }}
       >
-        <Iconify icon={currentLang.icon} sx={{ borderRadius: 0.65, width: 28 }} />
+        <Iconify icon={locales.currentLang.icon} sx={{ borderRadius: 0.65, width: 28 }} />
       </IconButton>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 160 }}>
-        {allLangs.map((option) => (
+        {locales.allLangs.map((option) => (
           <MenuItem
             key={option.value}
-            selected={option.value === currentLang.value}
-            onClick={handleChangeLang}
+            selected={option.value === locales.currentLang.value}
+            onClick={() => handleChangeLang(option.value)}
           >
             <Iconify icon={option.icon} sx={{ borderRadius: 0.65, width: 28 }} />
 

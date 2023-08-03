@@ -1,4 +1,5 @@
 import sum from 'lodash/sum';
+import PropTypes from 'prop-types';
 import { useCallback, useEffect } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 // @mui
@@ -20,7 +21,12 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function VoucherNewEditDetails() {
+export default function VoucherNewEditDetails({ selectedParent }) {
+  console.log(
+    '🚀 ~ file: voucher-new-edit-details.js:25 ~ VoucherNewEditDetails ~ selectedParent:',
+    selectedParent
+  );
+
   const { control, setValue, watch, resetField } = useFormContext();
 
   const { products, productsLoading, productsEmpty } = useGetProducts();
@@ -46,7 +52,7 @@ export default function VoucherNewEditDetails() {
       productName: '',
       notes: '',
       quantity: 1,
-      rate: 0,
+      discount: 0,
       total: 0,
     });
   };
@@ -326,3 +332,6 @@ export default function VoucherNewEditDetails() {
     </Box>
   );
 }
+VoucherNewEditDetails.propTypes = {
+  selectedParent: PropTypes.object,
+};

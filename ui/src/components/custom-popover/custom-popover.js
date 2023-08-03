@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types'; // @mui
+import PropTypes from 'prop-types';
+// @mui
 import { menuItemClasses } from '@mui/material/MenuItem';
 import Popover from '@mui/material/Popover';
 //

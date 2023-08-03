@@ -3,18 +3,15 @@ import { Outlet } from 'react-router-dom';
 // auth
 import { GuestGuard } from 'src/auth/guard';
 // layouts
+// import CompactLayout from 'src/layouts/compact';
 import AuthClassicLayout from 'src/layouts/auth/classic';
 // components
 import { SplashScreen } from 'src/components/loading-screen';
-import CompactLayout from 'src/layouts/compact/layout';
 
 // ----------------------------------------------------------------------
-
 // JWT
 const JwtLoginPage = lazy(() => import('src/pages/auth/jwt/login'));
 const JwtRegisterPage = lazy(() => import('src/pages/auth/jwt/register'));
-const NewPasswordPage = lazy(() => import('src/pages/amplify/new-password'));
-const ForgotPasswordPage = lazy(() => import('src/pages/amplify/forgot-password'));
 // ----------------------------------------------------------------------
 
 const authJwt = {
@@ -38,21 +35,10 @@ const authJwt = {
     {
       path: 'register',
       element: (
-        <AuthClassicLayout title="Padmavti">
+        <AuthClassicLayout title="Manage the job more effectively with Minimal">
           <JwtRegisterPage />
         </AuthClassicLayout>
       ),
-    },
-    {
-      element: (
-        <CompactLayout>
-          <Outlet />
-        </CompactLayout>
-      ),
-      children: [
-        { path: 'new-password', element: <NewPasswordPage /> },
-        { path: 'forgot-password', element: <ForgotPasswordPage /> },
-      ],
     },
   ],
 };

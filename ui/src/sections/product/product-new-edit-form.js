@@ -31,9 +31,16 @@ import {
 // components
 import { useSnackbar } from 'src/components/snackbar';
 import { useRouter } from 'src/routes/hook';
-import { RHFAutocomplete, RHFEditor, RHFMultiCheckbox, RHFMultiSelect, RHFSelect, RHFSwitch, RHFTextField, RHFUpload } from 'src/components/hook-form';
-import FormProvider from 'src/components/hook-form/form-provider';
-
+import FormProvider, {
+  RHFSelect,
+  RHFEditor,
+  RHFUpload,
+  RHFSwitch,
+  RHFTextField,
+  RHFMultiSelect,
+  RHFAutocomplete,
+  RHFMultiCheckbox,
+} from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
@@ -110,6 +117,13 @@ export default function ProductNewEditForm({ currentProduct }) {
     }
   }, [currentProduct, defaultValues, reset]);
 
+  useEffect(() => {
+    if (includeTaxes) {
+      setValue('taxes', 0);
+    } else {
+      setValue('taxes', currentProduct?.taxes || 0);
+    }
+  }, [currentProduct?.taxes, includeTaxes, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -150,6 +164,10 @@ export default function ProductNewEditForm({ currentProduct }) {
     setValue('images', []);
   }, [setValue]);
 
+  const handleChangeIncludeTaxes = useCallback((event) => {
+    setIncludeTaxes(event.target.checked);
+  }, []);
+
   const renderDetails = (
     <>
       {mdUp && (
@@ -158,7 +176,7 @@ export default function ProductNewEditForm({ currentProduct }) {
             Details
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Title...
+            Title, short description, image...
           </Typography>
         </Grid>
       )}
@@ -170,12 +188,14 @@ export default function ProductNewEditForm({ currentProduct }) {
           <Stack spacing={3} sx={{ p: 3 }}>
             <RHFTextField name="name" label="Product Name" />
 
-            {/* <RHFTextField name="subDescription" label="Sub Description" multiline rows={4} /> */}
-            {/* <Stack spacing={1.5}>
+            <RHFTextField name="subDescription" label="Sub Description" multiline rows={4} />
+
+            <Stack spacing={1.5}>
               <Typography variant="subtitle2">Content</Typography>
               <RHFEditor simple name="description" />
-            </Stack> */}
-            {/* <Stack spacing={1.5}>
+            </Stack>
+
+            <Stack spacing={1.5}>
               <Typography variant="subtitle2">Images</Typography>
               <RHFUpload
                 multiple
@@ -187,7 +207,7 @@ export default function ProductNewEditForm({ currentProduct }) {
                 onRemoveAll={handleRemoveAllFiles}
                 onUpload={() => console.info('ON UPLOAD')}
               />
-            </Stack> */}
+            </Stack>
           </Stack>
         </Card>
       </Grid>
@@ -245,17 +265,17 @@ export default function ProductNewEditForm({ currentProduct }) {
                 ))}
               </RHFSelect>
 
-              {/* <RHFMultiSelect
+              <RHFMultiSelect
                 checkbox
                 name="colors"
                 label="Colors"
                 options={PRODUCT_COLOR_NAME_OPTIONS}
               />
 
-              <RHFMultiSelect checkbox name="sizes" label="Sizes" options={PRODUCT_SIZE_OPTIONS} /> */}
+              <RHFMultiSelect checkbox name="sizes" label="Sizes" options={PRODUCT_SIZE_OPTIONS} />
             </Box>
 
-            {/* <RHFAutocomplete
+            <RHFAutocomplete
               name="tags"
               label="Tags"
               placeholder="+ Tags"
@@ -280,14 +300,14 @@ export default function ProductNewEditForm({ currentProduct }) {
                   />
                 ))
               }
-            /> */}
+            />
 
-            {/* <Stack spacing={1}>
+            <Stack spacing={1}>
               <Typography variant="subtitle2">Gender</Typography>
               <RHFMultiCheckbox row name="gender" spacing={2} options={PRODUCT_GENDER_OPTIONS} />
-            </Stack> */}
+            </Stack>
 
-            {/* <Divider sx={{ borderStyle: 'dashed' }} />
+            <Divider sx={{ borderStyle: 'dashed' }} />
 
             <Stack direction="row" alignItems="center" spacing={3}>
               <RHFSwitch name="saleLabel.enabled" label={null} sx={{ m: 0 }} />
@@ -307,7 +327,7 @@ export default function ProductNewEditForm({ currentProduct }) {
                 fullWidth
                 disabled={!values.newLabel.enabled}
               />
-            </Stack> */}
+            </Stack>
           </Stack>
         </Card>
       </Grid>
@@ -366,7 +386,7 @@ export default function ProductNewEditForm({ currentProduct }) {
               }}
             />
 
-            {/* <FormControlLabel
+            <FormControlLabel
               control={<Switch checked={includeTaxes} onChange={handleChangeIncludeTaxes} />}
               label="Price includes taxes"
             />
@@ -388,7 +408,7 @@ export default function ProductNewEditForm({ currentProduct }) {
                   ),
                 }}
               />
-            )} */}
+            )}
           </Stack>
         </Card>
       </Grid>

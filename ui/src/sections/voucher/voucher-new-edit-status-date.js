@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 // @mui
 import MenuItem from '@mui/material/MenuItem';
@@ -5,16 +6,33 @@ import Stack from '@mui/material/Stack';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // components
 import { useGetLedgers } from 'src/api/ledger';
+import { useGetProducts } from 'src/api/product';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-export default function VoucherNewEditStatusDate() {
+export default function VoucherNewEditStatusDate({ setSelectedParent }) {
   const { control, watch } = useFormContext();
 
   const { ledgers, ledgersLoading, ledgersEmpty, refreshLedgers } = useGetLedgers();
+  const { products, productsLoading, productsEmpty } = useGetProducts();
 
   const values = watch();
+
+  const uniqueParents = {};
+  const uniqueProducts = products.filter((product) => {
+    if (!uniqueParents[product.parentName]) {
+      // If parentName is not already in the uniqueParents object, add it and mark it as seen
+      uniqueParents[product.parentName] = true;
+      return true; // Include this product in the filtered array
+    }
+    return false; // Skip this product as its parentName has already been seen
+  });
+
+  const handleSelectChange = (event) => {
+    const newValue = event.target.value;
+    // setSelectedParent(newValue);
+  };
   return (
     <Stack
       spacing={2}
@@ -25,14 +43,18 @@ export default function VoucherNewEditStatusDate() {
 
       <RHFSelect
         fullWidth
-        name="party_name"
-        label="Party A/c Name"
+        name="parent_name"
+        label="Parent Name"
         InputLabelProps={{ shrink: true }}
+        onChange={handleSelectChange}
         PaperPropsSx={{ textTransform: 'capitalize' }}
       >
-        {ledgers.map((option) => (
-          <MenuItem key={option.name} value={option.guid}>
-            {option.name}
+        {uniqueProducts.map((option) => (
+          <MenuItem
+            key={option.parentName ? option.parentName : ' '}
+            value={option.parentId ? option.parentId : ' '}
+          >
+            {option.parentName ? option.parentName : ''}
           </MenuItem>
         ))}
       </RHFSelect>
@@ -78,3 +100,6 @@ export default function VoucherNewEditStatusDate() {
     </Stack>
   );
 }
+VoucherNewEditStatusDate.propTypes = {
+  setSelectedParent: PropTypes.func,
+};

@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet-async';
-import { ProductEditView } from 'src/sections/product/view';
-import { UserEditView } from 'src/sections/user/view';
 // sections
+import UserEditView from 'src/sections/user/view/user-edit-view';
 
 // ----------------------------------------------------------------------
 

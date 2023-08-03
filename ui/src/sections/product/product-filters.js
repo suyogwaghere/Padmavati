@@ -113,25 +113,25 @@ export default function ProductFilters({
     </Stack>
   );
 
-  const renderGender = (
-    <Stack>
-      <Typography variant="subtitle2" sx={{ mb: 1 }}>
-        Gender
-      </Typography>
-      {genderOptions.map((option) => (
-        <FormControlLabel
-          key={option.value}
-          control={
-            <Checkbox
-              checked={filters.gender.includes(option.label)}
-              onClick={() => handleFilterGender(option.label)}
-            />
-          }
-          label={option.label}
-        />
-      ))}
-    </Stack>
-  );
+  // const renderGender = (
+  //   <Stack>
+  //     <Typography variant="subtitle2" sx={{ mb: 1 }}>
+  //       Gender
+  //     </Typography>
+  //     {genderOptions.map((option) => (
+  //       <FormControlLabel
+  //         key={option.value}
+  //         control={
+  //           <Checkbox
+  //             checked={filters.gender.includes(option.label)}
+  //             onClick={() => handleFilterGender(option.label)}
+  //           />
+  //         }
+  //         label={option.label}
+  //       />
+  //     ))}
+  //   </Stack>
+  // );
 
   const renderCategory = (
     <Stack>
@@ -158,75 +158,75 @@ export default function ProductFilters({
     </Stack>
   );
 
-  const renderColor = (
-    <Stack>
-      <Typography variant="subtitle2" sx={{ mb: 1 }}>
-        Color
-      </Typography>
-      <ColorPicker
-        selected={filters.colors}
-        onSelectColor={(colors) => handleFilterColors(colors)}
-        colors={colorOptions}
-        limit={6}
-      />
-    </Stack>
-  );
+  // const renderColor = (
+  //   <Stack>
+  //     <Typography variant="subtitle2" sx={{ mb: 1 }}>
+  //       Color
+  //     </Typography>
+  //     <ColorPicker
+  //       selected={filters.colors}
+  //       onSelectColor={(colors) => handleFilterColors(colors)}
+  //       colors={colorOptions}
+  //       limit={6}
+  //     />
+  //   </Stack>
+  // );
 
-  const renderPrice = (
-    <Stack>
-      <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Price
-      </Typography>
+  // const renderPrice = (
+  //   <Stack>
+  //     <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
+  //       Price
+  //     </Typography>
 
-      <Stack direction="row" spacing={5} sx={{ my: 2 }}>
-        <InputRange type="min" value={filters.priceRange} onFilters={onFilters} />
-        <InputRange type="max" value={filters.priceRange} onFilters={onFilters} />
-      </Stack>
+  //     <Stack direction="row" spacing={5} sx={{ my: 2 }}>
+  //       <InputRange type="min" value={filters.priceRange} onFilters={onFilters} />
+  //       <InputRange type="max" value={filters.priceRange} onFilters={onFilters} />
+  //     </Stack>
 
-      <Slider
-        value={filters.priceRange}
-        onChange={handleFilterPriceRange}
-        step={10}
-        min={0}
-        max={200}
-        marks={marksLabel}
-        getAriaValueText={(value) => `$${value}`}
-        valueLabelFormat={(value) => `$${value}`}
-        sx={{
-          alignSelf: 'center',
-          width: `calc(100% - 24px)`,
-        }}
-      />
-    </Stack>
-  );
+  //     <Slider
+  //       value={filters.priceRange}
+  //       onChange={handleFilterPriceRange}
+  //       step={10}
+  //       min={0}
+  //       max={200}
+  //       marks={marksLabel}
+  //       getAriaValueText={(value) => `$${value}`}
+  //       valueLabelFormat={(value) => `$${value}`}
+  //       sx={{
+  //         alignSelf: 'center',
+  //         width: `calc(100% - 24px)`,
+  //       }}
+  //     />
+  //   </Stack>
+  // );
 
-  const renderRating = (
-    <Stack spacing={2} alignItems="flex-start">
-      <Typography variant="subtitle2">Rating</Typography>
+  // const renderRating = (
+  //   <Stack spacing={2} alignItems="flex-start">
+  //     <Typography variant="subtitle2">Rating</Typography>
 
-      {ratingOptions.map((item, index) => (
-        <Stack
-          key={item}
-          direction="row"
-          onClick={() => handleFilterRating(item)}
-          sx={{
-            borderRadius: 1,
-            cursor: 'pointer',
-            typography: 'body2',
-            '&:hover': { opacity: 0.48 },
-            ...(filters.rating === item && {
-              pl: 0.5,
-              pr: 0.75,
-              py: 0.25,
-              bgcolor: 'action.selected',
-            }),
-          }}
-        >
-          <Rating readOnly value={4 - index} sx={{ mr: 1 }} /> & Up
-        </Stack>
-      ))}
-    </Stack>
-  );
+  //     {ratingOptions.map((item, index) => (
+  //       <Stack
+  //         key={item}
+  //         direction="row"
+  //         onClick={() => handleFilterRating(item)}
+  //         sx={{
+  //           borderRadius: 1,
+  //           cursor: 'pointer',
+  //           typography: 'body2',
+  //           '&:hover': { opacity: 0.48 },
+  //           ...(filters.rating === item && {
+  //             pl: 0.5,
+  //             pr: 0.75,
+  //             py: 0.25,
+  //             bgcolor: 'action.selected',
+  //           }),
+  //         }}
+  //       >
+  //         <Rating readOnly value={4 - index} sx={{ mr: 1 }} /> & Up
+  //       </Stack>
+  //     ))}
+  //   </Stack>
+  // );
 
   return (
     <>
@@ -260,15 +260,15 @@ export default function ProductFilters({
 
         <Scrollbar sx={{ px: 2.5, py: 3 }}>
           <Stack spacing={3}>
-            {renderGender}
+            {/* {renderGender} */}
 
             {renderCategory}
 
-            {renderColor}
+            {/* {renderColor} */}
 
-            {renderPrice}
+            {/* {renderPrice} */}
 
-            {renderRating}
+            {/* {renderRating} */}
           </Stack>
         </Scrollbar>
       </Drawer>

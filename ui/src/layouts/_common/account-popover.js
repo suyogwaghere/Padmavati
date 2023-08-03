@@ -9,11 +9,14 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 // routes
 import { useRouter } from 'src/routes/hook';
+import { paths } from 'src/routes/paths';
+// hooks
 // auth
 import { useAuthContext } from 'src/auth/hooks';
 // components
 import { varHover } from 'src/components/animate';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useSnackbar } from 'src/components/snackbar';
 
 // ----------------------------------------------------------------------
 
@@ -24,11 +27,11 @@ const OPTIONS = [
   },
   {
     label: 'Profile',
-    linkTo: '/#1',
+    linkTo: paths.dashboard.user.profile,
   },
   {
     label: 'Settings',
-    linkTo: '/#2',
+    linkTo: paths.dashboard.user.account,
   },
 ];
 
@@ -37,7 +40,11 @@ const OPTIONS = [
 export default function AccountPopover() {
   const router = useRouter();
 
+  // const { user } = useMockedUser();
+
   const { logout, user } = useAuthContext();
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const popover = usePopover();
 
@@ -48,6 +55,7 @@ export default function AccountPopover() {
       router.replace('/');
     } catch (error) {
       console.error(error);
+      enqueueSnackbar('Unable to logout!', { variant: 'error' });
     }
   };
 

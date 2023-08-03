@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types'; // @mui
+import PropTypes from 'prop-types';
+// @mui
 import Box from '@mui/material/Box';
 // hooks
 import { useResponsive } from 'src/hooks/use-responsive';

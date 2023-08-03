@@ -1,60 +1,55 @@
 import isEqual from 'lodash/isEqual';
-import { useCallback, useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 // @mui
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import Container from '@mui/material/Container';
-import IconButton from '@mui/material/IconButton';
 import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableContainer from '@mui/material/TableContainer';
+import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
+import Container from '@mui/material/Container';
+import TableBody from '@mui/material/TableBody';
+import IconButton from '@mui/material/IconButton';
+import TableContainer from '@mui/material/TableContainer';
 // routes
-import { RouterLink } from 'src/routes/components';
-import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hook';
+import { RouterLink } from 'src/routes/components';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // _mock
 import { PRODUCT_STOCK_OPTIONS } from 'src/_mock';
 // api
+import { useGetProducts } from 'src/api/product';
 // components
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import { ConfirmDialog } from 'src/components/custom-dialog';
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
 import { useSettingsContext } from 'src/components/settings';
 import {
+  useTable,
+  getComparator,
+  emptyRows,
+  TableNoData,
+  TableSkeleton,
   TableEmptyRows,
   TableHeadCustom,
-  TableNoData,
-  TablePaginationCustom,
   TableSelectedAction,
-  TableSkeleton,
-  emptyRows,
-  getComparator,
-  useTable,
+  TablePaginationCustom,
 } from 'src/components/table';
+import Iconify from 'src/components/iconify';
+import Scrollbar from 'src/components/scrollbar';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
-import { useSnackbar } from 'notistack';
-import { useGetProducts } from 'src/api/product';
-import axiosInstance, { endpoints } from 'src/utils/axios';
-import ProductTableFiltersResult from '../product-table-filters-result';
 import ProductTableRow from '../product-table-row';
 import ProductTableToolbar from '../product-table-toolbar';
+import ProductTableFiltersResult from '../product-table-filters-result';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'productName', label: 'Product' },
-  { id: 'stock', label: 'Stock', width: 110 },
-  { id: 'uom', label: 'UOM', width: 110 },
-  { id: 'openingBalance', label: 'Opening Balance', width: 110 },
-  { id: 'openingValue', label: 'Opening value', width: 110 },
-  { id: 'sellPrice', label: 'Sell Price', width: 110 },
-  { id: 'purchasePrice', label: 'Purchased Price', width: 110 },
-  { id: 'taxRate', label: 'TAX', width: 110 },
-  { id: 'gst_hsn_code', label: 'GST HSN CODE', width: 110 },
+  { id: 'name', label: 'Product' },
+  { id: 'createdAt', label: 'Create at', width: 160 },
+  { id: 'inventoryType', label: 'Stock', width: 160 },
+  { id: 'price', label: 'Price', width: 140 },
+  { id: 'publish', label: 'Publish', width: 110 },
+  { id: '', width: 88 },
 ];
 
 const PUBLISH_OPTIONS = [
@@ -63,7 +58,7 @@ const PUBLISH_OPTIONS = [
 ];
 
 const defaultFilters = {
-  productName: '',
+  name: '',
   publish: [],
   stock: [],
 };
@@ -80,7 +75,7 @@ export default function ProductListView() {
   const [tableData, setTableData] = useState([]);
 
   const [filters, setFilters] = useState(defaultFilters);
-  const { enqueueSnackbar } = useSnackbar();
+
   const { products, productsLoading, productsEmpty } = useGetProducts();
 
   const confirm = useBoolean();
@@ -118,20 +113,7 @@ export default function ProductListView() {
     },
     [table]
   );
-  const handleProductSync = () => {
-    axiosInstance
-      .post(endpoints.product.sync)
-      .then((res) => {
-        const { data } = res;
-        enqueueSnackbar(data?.message || 'Sync successful');
-      })
-      .catch((err) => {
-        console.log(err);
-        enqueueSnackbar(err?.error?.message ? err.error.message : 'something went wrong!', {
-          variant: 'error',
-        });
-      });
-  };
+
   const handleDeleteRow = useCallback(
     (id) => {
       const deleteRow = tableData.filter((row) => row.id !== id);
@@ -178,19 +160,20 @@ export default function ProductListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Product', href: paths.dashboard.product.root },
+            {
+              name: 'Product',
+              href: paths.dashboard.product.root,
+            },
             { name: 'List' },
           ]}
           action={
             <Button
               component={RouterLink}
-              onClick={() => {
-                handleProductSync();
-              }}
+              href={paths.dashboard.product.new}
               variant="contained"
-              startIcon={<Iconify icon="ci:arrows-reload-01" />}
+              startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              Sync
+              New Product
             </Button>
           }
           sx={{ mb: { xs: 3, md: 5 } }}
@@ -333,7 +316,7 @@ export default function ProductListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters }) {
-  const { productName } = filters;
+  const { name, stock, publish } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -345,19 +328,19 @@ function applyFilter({ inputData, comparator, filters }) {
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (productName) {
+  if (name) {
     inputData = inputData.filter(
-      (product) => product.productName.toLowerCase().indexOf(productName.toLowerCase()) !== -1
+      (product) => product.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
-  // if (stock.length) {
-  //   inputData = inputData.filter((product) => stock.includes(product.inventoryType));
-  // }
+  if (stock.length) {
+    inputData = inputData.filter((product) => stock.includes(product.inventoryType));
+  }
 
-  // if (publish.length) {
-  //   inputData = inputData.filter((product) => publish.includes(product.publish));
-  // }
+  if (publish.length) {
+    inputData = inputData.filter((product) => publish.includes(product.publish));
+  }
 
   return inputData;
 }

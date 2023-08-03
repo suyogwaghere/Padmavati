@@ -49,6 +49,7 @@ const reducer = (state, action) => {
 
 // ----------------------------------------------------------------------
 
+const REMEMBER_ME = 'rememberMe';
 const STORAGE_KEY = 'accessToken';
 const ROLE_KEY = 'userRole';
 
@@ -57,10 +58,11 @@ export function AuthProvider({ children }) {
 
   const initialize = useCallback(async () => {
     try {
+      const rememberMe = sessionStorage.getItem(REMEMBER_ME);
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
       const userRole = sessionStorage.getItem(ROLE_KEY);
       if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
+        setSession(accessToken, rememberMe);
         setRole(userRole);
         const response = await axios.get(endpoints.auth.me);
 
@@ -96,10 +98,11 @@ export function AuthProvider({ children }) {
   }, [initialize]);
 
   // LOGIN
-  const login = useCallback(async (email, password) => {
+  const login = useCallback(async (email, password, rememberMe) => {
     const data = {
       email,
       password,
+      rememberMe,
     };
 
     const response = await axios.post(endpoints.auth.login, data);
@@ -111,7 +114,7 @@ export function AuthProvider({ children }) {
       throw new Error('You do not have admin permission.');
     }
     setRole(hasAdminPermission);
-    setSession(accessToken);
+    setSession(accessToken, rememberMe);
     // setSession(hasAdminPermission);
 
     dispatch({

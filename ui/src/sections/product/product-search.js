@@ -1,32 +1,49 @@
-import PropTypes from 'prop-types';
-import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
+import parse from 'autosuggest-highlight/parse';
+import PropTypes from 'prop-types';
 // @mui
-import Box from '@mui/material/Box';
+import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import InputAdornment from '@mui/material/InputAdornment';
-import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
 // routes
-import { useRouter } from 'src/routes/hook';
+// import { useRouter } from 'src/routes/hook';
 // components
 import Iconify from 'src/components/iconify';
 import SearchNotFound from 'src/components/search-not-found';
-
+// redux
+import { addToCart } from 'src/redux/slices/checkout';
+import { useDispatch } from 'src/redux/store';
 // ----------------------------------------------------------------------
 
 export default function ProductSearch({ query, results, onSearch, hrefItem, loading }) {
-  const router = useRouter();
-
-  const handleClick = (id) => {
-    router.push(hrefItem(id));
+  // const router = useRouter();
+  const dispatch = useDispatch();
+  const handleClick = (product) => {
+    // router.push(hrefItem(id));
+    const { id, productName, coverUrl, sellPrice, purchasePrice, MRP } = product;
+    const newProduct = {
+      id,
+      productName,
+      coverUrl,
+      purchasePrice,
+      sellPrice,
+      MRP,
+      quantity: 1,
+    };
+    try {
+      dispatch(addToCart(newProduct));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleKeyUp = (event) => {
     if (query) {
       if (event.key === 'Enter') {
-        const selectItem = results.filter((product) => product.name === query)[0];
+        const selectItem = results.filter((product) => product.productName === query)[0];
 
         handleClick(selectItem.id);
       }
@@ -41,7 +58,7 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
       popupIcon={null}
       options={results}
       onInputChange={(event, newValue) => onSearch(newValue)}
-      getOptionLabel={(option) => option.name}
+      getOptionLabel={(option) => option.productName}
       noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       slotProps={{
@@ -81,14 +98,14 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
         />
       )}
       renderOption={(props, product, { inputValue }) => {
-        const matches = match(product.name, inputValue);
-        const parts = parse(product.name, matches);
+        const matches = match(product.productName, inputValue);
+        const parts = parse(product.productName, matches);
 
         return (
-          <Box component="li" {...props} onClick={() => handleClick(product.id)} key={product.id}>
+          <Box component="li" {...props} onClick={() => handleClick(product)} key={product.id}>
             <Avatar
               key={product.id}
-              alt={product.name}
+              alt={product.productName}
               src={product.coverUrl}
               variant="rounded"
               sx={{ width: 48, height: 48, flexShrink: 0, mr: 1.5, borderRadius: 1 }}

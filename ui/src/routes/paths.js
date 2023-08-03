@@ -1,5 +1,3 @@
-// ----------------------------------------------------------------------
-
 const ROOTS = {
   AUTH: '/auth',
   DASHBOARD: '/dashboard',
@@ -8,42 +6,45 @@ const ROOTS = {
 // ----------------------------------------------------------------------
 
 export const paths = {
+  product: {
+    root: `/product`,
+    checkout: `/product/checkout`,
+    details: (id) => `/product/${id}`,
+  },
   // AUTH
   auth: {
     jwt: {
       login: `${ROOTS.AUTH}/jwt/login`,
       register: `${ROOTS.AUTH}/jwt/register`,
-      newPassword: `${ROOTS.AUTH}/jwt/new-password`,
-      forgotPassword: `${ROOTS.AUTH}/jwt/forgot-password`,
     },
   },
+
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
-    product: {
-      root: `${ROOTS.DASHBOARD}/product`,
-      new: `${ROOTS.DASHBOARD}/product/new`,
-      edit: (id) => `${ROOTS.DASHBOARD}/product/${id}/edit`,
+    permission: `${ROOTS.DASHBOARD}/permission`,
+    general: {
+      app: `${ROOTS.DASHBOARD}/app`,
     },
-    category: {
-      root: `${ROOTS.DASHBOARD}/category`,
-      new: `${ROOTS.DASHBOARD}/category/new`,
-      edit: (id) => `${ROOTS.DASHBOARD}/category/${id}/edit`,
-    },
-    brand: {
-      root: `${ROOTS.DASHBOARD}/brand`,
-      new: `${ROOTS.DASHBOARD}/brand/new`,
-      edit: (id) => `${ROOTS.DASHBOARD}/brand/${id}/edit`,
+    user: {
+      root: `${ROOTS.DASHBOARD}/user`,
+      new: `${ROOTS.DASHBOARD}/user/new`,
+      list: `${ROOTS.DASHBOARD}/user/list`,
+      cards: `${ROOTS.DASHBOARD}/user/cards`,
+      profile: `${ROOTS.DASHBOARD}/user/profile`,
+      edit: (id) => `${ROOTS.DASHBOARD}/user/${id}/edit`,
     },
     ledger: {
       root: `${ROOTS.DASHBOARD}/ledger`,
       new: `${ROOTS.DASHBOARD}/brand/ledger`,
       edit: (id) => `${ROOTS.DASHBOARD}/ledger/${id}/edit`,
     },
-    user: {
-      root: `${ROOTS.DASHBOARD}/user`,
-      new: `${ROOTS.DASHBOARD}/user/new`,
-      edit: (id) => `${ROOTS.DASHBOARD}/user/${id}/edit`,
+    product: {
+      root: `${ROOTS.DASHBOARD}/product`,
+      new: `${ROOTS.DASHBOARD}/product/new`,
+      checkout: `${ROOTS.DASHBOARD}/product/checkout`,
+      details: (id) => `${ROOTS.DASHBOARD}/product/${id}`,
+      edit: (id) => `${ROOTS.DASHBOARD}/product/${id}/edit`,
     },
     voucher: {
       root: `${ROOTS.DASHBOARD}/voucher`,

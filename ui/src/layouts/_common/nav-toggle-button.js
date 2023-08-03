@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types'; // @mui
+import PropTypes from 'prop-types';
+// @mui
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 // hooks

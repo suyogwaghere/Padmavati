@@ -22,7 +22,8 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // auth
 import { useAuthContext } from 'src/auth/hooks';
 // components
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import FormProvider, { RHFCheckbox, RHFTextField } from 'src/components/hook-form';
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -61,8 +62,10 @@ export default function JwtLoginView() {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
+    console.log('🚀 ~ file: jwt-login-view.js:68 ~ onSubmit ~ data:', data);
+
     try {
-      await login?.(data.email, data.password);
+      await login?.(data.email, data.password, data.rememberMe);
 
       router.push(returnTo || PATH_AFTER_LOGIN);
     } catch (error) {
@@ -94,9 +97,7 @@ export default function JwtLoginView() {
   const renderForm = (
     <Stack spacing={2.5}>
       {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
-
       <RHFTextField name="email" label="Email address" autocomplete="on" />
-
       <RHFTextField
         name="password"
         label="Password"
@@ -112,6 +113,11 @@ export default function JwtLoginView() {
         }}
       />
 
+      <RHFCheckbox
+        name="rememberMe"
+        label="Remember me"
+        // control={<Checkbox size="medium" />}
+      />
       <Link
         component={RouterLink}
         href={paths.auth.jwt.forgotPassword}
@@ -122,7 +128,6 @@ export default function JwtLoginView() {
       >
         Forgot password?
       </Link>
-
       <LoadingButton
         fullWidth
         color="inherit"

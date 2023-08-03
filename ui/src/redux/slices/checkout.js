@@ -1,8 +1,6 @@
-import sum from 'lodash/sum';
-import uniq from 'lodash/uniq';
-import uniqBy from 'lodash/uniqBy';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { createSlice } from '@reduxjs/toolkit';
+import sum from 'lodash/sum';
+import uniqBy from 'lodash/uniqBy';
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +24,7 @@ const slice = createSlice({
 
       const totalItems = sum(cart.map((product) => product.quantity));
 
-      const subTotal = sum(cart.map((product) => product.price * product.quantity));
+      const subTotal = sum(cart.map((product) => product.sellPrice * product.quantity));
 
       state.cart = cart;
       state.discount = state.discount || 0;
@@ -51,7 +49,7 @@ const slice = createSlice({
           if (existProduct) {
             return {
               ...product,
-              colors: uniq([...product.colors, ...newProduct.colors]),
+              // colors: uniq([...product.colors, ...newProduct.colors]),
               quantity: product.quantity + 1,
             };
           }
@@ -66,6 +64,13 @@ const slice = createSlice({
 
     deleteCart(state, action) {
       const updateCart = state.cart.filter((product) => product.id !== action.payload);
+
+      if (updateCart.length === 0) {
+        console.log('cart empty');
+        state.totalItems = 0;
+        state.subTotal = 0;
+        state.total = 0;
+      }
 
       state.cart = updateCart;
     },

@@ -299,6 +299,13 @@ export class ProductController {
     await this.productRepository.deleteById(guid);
   }
 
+  // searching
+  @get('/api/products/search')
+  async searchByName(
+    @param.query.string('query') query: string,
+  ): Promise<Product[]> {
+    return this.productRepository.searchByName(query);
+  }
   //   @authenticate({
   //     strategy: 'jwt',
   //     options: {required: [PermissionKeys.SUPER_ADMIN]},

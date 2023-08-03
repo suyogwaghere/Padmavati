@@ -18,8 +18,7 @@ export default function SettingsButton({ sx }) {
     <Badge
       color="error"
       variant="dot"
-      // invisible={!settings.canReset}
-      invisible
+      invisible={!settings.canReset}
       sx={{
         [`& .${badgeClasses.badge}`]: {
           top: 8,
