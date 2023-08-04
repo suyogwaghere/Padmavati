@@ -36,7 +36,8 @@
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "start:watch": "tsc-watch --target es2017 --outDir ./dist --onSuccess \"node .\"",
     "go": "npm run start:watch",
-    "rebuild": "npm run clean && npm run build"
+    "rebuild": "npm run clean && npm run build",
+    "start:debug": "node --inspect ./dist/index.js"
   },
   "repository": {
     "type": "git",

@@ -36,7 +36,7 @@ export class LedgerController {
     public ledgerRepository: LedgerRepository,
   ) {}
 
-  @post('/ledgers')
+  @post('/api/ledgers')
   @response(200, {
     description: 'Ledger model instance',
     content: {'application/json': {schema: getModelSchemaRef(Ledger)}},
@@ -57,7 +57,7 @@ export class LedgerController {
     return this.ledgerRepository.create(ledger);
   }
 
-  @get('/ledgers/count')
+  @get('/api/ledgers/count')
   @response(200, {
     description: 'Ledger model count',
     content: {'application/json': {schema: CountSchema}},
@@ -95,7 +95,7 @@ export class LedgerController {
   @post('/api/ledgers/sync', {
     responses: {
       '200': {
-        description: 'Ledger sync successful',
+        description: 'Ledger sync ',
         content: {
           schema: getJsonSchemaRef(Ledger),
         },
@@ -114,22 +114,22 @@ export class LedgerController {
       try {
         await this.ledgerRepository.deleteAll(undefined, {transaction: tx});
         const finalMappedObject: Ledger[] = parsedData.map((ledger: any) => {
-          const mappedProduct: Ledger = new Ledger();
-          mappedProduct.name = ledger.name || ' ';
-          mappedProduct.group = ledger.group || ' ';
-          mappedProduct.guid = ledger.guid || ' ';
-          mappedProduct.openingValue = ledger.openingValue * 1 || 0;
-          mappedProduct.address = ledger.address || ' ';
-          mappedProduct.country = ledger.country || ' ';
-          mappedProduct.state = ledger.state || ' ';
-          mappedProduct.gstIn = ledger.gstIn || ' ';
-          mappedProduct.whatsapp_no = ledger.whatsapp_no || ' ';
-          mappedProduct.mobile_no = ledger.mobile_no || ' ';
-          mappedProduct.pincode = ledger.pincode * 1 || 0;
-          mappedProduct.station = ledger.station || ' ';
-          mappedProduct.l_ID = ledger.l_ID || ' ';
+          const mappedLedger: Ledger = new Ledger();
+          mappedLedger.name = ledger.name || ' ';
+          mappedLedger.group = ledger.group || ' ';
+          mappedLedger.guid = ledger.guid || ' ';
+          mappedLedger.openingValue = ledger.openingValue * 1 || 0;
+          mappedLedger.address = ledger.address || ' ';
+          mappedLedger.country = ledger.country || ' ';
+          mappedLedger.state = ledger.state || ' ';
+          mappedLedger.gstIn = ledger.gstIn || ' ';
+          mappedLedger.whatsapp_no = ledger.whatsapp_no || ' ';
+          mappedLedger.mobile_no = ledger.mobile_no || ' ';
+          mappedLedger.pincode = ledger.pincode * 1 || 0;
+          mappedLedger.station = ledger.station || ' ';
+          mappedLedger.l_ID = ledger.l_ID || ' ';
 
-          return mappedProduct;
+          return mappedLedger;
         });
         await this.ledgerRepository.createAll(finalMappedObject, {
           transaction: tx,
@@ -137,11 +137,10 @@ export class LedgerController {
         await tx.commit();
         return {
           success: true,
-          message: `Ledgers synced successfully.  _`,
+          message: `Ledgers synced successfully.`,
         };
       } catch (err) {
         console.log('Error ', err);
-
         await tx.rollback();
         throw new Error(
           'Error synchronizing ledgers. Transaction rolled back.',
@@ -152,7 +151,7 @@ export class LedgerController {
     }
   }
   // ///////////////////////////////////
-  @patch('/ledgers')
+  @patch('/api/ledgers')
   @response(200, {
     description: 'Ledger PATCH success count',
     content: {'application/json': {schema: CountSchema}},
@@ -171,7 +170,7 @@ export class LedgerController {
     return this.ledgerRepository.updateAll(ledger, where);
   }
 
-  @get('/ledgers/{id}')
+  @get('/api/ledgers/{id}')
   @response(200, {
     description: 'Ledger model instance',
     content: {
@@ -188,7 +187,7 @@ export class LedgerController {
     return this.ledgerRepository.findById(id, filter);
   }
 
-  @patch('/ledgers/{id}')
+  @patch('/api/ledgers/{id}')
   @response(204, {
     description: 'Ledger PATCH success',
   })
@@ -206,7 +205,7 @@ export class LedgerController {
     await this.ledgerRepository.updateById(id, ledger);
   }
 
-  @put('/ledgers/{id}')
+  @put('/api/ledgers/{id}')
   @response(204, {
     description: 'Ledger PUT success',
   })
@@ -217,7 +216,7 @@ export class LedgerController {
     await this.ledgerRepository.replaceById(id, ledger);
   }
 
-  @del('/ledgers/{id}')
+  @del('/api/ledgers/{id}')
   @response(204, {
     description: 'Ledger DELETE success',
   })

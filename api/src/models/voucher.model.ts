@@ -39,10 +39,10 @@ export class Voucher extends Entity {
   totalQuantity: number;
 
   @property({
-    type: 'date',
+    type: 'string',
     required: true,
   })
-  date: string;
+  voucherDate: string;
 
   @property({
     type: 'date',

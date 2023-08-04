@@ -1,5 +1,7 @@
 {
   "cSpell.words": [
+    "cgst",
+    "currnet",
     "datasources",
     "ecommerce",
     "hasher",
@@ -10,7 +12,9 @@
     "Padmavti",
     "Paser",
     "persistor",
-    "pincode"
+    "pincode",
+    "Saletype",
+    "sgst"
   ],
   "eslint.workingDirectories": ["./api", "./ui"]
 }

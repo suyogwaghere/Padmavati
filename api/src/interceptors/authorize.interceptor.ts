@@ -1,4 +1,6 @@
-import { AuthenticationBindings } from '@loopback/authentication';
+/* eslint-disable @typescript-eslint/return-await */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {AuthenticationBindings} from '@loopback/authentication';
 import {
   Getter,
   /* inject, */
@@ -10,23 +12,21 @@ import {
   Provider,
   ValueOrPromise,
 } from '@loopback/core';
-import { CurrentUser } from '../types';
-import { intersection } from 'lodash';
-import { HttpErrors } from '@loopback/rest';
+import {CurrentUser} from '../types';
+import {intersection} from 'lodash';
+import {HttpErrors} from '@loopback/rest';
 /**
  * This class will be bound to the application as an `Interceptor` during
  * `boot`
  */
 @globalInterceptor('', {tags: {name: 'authorize'}})
 export class AuthorizeInterceptor implements Provider<Interceptor> {
-  
   constructor(
-        @inject(AuthenticationBindings.METADATA)
+    @inject(AuthenticationBindings.METADATA)
     public metaData: any,
     @inject.getter(AuthenticationBindings.CURRENT_USER)
     public getCurrentUser: Getter<CurrentUser>,
   ) {}
-  
 
   /**
    * This method is used by LoopBack context to produce an interceptor function
@@ -49,7 +49,7 @@ export class AuthorizeInterceptor implements Provider<Interceptor> {
   ) {
     // eslint-disable-next-line no-useless-catch
     try {
-       // Add pre-invocation logic here
+      // Add pre-invocation logic here
       if (this.metaData) {
         if (!this.metaData[0]?.options?.required) return await next();
       }

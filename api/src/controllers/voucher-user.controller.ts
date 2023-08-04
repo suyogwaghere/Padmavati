@@ -1,24 +1,15 @@
-import {
-  repository,
-} from '@loopback/repository';
-import {
-  param,
-  get,
-  getModelSchemaRef,
-} from '@loopback/rest';
-import {
-  Voucher,
-  User,
-} from '../models';
+import {repository} from '@loopback/repository';
+import {get, getModelSchemaRef, param} from '@loopback/rest';
+import {User, Voucher} from '../models';
 import {VoucherRepository} from '../repositories';
 
 export class VoucherUserController {
   constructor(
     @repository(VoucherRepository)
     public voucherRepository: VoucherRepository,
-  ) { }
+  ) {}
 
-  @get('/vouchers/{id}/user', {
+  @get('/api/vouchers/{id}/user', {
     responses: {
       '200': {
         description: 'User belonging to Voucher',

@@ -103,7 +103,7 @@ export class ProductController {
   @post('/api/products/sync', {
     responses: {
       '200': {
-        description: 'Product Sync Success',
+        description: 'Product Sync',
         content: {
           schema: getJsonSchemaRef(Product),
         },

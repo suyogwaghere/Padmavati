@@ -16,7 +16,13 @@ export class VoucherProduct extends Entity {
     type: 'string',
     required: true,
   })
-  productName: string;
+  productId: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  uom: string;
 
   @property({
     type: 'number',
@@ -53,12 +59,43 @@ export class VoucherProduct extends Entity {
     scale: 2,
   })
   discount: number;
+  @property({
+    type: 'number',
+    required: true,
+  })
+  taxRate: number;
+  @property({
+    type: 'number',
+    required: true,
+    default: 0,
+    dataType: 'decimal',
+    precision: 30,
+    scale: 2,
+  })
+  taxAmt: number;
+  @property({
+    type: 'number',
+    required: true,
+    default: 0,
+    dataType: 'decimal',
+    precision: 30,
+    scale: 2,
+  })
+  taxableAMt: number;
+  @property({
+    type: 'number',
+    required: true,
+    default: 0,
+    dataType: 'decimal',
+    precision: 30,
+    scale: 2,
+  })
+  netAmt: number;
 
   @property({
     type: 'string',
-    required: true,
   })
-  notes: string;
+  notes?: string;
 
   constructor(data?: Partial<VoucherProduct>) {
     super(data);
