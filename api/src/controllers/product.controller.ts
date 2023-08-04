@@ -194,39 +194,15 @@ export class ProductController {
     description: 'Product model instance',
     content: {'application/json': {schema: getModelSchemaRef(Product)}},
   })
-  async findById(@param.path.number('id') id: string): Promise<any> {
-    // const product = await this.productRepository.findById(id);
-    // if (!product) {
-    //   throw new HttpErrors.NotFound('Product not found');
-    // }
-    // Retrieve variations using the junction table
-    // const productVariations = await this.productRepository
-    //   .variations(id)
-    //   .find();
-    // // Map the variations to the product object
-    // const updatedVariationsWithJunctionData = await Promise.all(
-    //   productVariations.map(async res => {
-    //     const variationData = await this.productVariationRepository.findOne({
-    //       where: {
-    //         productId: id,
-    //         variationId: res.id,
-    //       },
-    //     });
-    //     if (variationData) {
-    //       return {
-    //         name: res.name,
-    //         id: res.id,
-    //         ...variationData,
-    //       };
-    //     } else {
-    //       return {
-    //         name: res.name,
-    //         id: res.id,
-    //       };
-    //     }
-    //   }),
-    // );
-    // return product;
+  async findById(@param.path.number('id') id: number): Promise<any> {
+    const products = await this.productRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return Promise.resolve({
+      ...products,
+    });
   }
 
   //Update product by ID
