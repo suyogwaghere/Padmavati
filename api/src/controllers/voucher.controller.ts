@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {AuthenticationBindings, authenticate} from '@loopback/authentication';
 import {inject} from '@loopback/core';
@@ -167,33 +168,19 @@ export class VoucherController {
   //   await this.voucherRepository.deleteById(id);
   // }
   // NEW UPDATES
-  @authenticate({
-    strategy: 'jwt',
-    // options: {required: [PermissionKeys.SALES]},
-  })
+  // @authenticate({
+  //   strategy: 'jwt',
+  //   // options: {required: [PermissionKeys.SALES]},
+  // })
   @get('/api/vouchers/syncToBusy')
   async syncVouchersToBusy(
     @param.filter(Voucher) filter?: Filter<Voucher>,
   ): Promise<any[]> {
     try {
       const vouchers = await this.voucherRepository.find({
-        include: [
-          {
-            relation: 'user',
-            scope: {
-              fields: {
-                id: false,
-                createdAt: false,
-                updatedAt: false,
-                permissions: false,
-                isActive: false,
-                password: false,
-                otp: false,
-                otpExpireAt: false,
-              },
-            },
-          },
-        ],
+        where: {
+          is_synced: 0, // Filter by is_synced = 0
+        },
         fields: {
           createdAt: false,
           updatedAt: false,
@@ -238,10 +225,6 @@ export class VoucherController {
           );
 
           return {
-            voucherSeries: 'S',
-            voucherNo: 'S-1101',
-            Saletype: 'L/GST-TaxIncl',
-            McName: 'Santacruz East',
             ...voucher,
             products: updatedVoucherProducts,
           };
@@ -254,7 +237,37 @@ export class VoucherController {
       throw new Error('Failed to sync vouchers');
     }
   }
-  // }
+
+  @post('/api/vouchers/syncFromBusy')
+  @response(200, {
+    description: 'Array of Users model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          items: getModelSchemaRef(Voucher),
+        },
+      },
+    },
+  })
+  async syncFromBusy(
+    @requestBody() syncedVoucherData: {syncedVoucherIds: number[]},
+  ) {
+    const {syncedVoucherIds} = syncedVoucherData;
+    try {
+      for (const voucherId of syncedVoucherIds) {
+        const voucher = await this.voucherRepository.findById(voucherId);
+        if (voucher) {
+          voucher.is_synced = 1;
+          await this.voucherRepository.update(voucher);
+        }
+      }
+      return `Synced status updated for ${syncedVoucherIds.length} vouchers`;
+    } catch (error) {
+      console.error('Error updating synced vouchers:', error);
+      throw new HttpErrors.InternalServerError('Internal Server Error');
+    }
+  }
 
   @authenticate({
     strategy: 'jwt',
@@ -311,6 +324,10 @@ export class VoucherController {
 
       const voucherCreateData = {
         voucherDate: formattedDate,
+        // voucherSeries: 'S',
+        // voucherNo: 'S-1101',
+        Saletype: 'L/GST-TaxIncl',
+        McName: 'Santacruz East',
         // voucher_type: 'Sales',
         // _voucher_type: 'e5a9b5a7-7f09-4ac0-a2cd-f5aa3ad03acf-00000026',
         partyName: party.name,
@@ -320,7 +337,7 @@ export class VoucherController {
         // is_accounting_voucher: true,
         // is_inventory_voucher: false,
         // is_order_voucher: false,
-        // is_synced: 0,
+        is_synced: 0,
         totalAmount: totalAmount,
         totalQuantity: totalQuantity,
         userId: currnetUser.id,
@@ -416,6 +433,8 @@ export class VoucherController {
 
       const voucherUpdateData = {
         voucherDate: voucherData.date,
+        Saletype: voucherData.Saletype,
+        McName: voucherData.McName,
         // voucher_type: 'Sales',
         // _voucher_type: 'e5a9b5a7-7f09-4ac0-a2cd-f5aa3ad03acf-00000026',
         partyName: party.name,
@@ -425,7 +444,7 @@ export class VoucherController {
         // is_accounting_voucher: true,
         // is_inventory_voucher: false,
         // is_order_voucher: false,
-        // is_synced: 0,
+        is_synced: 0,
         totalAmount: totalAmountData,
         totalQuantity: totalQuantityData,
       };

@@ -1,4 +1,5 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
+/* eslint-disable @typescript-eslint/naming-convention */
+import {Entity, belongsTo, model, property} from '@loopback/repository';
 import {User} from './user.model';
 
 @model()
@@ -21,6 +22,22 @@ export class Voucher extends Entity {
     required: true,
   })
   partyId: string;
+  @property({
+    type: 'string',
+    required: true,
+  })
+  McName: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  Saletype: string;
+
+  @property({
+    type: 'number',
+  })
+  is_synced: number;
 
   @property({
     type: 'number',
