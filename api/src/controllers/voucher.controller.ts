@@ -318,7 +318,7 @@ export class VoucherController {
       let totalQuantity = 0;
 
       for (const product of voucher.products) {
-        totalAmount += product.quantity * product.price;
+        totalAmount += product.quantity * product.sellPrice;
         totalQuantity += product.quantity;
       }
 
@@ -353,7 +353,7 @@ export class VoucherController {
       const voucherProducts = voucher.products.map((product: any) => {
         const taxRate = parseFloat(product.taxRate);
         const quantity = parseInt(product.quantity);
-        const price = parseFloat(product.price);
+        const price = parseFloat(product.sellPrice);
 
         const amount = quantity * price;
         const taxAmt = (amount * taxRate) / 100;
@@ -363,9 +363,9 @@ export class VoucherController {
           voucherId: newVoucher.id,
           productId: product.productId,
           quantity: product.quantity,
-          price: product.price,
+          price: product.sellPrice,
           amount: amount,
-          discount: product.discount,
+          discount: product.discount || '',
           uom: product.uom,
           taxRate: product.taxRate,
           taxAmt: taxAmt,
@@ -428,7 +428,7 @@ export class VoucherController {
 
       for (const product of voucherData.products) {
         totalQuantityData += product.quantity;
-        totalAmountData += product.quantity * product.price;
+        totalAmountData += product.quantity * product.sellPrice;
       }
 
       const voucherUpdateData = {

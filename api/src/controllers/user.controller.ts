@@ -72,6 +72,10 @@ export class SignupController {
     if (user) {
       throw new HttpErrors.BadRequest('Email Already Exists');
     }
+    console.log(
+      '🚀 ~ file: user.controller.ts:71 ~ SignupController ~ userData:',
+      userData,
+    );
 
     validateCredentials(_.pick(userData, ['email', 'password']));
     userData.password = await this.hasher.hashPassword(userData.password);

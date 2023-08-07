@@ -223,4 +223,11 @@ export class LedgerController {
   async deleteById(@param.path.number('id') id: number): Promise<void> {
     await this.ledgerRepository.deleteById(id);
   }
+
+  @get('/api/ledger/search')
+  async searchByName(
+    @param.query.string('query') query: string,
+  ): Promise<Ledger[]> {
+    return this.ledgerRepository.searchByName(query);
+  }
 }

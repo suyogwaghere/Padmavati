@@ -14,4 +14,10 @@ export class LedgerRepository extends TimeStampRepositoryMixin<
   constructor(@inject('datasources.Mysql') dataSource: MysqlDataSource) {
     super(Ledger, dataSource);
   }
+  async searchByName(query: string): Promise<Ledger[]> {
+    const querys = `
+    SELECT * FROM ledger WHERE name LIKE '%${query}%'
+  `;
+    return this.dataSource.execute(querys);
+  }
 }
