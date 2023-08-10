@@ -62,6 +62,12 @@ export class Voucher extends Entity {
   voucherDate: string;
 
   @property({
+    type: 'string',
+    required: true,
+  })
+  adminNote: string;
+
+  @property({
     type: 'date',
   })
   createdAt?: Date;

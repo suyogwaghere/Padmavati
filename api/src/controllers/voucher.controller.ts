@@ -127,8 +127,46 @@ export class VoucherController {
     @param.path.number('id') id: number,
     @param.filter(Voucher, {exclude: 'where'})
     filter?: FilterExcludingWhere<Voucher>,
-  ): Promise<Voucher> {
-    return this.voucherRepository.findById(id, filter);
+  ): Promise<any> {
+    try {
+      const voucher = await this.voucherRepository.findById(id);
+
+      const voucherProducts = await this.voucherProductRepository.find({
+        where: {
+          voucherId: voucher.id,
+        },
+      });
+
+      const updatedVoucherProducts = await Promise.all(
+        voucherProducts.map(async voucherProduct => {
+          const productData = await this.productRepository.findOne({
+            where: {
+              productId: voucherProduct.productId,
+            },
+          });
+
+          return {
+            productName: productData?.productName,
+            productId: voucherProduct?.productId,
+            quantity: voucherProduct?.quantity,
+            price: voucherProduct?.price,
+            amount: voucherProduct?.amount,
+            discount: voucherProduct?.discount,
+            // godown: voucherProduct?.godown,
+            // _godown: voucherProduct?._godown,
+            notes: voucherProduct?.notes,
+          };
+        }),
+      );
+
+      return {
+        ...voucher,
+        products: updatedVoucherProducts,
+      };
+    } catch (error) {
+      console.error('Error retrieving vouchers:', error);
+      throw new Error('Failed to retrieve vouchers');
+    }
   }
 
   // @patch('/api/vouchers/{id}')
@@ -337,6 +375,7 @@ export class VoucherController {
         // is_accounting_voucher: true,
         // is_inventory_voucher: false,
         // is_order_voucher: false,
+        adminNote: voucher.adminNote || ' ',
         is_synced: 0,
         totalAmount: totalAmount,
         totalQuantity: totalQuantity,
@@ -444,6 +483,7 @@ export class VoucherController {
         // is_accounting_voucher: true,
         // is_inventory_voucher: false,
         // is_order_voucher: false,
+        adminNote: voucherData.adminNote || ' ',
         is_synced: 0,
         totalAmount: totalAmountData,
         totalQuantity: totalQuantityData,
@@ -610,7 +650,7 @@ export class VoucherController {
 
               return {
                 productName: productData?.productName,
-                productGuid: voucherProduct?.productId,
+                productId: voucherProduct?.productId,
                 quantity: voucherProduct?.quantity,
                 price: voucherProduct?.price,
                 amount: voucherProduct?.amount,

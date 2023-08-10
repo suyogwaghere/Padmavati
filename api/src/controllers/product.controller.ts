@@ -28,7 +28,9 @@ import {inject} from '@loopback/context';
 import {MysqlDataSource} from '../datasources';
 import {Product} from '../models';
 import {ProductRepository} from '../repositories';
-
+class UniqueParentProduct {
+  constructor(public parentId: any, public parentName: any) {}
+}
 export class ProductController {
   constructor(
     @inject('datasources.Mysql')
@@ -182,6 +184,37 @@ export class ProductController {
     @param.filter(Product) filter?: Filter<Product>,
   ): Promise<Product[]> {
     return this.productRepository.find(filter);
+  }
+  //Get all product parents
+  @authenticate({
+    strategy: 'jwt',
+  })
+  @get('/api/products/parent/list')
+  async findParents(
+    @param.filter(Product) filter?: Filter<Product>,
+  ): Promise<UniqueParentProduct[]> {
+    const parentProducts = await this.productRepository.find(filter);
+
+    // Create a Map to store unique parentName and parentId combinations
+    const uniqueParentsMap = new Map<string, string>();
+
+    // Iterate through parentProducts and add unique combinations to the map
+    parentProducts.forEach(parentProduct => {
+      if (parentProduct.parentId && parentProduct.parentName) {
+        // Check if parentId is defined
+        uniqueParentsMap.set(parentProduct.parentId, parentProduct.parentName);
+      }
+    });
+
+    // Create an array of objects from the Map's entries
+    const uniqueParentProductResponses: UniqueParentProduct[] = Array.from(
+      uniqueParentsMap.entries(),
+    ).map(([parentId, parentName]) => ({
+      parentId,
+      parentName,
+    }));
+
+    return uniqueParentProductResponses;
   }
 
   //Find product by ID
