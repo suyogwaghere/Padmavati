@@ -1,7 +1,9 @@
 import sum from 'lodash/sum';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import axiosInstance, { endpoints } from 'src/utils/axios';
+// utils
 // @mui
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -15,33 +17,57 @@ import { fCurrency } from 'src/utils/format-number';
 // _mock
 
 // components
-import { useGetProducts } from 'src/api/product';
 import { RHFAutocomplete, RHFTextField } from 'src/components/hook-form';
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 export default function VoucherNewEditDetails({ selectedParent }) {
+  const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   console.log(
-    '🚀 ~ file: voucher-new-edit-details.js:25 ~ VoucherNewEditDetails ~ selectedParent:',
-    selectedParent
+    '🚀 ~ file: voucher-new-edit-details.js:29 ~ VoucherNewEditDetails ~ selectedProduct:',
+    selectedProduct
   );
 
   const { control, setValue, watch, resetField } = useFormContext();
 
-  const { products, productsLoading, productsEmpty } = useGetProducts();
-
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'items',
+    name: 'products',
   });
   const values = watch();
 
-  const totalOnRow = values.items.map((item) => item.quantity * item.rate);
+  console.log(
+    '🚀 ~ file: voucher-new-edit-details.js:35 ~ VoucherNewEditDetails ~ values:',
+    values
+  );
+
+  const totalOnRow = values.products.map((product) => product.quantity * product.price);
 
   const subTotal = sum(totalOnRow);
 
   const totalAmount = subTotal - values.discount - values.shipping + values.taxes;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const url = endpoints.product.list;
+        // const url = `http://192.168.1.69:3005${endpoints.product.list}`;
+        const res = await axiosInstance.get(url);
+        const data = await res.data;
+        console.log('🚀 ~ file: voucher-new-edit-details.js:52 ~ fetchData ~ data:', data);
+        const filteredNames = data.filter((product) => product.parentId === selectedParent);
+        const product = filteredNames;
+        console.log('🚀 ~ file: voucher-new-edit-details.js:56 ~ fetchData ~ newp:', product);
+        setProducts(product);
+      } catch (error) {
+        console.log('error ', error);
+      }
+    };
+    fetchData();
+  }, [selectedParent]);
 
   useEffect(() => {
     setValue('totalAmount', totalAmount);
@@ -63,29 +89,29 @@ export default function VoucherNewEditDetails({ selectedParent }) {
 
   const handleChangeQuantity = useCallback(
     (event, index) => {
-      setValue(`items[${index}].quantity`, Number(event.target.value));
+      setValue(`products[${index}].quantity`, Number(event.target.value));
       setValue(
-        `items[${index}].total`,
-        values.items.map((item) => item.quantity * item.rate)[index]
+        `products[${index}].total`,
+        values.products.map((item) => item.quantity * item.price)[index]
       );
     },
-    [setValue, values.items]
+    [setValue, values.products]
   );
 
   const handleChangePrice = useCallback(
     (event, index) => {
-      setValue(`items[${index}].rate`, Number(event.target.value));
+      setValue(`products[${index}].price`, Number(event.target.value));
       setValue(
-        `items[${index}].total`,
-        values.items.map((item) => item.quantity * item.rate)[index]
+        `products[${index}].total`,
+        values.products.map((item) => item.quantity * item.price)[index]
       );
     },
-    [setValue, values.items]
+    [setValue, values.products]
   );
 
   const handleChangeNote = useCallback(
     (event, index) => {
-      setValue(`items[${index}].notes`, event.target.value);
+      setValue(`products[${index}].notes`, event.target.value);
     },
     [setValue]
   );
@@ -148,14 +174,32 @@ export default function VoucherNewEditDetails({ selectedParent }) {
           <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
               <RHFAutocomplete
-                name={`items[${index}].productName`}
+                name={`products[${index}].productName`}
                 label="Name"
                 size="small"
                 fullWidth
+                onChange={(event, newValue) => {
+                  // Find the selected product object based on the selected product name
+                  const selectedProductObject = products.find(
+                    (product) => product.productName === newValue
+                  );
+                  setSelectedProduct(selectedProductObject); // Store the selected product object in the statee in the state
+                  // Update the form's value with the selected product's details
+                  setValue(`products[${index}].productName`, selectedProductObject.productName);
+                  setValue(`products[${index}].notes`, selectedProductObject.notes);
+                  setValue(`products[${index}].quantity`, selectedProductObject.quantity);
+                  setValue(`products[${index}].price`, selectedProductObject.sellPrice);
+
+                  // ... other fields you want to update
+
+                  // Trigger the change event for the other fields if needed
+                  handleChangeQuantity(event, index); // Update quantity-related calculations
+                  handleChangePrice(event, index); // Update price-related calculations
+                }}
                 options={products ? products.map((product) => product.productName) : []}
                 getOptionLabel={(option) => option}
                 renderOption={(props, option) => {
-                  const { productName, id, guid } = products.filter(
+                  const { productName, id } = products.filter(
                     (product) => product.productName === option
                   )[0];
 
@@ -172,9 +216,9 @@ export default function VoucherNewEditDetails({ selectedParent }) {
               />
 
               <RHFTextField
+                name={`products[${index}].notes`}
                 size="small"
                 type="text"
-                name={`items[${index}].notes`}
                 label="Note"
                 placeholder="Note..."
                 onChange={(event) => handleChangeNote(event, index)}
@@ -183,9 +227,9 @@ export default function VoucherNewEditDetails({ selectedParent }) {
               />
 
               <RHFTextField
+                name={`products[${index}].quantity`}
                 size="small"
                 type="number"
-                name={`items[${index}].quantity`}
                 label="Quantity"
                 placeholder="0"
                 onChange={(event) => handleChangeQuantity(event, index)}
@@ -194,11 +238,12 @@ export default function VoucherNewEditDetails({ selectedParent }) {
               />
 
               <RHFTextField
+                name={`products[${index}].price`}
                 size="small"
                 type="number"
-                name={`items[${index}].rate`}
                 label="Price"
                 placeholder="0.00"
+                // value={`products[${index}].price`}
                 onChange={(event) => handleChangePrice(event, index)}
                 InputProps={{
                   startAdornment: (
@@ -210,18 +255,16 @@ export default function VoucherNewEditDetails({ selectedParent }) {
                 sx={{ maxWidth: { md: 96 } }}
               />
               <RHFTextField
+                name={`products[${index}].discount`}
                 disabled
                 size="small"
                 type="number"
-                name={`items[${index}].total`}
                 label="Discount"
                 placeholder="0.00"
                 // endAdornment={<InputAdornment position="end">kg</InputAdornment>}
                 value={
-                  '0.00'
-                  // values.items[index].total === 0
-                  //   ? ''
-                  //   : (values.items[index].quantity * values.items[index].rate).toFixed(2)
+                  // '0.00'
+                  values.products[index].discount === 0 ? '0.00' : values.products[index].discount
                 }
                 onChange={(event) => handleChangePrice(event, index)}
                 InputProps={{
@@ -239,16 +282,16 @@ export default function VoucherNewEditDetails({ selectedParent }) {
                 }}
               />
               <RHFTextField
+                name={`products[${index}].total`}
                 disabled
                 size="small"
                 type="number"
-                name={`items[${index}].total`}
                 label="Total"
                 placeholder="0.00"
                 value={
-                  values.items[index].total === 0
+                  values.products[index].total === 0
                     ? ''
-                    : (values.items[index].quantity * values.items[index].rate).toFixed(2)
+                    : (values.products[index].quantity * values.products[index].price).toFixed(2)
                 }
                 onChange={(event) => handleChangePrice(event, index)}
                 InputProps={{

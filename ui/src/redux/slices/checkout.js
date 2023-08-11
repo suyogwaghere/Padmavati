@@ -6,6 +6,8 @@ import uniqBy from 'lodash/uniqBy';
 
 const initialState = {
   activeStep: 0,
+  partyId: '',
+  adminNote: '',
   cart: [],
   subTotal: 0,
   total: 0,
@@ -19,6 +21,10 @@ const slice = createSlice({
   name: 'checkout',
   initialState,
   reducers: {
+    getPartyId(state, action) {
+      const id = action.payload;
+      state.partyId = id;
+    },
     getCart(state, action) {
       const cart = action.payload;
 
@@ -61,6 +67,24 @@ const slice = createSlice({
       state.cart = uniqBy([...state.cart, newProduct], 'id');
       state.totalItems = sum(state.cart.map((product) => product.quantity));
     },
+    updateCartItemNote(state, action) {
+      const data = action.payload;
+      const { notes, disc } = data;
+
+      console.log('🚀 ~ file: checkout.js:74 ~ updateCartItemNote ~ disc:', disc);
+
+      console.log('🚀 ~ file: checkout.js:74 ~ updateCartItemNote ~ notes:', notes);
+
+      state.cart = state.cart.map((product) =>
+        product.productId === data.productId ? { ...product, notes, discount: disc } : product
+      );
+      console.log('🚀Updated added: ', state.cart);
+    },
+    updateAdminNote(state, action) {
+      const data = action.payload;
+      state.adminNote = data;
+      console.log('🚀admin note added: ', data);
+    },
 
     deleteCart(state, action) {
       const updateCart = state.cart.filter((product) => product.id !== action.payload);
@@ -78,6 +102,7 @@ const slice = createSlice({
     resetCart(state) {
       state.cart = [];
       state.billing = null;
+      // state.partyId = '';
       state.activeStep = 0;
       state.total = 0;
       state.subTotal = 0;
@@ -155,6 +180,10 @@ export default slice.reducer;
 
 // Actions
 export const {
+  updateCartItemNote,
+  getPartyId,
+  updateAdminNote,
+  adminNote,
   getCart,
   addToCart,
   resetCart,

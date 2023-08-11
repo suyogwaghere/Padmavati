@@ -2,6 +2,9 @@ import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo, useReducer } from 'react';
 // utils
 import axios, { endpoints } from 'src/utils/axios';
+// redux
+import { useDispatch } from 'react-redux';
+import { getPartyId } from 'src/redux/slices/checkout';
 //
 import { AuthContext } from './auth-context';
 import { isValidToken, setRole, setSession } from './utils';
@@ -56,6 +59,8 @@ const ROLE_KEY = 'userRole';
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const dis = useDispatch();
+
   const initialize = useCallback(async () => {
     try {
       const rememberMe = sessionStorage.getItem(REMEMBER_ME);
@@ -109,6 +114,20 @@ export function AuthProvider({ children }) {
 
     const { accessToken, user } = response.data;
 
+    // const partyId = currentUser?.name;
+    const partyId = user.ledgerId;
+
+    console.log('🚀 ~ file: auth-provider.js:120 ~ login ~ partyId:', partyId);
+
+    const newPartyId = {
+      partyId,
+    };
+    try {
+      dis(getPartyId(newPartyId));
+    } catch (error) {
+      console.error(error);
+    }
+
     const hasAdminPermission = user.permissions[0];
     if (!hasAdminPermission) {
       throw new Error('You do not have admin permission.');
@@ -123,6 +142,7 @@ export function AuthProvider({ children }) {
         user,
       },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // REGISTER

@@ -1,19 +1,23 @@
-import PropTypes from 'prop-types';
-import * as Yup from 'yup';
-import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import PropTypes from 'prop-types';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+// routes
 // @mui
+import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
-import LoadingButton from '@mui/lab/LoadingButton';
 // components
-import Iconify from 'src/components/iconify';
 import FormProvider from 'src/components/hook-form';
+import Iconify from 'src/components/iconify';
+import { useSnackbar } from 'src/components/snackbar';
+import { useRouter } from 'src/routes/hook';
+import axiosInstance from 'src/utils/axios';
 //
-import CheckoutSummary from './checkout-summary';
-import CheckoutDelivery from './checkout-delivery';
 import CheckoutBillingInfo from './checkout-billing-info';
+import CheckoutDelivery from './checkout-delivery';
 import CheckoutPaymentMethods from './checkout-payment-methods';
+import CheckoutSummary from './checkout-summary';
 
 // ----------------------------------------------------------------------
 
@@ -68,7 +72,8 @@ export default function CheckoutPayment({
   onApplyShipping,
 }) {
   const { total, discount, subTotal, shipping, billing } = checkout;
-
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const PaymentSchema = Yup.object().shape({
     payment: Yup.string().required('Payment is required!'),
   });
@@ -88,13 +93,48 @@ export default function CheckoutPayment({
     formState: { isSubmitting },
   } = methods;
 
+  // const onSubmit = handleSubmit(async (data) => {
+  //   try {
+  //     onNextStep();
+
+  //     onReset();
+  //     console.info('DATA', data);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // });
+
   const onSubmit = handleSubmit(async (data) => {
+    console.log('data ', data);
     try {
+      const inputData = {
+        partyId: checkout.partyId.partyId,
+        products: checkout.cart,
+        adminNote: checkout.adminNote,
+      };
+
+      console.log('🚀 ~ file: checkout-payment.js:116 ~ onSubmit ~ inputData:', inputData);
+
+      await axiosInstance
+        .post(`/api/voucher/create`, inputData)
+        .then((res) => {
+          enqueueSnackbar('Create success!');
+        })
+        .catch((err) => {
+          console.error(err.response.data.error.message);
+          enqueueSnackbar(
+            err.response.data.error.message
+              ? err.response.data.error.message
+              : 'something went wrong!',
+            { variant: 'error' }
+          );
+        });
       onNextStep();
       onReset();
       console.info('DATA', data);
     } catch (error) {
       console.error(error);
+      enqueueSnackbar(error, { variant: 'error' });
     }
   });
 

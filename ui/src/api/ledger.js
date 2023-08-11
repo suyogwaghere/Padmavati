@@ -1,14 +1,15 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import useSWR from 'swr';
 import { useMemo } from 'react';
+import useSWR from 'swr';
 // utils
-import { fetcher, endpoints } from 'src/utils/axios';
+import { endpoints, fetcher } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
 export function useGetLedgers() {
   const URL = endpoints.ledger.list;
-
+  // const queryParams = `filter[limit]=${lmt}`;
+  // const urlWithParams = `${URL}?${queryParams}`;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
 
   const refreshLedgers = () => {
@@ -39,6 +40,29 @@ export function useGetBrand(brandId) {
       brandLoading: isLoading,
       brandError: error,
       brandValidating: isValidating,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  return memoizedValue;
+}
+
+// ----------------------------------------------------------------------
+
+export function useSearchLedgers(query) {
+  const URL = query ? [endpoints.ledger.search, { params: { query } }] : null;
+
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher, {
+    keepPreviousData: true,
+  });
+
+  const memoizedValue = useMemo(
+    () => ({
+      searchResults: data || [],
+      searchLoading: isLoading,
+      searchError: error,
+      searchValidating: isValidating,
+      searchEmpty: !isLoading && !data?.length,
     }),
     [data, error, isLoading, isValidating]
   );

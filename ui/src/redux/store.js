@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch as useAppDispatch, useSelector as useAppSelector } from 'react-redux';
-import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, persistStore } from 'redux-persist';
 import { rootReducer } from './root-reducer';
+// import fetchProducts from './slices/fetchP';
 
 // ----------------------------------------------------------------------
 
@@ -10,7 +11,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        ignoredActions: [FLUSH, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
 });

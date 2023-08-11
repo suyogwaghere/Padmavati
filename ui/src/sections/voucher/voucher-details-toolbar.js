@@ -1,18 +1,21 @@
 import PropTypes from 'prop-types';
 // @mui
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 // routes
 import { RouterLink } from 'src/routes/components';
 // utils
 import { fDateTime } from 'src/utils/format-time';
 // components
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
+import { useCallback } from 'react';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import Iconify from 'src/components/iconify';
+import Label from 'src/components/label';
+import { useRouter } from 'src/routes/hook';
+import { paths } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +28,12 @@ export default function VoucherDetailsToolbar({
   onChangeStatus,
 }) {
   const popover = usePopover();
+  const router = useRouter();
+  const handleEditVoucher = (id) => {
+    console.log('🚀 ~ file: voucher-details-toolbar.js:35 ~ test: ', id);
+    router.push(paths.dashboard.voucher.edit(id));
+  };
+
   return (
     <>
       <Stack
@@ -90,8 +99,13 @@ export default function VoucherDetailsToolbar({
             Print
           </Button>
 
-          <Button color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
-            Edit
+          <Button
+            color="inherit"
+            onClick={() => handleEditVoucher(orderNumber)}
+            variant="contained"
+            startIcon={<Iconify icon="solar:pen-bold" />}
+          >
+            Edit Voucher
           </Button>
         </Stack>
       </Stack>

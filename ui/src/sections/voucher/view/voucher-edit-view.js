@@ -33,7 +33,7 @@ export default function VoucherEditView() {
             name: 'Voucher',
             href: paths.dashboard.voucher.root,
           },
-          { name: currentVoucher?.party_name },
+          { name: currentVoucher?.partyName },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

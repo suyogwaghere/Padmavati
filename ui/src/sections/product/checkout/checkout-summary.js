@@ -1,15 +1,18 @@
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 // @mui
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import TextField from '@mui/material/TextField';
-import CardHeader from '@mui/material/CardHeader';
-import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import InputAdornment from '@mui/material/InputAdornment';
+import CardHeader from '@mui/material/CardHeader';
+import Divider from '@mui/material/Divider';
+// import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { updateAdminNote } from 'src/redux/slices/checkout';
+import { useDispatch } from 'react-redux';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // components
@@ -28,7 +31,22 @@ export default function CheckoutSummary({
   enableDiscount = false,
 }) {
   const displayShipping = shipping !== null ? 'Free' : '-';
-
+  const [adminNote, setAdminNote] = useState('');
+  const handleInsertNote = (event) => {
+    const newNote = event.target.value;
+    setAdminNote(newNote);
+  };
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (adminNote.length > 0) {
+      dispatch(updateAdminNote(adminNote));
+      console.log(
+        '🚀 ~ file: checkout-cart-product.js:42 ~ handleTextInputChange ~ newNote:',
+        adminNote
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminNote]);
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeader
@@ -81,7 +99,7 @@ export default function CheckoutSummary({
             </Box>
           </Stack>
 
-          {enableDiscount && onApplyDiscount && (
+          {/* {enableDiscount && onApplyDiscount && (
             <TextField
               fullWidth
               placeholder="Discount codes / Gifts"
@@ -96,7 +114,15 @@ export default function CheckoutSummary({
                 ),
               }}
             />
-          )}
+          )} */}
+
+          <TextField
+            fullWidth
+            placeholder="Note"
+            value={adminNote}
+            size="small"
+            onChange={handleInsertNote}
+          />
         </Stack>
       </CardContent>
     </Card>

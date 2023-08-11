@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import PropTypes from 'prop-types';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 // @mui
@@ -15,13 +15,14 @@ import Grid from '@mui/material/Unstable_Grid2';
 // routes
 import { paths } from 'src/routes/paths';
 // hooks
+import { useDebounce } from 'src/hooks/use-debounce';
 import { useResponsive } from 'src/hooks/use-responsive';
 // _mock
 // components
 // import TextField from '@mui/material/';
 import { IconButton, InputAdornment } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useGetLedgers } from 'src/api/ledger';
+import { useSearchLedgers } from 'src/api/ledger';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import FormProvider from 'src/components/hook-form/form-provider';
 import Iconify from 'src/components/iconify/iconify';
@@ -32,18 +33,20 @@ import axiosInstance from 'src/utils/axios';
 // ----------------------------------------------------------------------
 const userOptions = ['admin', 'customer'];
 export default function UserNewEditForm({ currentUser }) {
-  const [val, setVal] = useState(userOptions[0]);
-  const [userType, setUserType] = useState('');
-  const [partyId, setPartyId] = useState(0);
-  const [val1, setValue] = useState();
-  const { ledgers } = useGetLedgers();
+  const [userType, setUserType] = useState(userOptions[0]);
+  // const [partyId, setPartyId] = useState(0);
+  // const [val1, setValue] = useState();
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedQuery = useDebounce(searchQuery, 1000);
+  // const { ledgers } = useSearchLedgers(query);
+  const { searchResults } = useSearchLedgers(debouncedQuery);
 
-  // console.log('🚀 ~ file: user-new-edit-form.js:37 ~ UserNewEditForm ~ val1:', val1);
-
-  const [inputValue, setInputValue] = useState('');
+  // const [inputValue, setInputValue] = useState('');
 
   // console.log('🚀 ~ file: user-new-edit-form.js:41 ~ UserNewEditForm ~ inputValue:', inputValue);
-
+  const handleSearch = useCallback((input) => {
+    setSearchQuery(input);
+  }, []);
   const router = useRouter();
   const mdUp = useResponsive('up', 'md');
 
@@ -81,6 +84,7 @@ export default function UserNewEditForm({ currentUser }) {
       name: currentUser?.name || '',
       email: currentUser?.email || '',
       contactNo: currentUser?.contactNo || '',
+      partyName: currentUser?.partyName || '',
     }),
     [currentUser]
   );
@@ -103,15 +107,15 @@ export default function UserNewEditForm({ currentUser }) {
   }, [currentUser, defaultValues, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log('data ', data);
+    console.log('Form data: ', data);
     try {
       if (currentUser) {
         const inputData = {
           name: data.name,
-          ledgerId: partyId,
+          ledgerId: data.partyId,
           email: data.email,
           contactNo: data.contactNo,
-          // permissions: [userType],
+          permissions: [userType],
         };
         await axiosInstance
           .patch(`/api/users/${currentUser.id}`, inputData)
@@ -131,7 +135,7 @@ export default function UserNewEditForm({ currentUser }) {
       } else {
         const inputData = {
           name: data.name,
-          ledgerId: partyId,
+          ledgerId: data.partyId * 1,
           email: data.email,
           password: data.password,
           contactNo: data.contactNo,
@@ -182,15 +186,14 @@ export default function UserNewEditForm({ currentUser }) {
             {!currentUser ? (
               <RHFSelect
                 sx={{ width: 300 }}
-                name="user_type"
+                name="userType"
                 label="User Type"
-                value={val}
+                value={userType}
+                key={userType}
                 InputLabelProps={{ shrink: true }}
-                // onChange={handleInputData}
                 onChange={(event, newInputValue) => {
-                  // setInputValue(newInputValue.props.value);
-                  setVal(newInputValue.props.value);
                   setUserType(newInputValue.props.value);
+                  methods.setValue('userType', newInputValue.props.value);
                 }}
                 PaperPropsSx={{ textTransform: 'capitalize' }}
               >
@@ -201,38 +204,34 @@ export default function UserNewEditForm({ currentUser }) {
                 ))}
               </RHFSelect>
             ) : null}
-            {/* <Autocomplete
-                value={val}
-                onChange={(event, newValue) => {
-                  setVal(newValue);
-                }}
-                inputValue={inputValue}
-                onInputChange={(event, newInputValue) => {
-                  setInputValue(newInputValue);
-                }}
-                id="controllable-states-demo"
-                options={userOptions}
-                sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} label="User Type" />}
-              /> */}
 
             <Autocomplete
-              // name={`items[${index}].productName`}
-              // size="small"
-              value={val1}
               fullWidth
-              name="party_name"
+              name="partyName"
               label="Party A/c Name"
-              onChange={(event, newValue) => {
-                setValue(newValue);
+              onInputChange={(event, newValue) => handleSearch(newValue)}
+              onChange={(event, newInputValue) => {
+                const selectedLedger = searchResults.find(
+                  (ledger) => ledger.name === newInputValue
+                );
+                if (selectedLedger) {
+                  methods.setValue('partyName', selectedLedger.name);
+                  methods.setValue('partyId', selectedLedger.l_ID); // Add this line to save partyId
+                } else {
+                  methods.setValue('partyName', newInputValue);
+                  methods.setValue('partyId', ''); // Set partyId to empty if ledger is not found
+                }
               }}
-              inputValue={inputValue}
-              onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue);
-              }}
-              options={ledgers ? ledgers.map((ledger) => ledger.name) : []}
-              getOptionLabel={(option) => option.id}
-              isOptionEqualToValue={(option, value) => option === value.name}
+              // Filter and sanitize searchResults
+              options={
+                searchResults
+                  ? searchResults
+                      .filter((ledger) => ledger && ledger.name)
+                      .map((ledger) => ledger.name)
+                  : []
+              }
+              getOptionLabel={(option) => option}
+              isOptionEqualToValue={(option, value) => option === value}
               renderInput={(params) => <TextField {...params} label="Party A/c Name" />}
             />
             <RHFTextField name="name" label="Name" />

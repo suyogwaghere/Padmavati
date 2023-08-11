@@ -103,11 +103,12 @@ export default function useCheckout() {
   );
 
   const onResetAll = useCallback(() => {
-    if (completed) {
-      dispatch(resetCart());
-      router.replace(paths.dashboard.product.root);
-    }
-  }, [completed, dispatch, router]);
+    dispatch(resetCart());
+    router.replace(paths.dashboard.product.root);
+    // if (completed) {
+    // }
+  }, [dispatch, router]);
+  // }, [completed, dispatch, router]);
 
   return {
     checkout,

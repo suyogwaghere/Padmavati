@@ -1,27 +1,26 @@
-import PropTypes from 'prop-types';
 import { format } from 'date-fns';
+import PropTypes from 'prop-types';
 // @mui
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import Collapse from '@mui/material/Collapse';
-import MenuItem from '@mui/material/MenuItem';
-import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import TableCell from '@mui/material/TableCell';
+import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import TableCell from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // components
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import Iconify from 'src/components/iconify';
+import Label from 'src/components/label';
 
 // ----------------------------------------------------------------------
 
@@ -35,12 +34,12 @@ export default function VoucherTableRow({
   onSyncVoucher,
 }) {
   const {
-    party_name,
+    partyName,
     products,
     status,
     id,
     createdAt,
-    date,
+    voucherDate,
     is_synced,
     totalQuantity,
     totalAmount,
@@ -74,14 +73,14 @@ export default function VoucherTableRow({
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
         <ListItemText
-          primary={party_name}
+          primary={partyName}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{ component: 'span', color: 'text.disabled' }}
         />
       </TableCell>
       <TableCell>
         <ListItemText
-          primary={format(new Date(date), 'dd MMM yyyy')}
+          primary={format(new Date(voucherDate), 'yyyy MM dd')}
           // secondary={format(new Date(createdAt), 'p')}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
@@ -104,7 +103,7 @@ export default function VoucherTableRow({
       </TableCell>
       <TableCell>
         <ListItemText
-          primary={format(new Date(createdAt), 'dd MMM yyyy')}
+          primary={format(new Date(createdAt), 'yyyy MM dd')}
           secondary={format(new Date(createdAt), 'p')}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
@@ -170,7 +169,7 @@ export default function VoucherTableRow({
                 <Box>{item.notes}</Box>
                 <Box sx={{ width: 110, textAlign: 'right' }}>x{item.quantity}</Box>
 
-                <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.rate)}</Box>
+                <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
               </Stack>
             ))}
           </Stack>

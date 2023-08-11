@@ -1,5 +1,12 @@
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+
 // @mui
+// eslint-disable-next-line import/no-extraneous-dependencies
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
@@ -7,12 +14,15 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // components
+import { useDispatch } from 'react-redux';
 import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
+import { updateCartItemNote } from 'src/redux/slices/checkout';
 // import { ColorPreview } from 'src/components/color-utils';
 //
 import IncrementerButton from '../common/incrementer-button';
@@ -20,8 +30,42 @@ import IncrementerButton from '../common/incrementer-button';
 // ----------------------------------------------------------------------
 
 export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
-  const { productName, size, sellPrice, colors, coverUrl, quantity, available } = row;
+  const { id, productId, productName, uom, sellPrice, coverUrl, quantity, discount, available } =
+    row;
+  const [notes, setTextInputValue] = useState('');
+  const [disc, setDiscount] = useState(discount);
 
+  const dispatch = useDispatch();
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    if (notes.length > 3) {
+      const data = {
+        productId,
+        notes,
+        disc,
+      };
+      dispatch(updateCartItemNote(data));
+      console.log(
+        '🚀 ~ file: checkout-cart-product.js:42 ~ handleTextInputChange ~ newNote:',
+        notes
+      );
+    }
+
+    // return () => {
+    //   second;
+    // };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notes, disc]);
+
+  const handleTextInputChange = (event) => {
+    const newNote = event.target.value;
+    setTextInputValue(newNote);
+  };
+  const handleDiscountChange = (event) => {
+    const newNote = event.target.value;
+    setDiscount(newNote);
+  };
   return (
     <TableRow>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
@@ -42,16 +86,30 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
             alignItems="center"
             sx={{ typography: 'body2', color: 'text.secondary' }}
           >
-            size: <Label sx={{ ml: 0.5 }}> {size} </Label>
+            UOM: <Label sx={{ ml: 0.5 }}> {uom} </Label>
             <Divider orientation="vertical" sx={{ mx: 1, height: 16 }} />
             {/* <ColorPreview colors={colors} /> */}
           </Stack>
         </Stack>
       </TableCell>
 
+      <TableCell>
+        <Accordion align="center" sx={{ m: 1, width: '15ch' }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>Note</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TextField
+              label="Write note"
+              variant="outlined"
+              size="small"
+              value={notes}
+              onChange={handleTextInputChange}
+            />
+          </AccordionDetails>
+        </Accordion>
+      </TableCell>
       <TableCell>{fCurrency(sellPrice)}</TableCell>
-
-     
 
       <TableCell>
         <Box sx={{ width: 88, textAlign: 'right' }}>
@@ -63,12 +121,27 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
             disabledIncrease={quantity >= available}
           />
 
-          <Typography variant="caption" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
-             available:{/* {available} */}
-          </Typography>
+          {/* <Typography variant="caption" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
+            available:{available} 
+          </Typography> */}
         </Box>
       </TableCell>
 
+      <TableCell align="center">
+        <TextField
+          label="discount"
+          variant="outlined"
+          size="small"
+          value={disc}
+          type="number"
+          onChange={handleDiscountChange}
+          inputProps={{ min: 0, max: 99 }}
+          // onChange={handleTextInputChange}
+        />
+        {/* <Typography variant="outlined" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
+          {discount}
+        </Typography> */}
+      </TableCell>
       <TableCell align="right">{fCurrency(sellPrice * quantity)}</TableCell>
 
       <TableCell align="right" sx={{ px: 1 }}>

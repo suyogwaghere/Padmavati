@@ -1,9 +1,13 @@
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 // @mui
+import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+import Fab from '@mui/material/Fab';
 import Stack from '@mui/material/Stack';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -19,7 +23,7 @@ import {
   PRODUCT_SORT_OPTIONS,
 } from 'src/_mock';
 // api
-import { useGetProducts, useSearchProducts } from 'src/api/product';
+import { useGetProductParents, useGetProducts, useSearchProducts } from 'src/api/product';
 // components
 import EmptyContent from 'src/components/empty-content';
 import { useSettingsContext } from 'src/components/settings';
@@ -45,6 +49,13 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function ProductShopView() {
+  // const products = useSelector((state) => state.products.fetchedProducts);
+  const { parents, parentsLoading, parentsEmpty } = useGetProductParents();
+  let firstParent = 0;
+  if (parents.length > 0) {
+    firstParent = parents[0].parentId;
+  }
+
   const settings = useSettingsContext();
 
   const { checkout } = useCheckout();
@@ -55,13 +66,25 @@ export default function ProductShopView() {
 
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [parentSelected, setParentSelected] = useState(firstParent);
+
   const debouncedQuery = useDebounce(searchQuery);
+
+  const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const { products, productsLoading, productsEmpty } = useGetProducts();
+  // const [visibleProducts, setVisibleProducts] = useState(10);
 
-  const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
+  const { products, productsLoading, productsEmpty } = useGetProducts(
+    parentSelected || firstParent
+  );
+
+  useEffect(() => {
+    if (parents.length > 0 && parentSelected === null && parentSelected === undefined) {
+      setParentSelected(parents[0].parentId); // Set the first parent's parentId
+    }
+  }, [parents, parentSelected]);
 
   const handleFilters = useCallback((name, value) => {
     setFilters((prevState) => ({
@@ -77,7 +100,7 @@ export default function ProductShopView() {
   });
 
   const canReset = !isEqual(defaultFilters, filters);
-
+  // const productsLoading = false;
   const notFound = !dataFiltered.length && canReset;
 
   const handleSortBy = useCallback((newValue) => {
@@ -92,6 +115,12 @@ export default function ProductShopView() {
     setFilters(defaultFilters);
   }, []);
 
+  const handleChange = (event, newValue) => {
+    console.log('🚀 ~ file: product-shop-view.js:106 ~ handleChange ~ newValue:', newValue);
+
+    setParentSelected(newValue);
+  };
+
   const renderFilters = (
     <Stack
       spacing={3}
@@ -104,10 +133,10 @@ export default function ProductShopView() {
         results={searchResults}
         onSearch={handleSearch}
         loading={searchLoading}
-        hrefItem={(id) => paths.product.details(id)}
+        hrefItem={(_id) => paths.product.details(_id)}
       />
 
-      <Stack direction="row" spacing={1} flexShrink={0}>
+      {/* <Stack direction="row" spacing={1} flexShrink={0}>
         <ProductFilters
           open={openFilters.value}
           onOpen={openFilters.onTrue}
@@ -126,7 +155,7 @@ export default function ProductShopView() {
         />
 
         <ProductSort sort={sortBy} onSort={handleSortBy} sortOptions={PRODUCT_SORT_OPTIONS} />
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 
@@ -142,6 +171,23 @@ export default function ProductShopView() {
     />
   );
 
+  const renderParents = (
+    <Box sx={{ maxWidth: { xs: 320, sm: 480 }, bgcolor: 'background.paper' }}>
+      <Tabs
+        value={parentSelected || parents[0]?.parentId}
+        onChange={handleChange}
+        variant="scrollable"
+        scrollButtons="auto"
+        aria-label="scrollable auto tabs example"
+        sx={{ width: '100%' }}
+      >
+        {parents.map((parent) => (
+          <Tab key={parent.parentId} fullWidth label={parent.parentName} value={parent.parentId} />
+        ))}
+      </Tabs>
+    </Box>
+  );
+
   const renderNotFound = <EmptyContent filled title="No Data" sx={{ py: 10 }} />;
 
   return (
@@ -152,7 +198,6 @@ export default function ProductShopView() {
       }}
     >
       <CartIcon totalItems={checkout.totalItems} />
-
       <Typography
         variant="h4"
         sx={{
@@ -161,7 +206,6 @@ export default function ProductShopView() {
       >
         Shop
       </Typography>
-
       <Stack
         spacing={2.5}
         sx={{
@@ -172,10 +216,59 @@ export default function ProductShopView() {
 
         {canReset && renderResults}
       </Stack>
-
-      {(notFound || productsEmpty) && renderNotFound}
+      <Stack
+        spacing={2.5}
+        sx={{
+          mb: { xs: 3, md: 5 },
+          alignItems: 'center',
+        }}
+      >
+        {renderParents}
+      </Stack>
+      {(notFound && renderNotFound) || productsEmpty}
 
       <ProductList products={dataFiltered} loading={productsLoading} />
+      {/* {visibleProducts < 915 && (
+        <Fab
+          sx={{
+            ml: 'auto',
+            mr: 'auto',
+            my: 3,
+            justifyContent: 'center',
+            flex: 1,
+            alignItems: 'center',
+          }}
+          variant="extended"
+          size="medium"
+          color="primary"
+          aria-label="add"
+        >
+          Load More
+        </Fab>
+      )} */}
+      {/* <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 5,
+        }}
+      >
+        {visibleProducts < 915 && (
+          <Fab
+            variant="extended"
+            onClick={() => setVisibleProducts(visibleProducts + 10)}
+            size="medium"
+            color="primary"
+            aria-label="add"
+          >
+            Load More
+          </Fab>
+        )}
+      </Box> */}
+
+      {/* <button type="button" onClick={() => setVisibleProducts(visibleProducts + 10)}>
+        </button>  */}
     </Container>
   );
 }

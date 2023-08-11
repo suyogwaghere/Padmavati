@@ -17,7 +17,7 @@ import { useAuthContext } from 'src/auth/hooks';
 import { varHover } from 'src/components/animate';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useSnackbar } from 'src/components/snackbar';
-
+import { useCheckout } from 'src/sections/product/hooks';
 // ----------------------------------------------------------------------
 
 const OPTIONS = [
@@ -38,6 +38,21 @@ const OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+  const {
+    checkout,
+    completed,
+    onResetAll,
+    onGotoStep,
+    onNextStep,
+    onBackStep,
+    onDeleteCart,
+    onResetBilling,
+    onCreateBilling,
+    onApplyDiscount,
+    onApplyShipping,
+    onIncreaseQuantity,
+    onDecreaseQuantity,
+  } = useCheckout();
   const router = useRouter();
 
   // const { user } = useMockedUser();
@@ -50,6 +65,7 @@ export default function AccountPopover() {
 
   const handleLogout = async () => {
     try {
+      onResetAll();
       await logout();
       popover.onClose();
       router.replace('/');

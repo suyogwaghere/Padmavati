@@ -39,6 +39,7 @@ export const endpoints = {
   },
   product: {
     list: '/api/products/list',
+    parent: '/api/products/parent/list',
     details: '/api/product/details',
     search: '/api/products/search',
     sync: '/api/products/sync',
@@ -50,6 +51,7 @@ export const endpoints = {
   },
   voucher: {
     list: '/api/vouchers/list',
+    user: '/api/vouchers/user/list',
     details: (id) => `/api/vouchers/${id}`,
     search: '/api/vouchers/search',
   },

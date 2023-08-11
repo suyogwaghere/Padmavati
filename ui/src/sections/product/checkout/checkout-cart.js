@@ -2,10 +2,14 @@ import PropTypes from 'prop-types';
 import sum from 'lodash/sum';
 // @mui
 import Card from '@mui/material/Card';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
+import { useSnackbar } from 'src/components/snackbar';
+import { useRouter } from 'src/routes/hook';
+import axiosInstance from 'src/utils/axios';
 // routes
 import { paths } from 'src/routes/paths';
 // components
@@ -25,13 +29,52 @@ export default function CheckoutCart({
   onApplyDiscount,
   onIncreaseQuantity,
   onDecreaseQuantity,
+  onReset,
 }) {
-  const { cart, total, discount, subTotal } = checkout;
+  const { cart, total, discount, subTotal, adminNote } = checkout;
 
   const totalItems = sum(cart.map((item) => item.quantity));
 
   const empty = !cart.length;
 
+  const { enqueueSnackbar } = useSnackbar();
+  //  const {
+  //    handleSubmit,
+  //    formState: { isSubmitting },
+  //  } = methods;
+  const onSubmit = async (data) => {
+    console.log('data ', data);
+    try {
+      const inputData = {
+        partyId: checkout.partyId.partyId,
+        products: checkout.cart,
+        adminNote: checkout.adminNote,
+      };
+
+      console.log('🚀 ~ file: checkout-payment.js:116 ~ onSubmit ~ inputData:', inputData);
+
+      await axiosInstance
+        .post(`/api/voucher/create`, inputData)
+        .then((res) => {
+          enqueueSnackbar('Create success!');
+        })
+        .catch((err) => {
+          console.error(err.response.data.error.message);
+          enqueueSnackbar(
+            err.response.data.error.message
+              ? err.response.data.error.message
+              : 'something went wrong!',
+            { variant: 'error' }
+          );
+        });
+      onNextStep();
+      // onReset();
+      console.info('DATA ', data);
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar(error, { variant: 'error' });
+    }
+  };
   return (
     <Grid container spacing={3}>
       <Grid xs={12} md={8}>
@@ -79,12 +122,13 @@ export default function CheckoutCart({
         <CheckoutSummary
           enableDiscount
           total={total}
+          adminNote={adminNote}
           discount={discount}
           subTotal={subTotal}
           onApplyDiscount={onApplyDiscount}
         />
 
-        <Button
+        {/* <Button
           fullWidth
           size="large"
           type="submit"
@@ -93,7 +137,19 @@ export default function CheckoutCart({
           onClick={onNextStep}
         >
           Check Out
-        </Button>
+        </Button> */}
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          variant="contained"
+          disabled={!cart.length}
+          onClick={onSubmit}
+          // onClick={onNextStep}
+          // loading={onSubmit}
+        >
+          Complete Order
+        </LoadingButton>
       </Grid>
     </Grid>
   );
@@ -106,4 +162,5 @@ CheckoutCart.propTypes = {
   onApplyDiscount: PropTypes.func,
   onDecreaseQuantity: PropTypes.func,
   onIncreaseQuantity: PropTypes.func,
+  onReset: PropTypes.func,
 };

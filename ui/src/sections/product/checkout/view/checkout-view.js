@@ -70,13 +70,11 @@ export default function CheckoutView() {
       <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
         Checkout
       </Typography>
-
-      <Grid container justifyContent={completed ? 'center' : 'flex-start'}>
+      {/* <Grid container justifyContent={completed ? 'center' : 'flex-start'}>
         <Grid xs={12} md={8}>
           <CheckoutSteps activeStep={activeStep} steps={PRODUCT_CHECKOUT_STEPS} />
         </Grid>
-      </Grid>
-
+      </Grid> */}
       {completed ? (
         <CheckoutOrderComplete open={completed} onReset={onResetAll} onDownloadPDF={() => {}} />
       ) : (
@@ -89,10 +87,11 @@ export default function CheckoutView() {
               onApplyDiscount={onApplyDiscount}
               onIncreaseQuantity={onIncreaseQuantity}
               onDecreaseQuantity={onDecreaseQuantity}
+              onReset={onResetAll}
             />
           )}
 
-          {activeStep === 1 && (
+          {/* {activeStep === 1 && (
             <CheckoutBillingAddress
               checkout={checkout}
               onBackStep={onBackStep}
@@ -109,9 +108,10 @@ export default function CheckoutView() {
               onApplyShipping={onApplyShipping}
               onReset={onResetAll}
             />
-          )}
+          )} */}
         </>
       )}
+      {console.log('🚀 ~ file: checkout-view.js:119 ~ CheckoutView ~ completed:', completed)}
     </Container>
   );
 }

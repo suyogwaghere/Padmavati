@@ -152,8 +152,8 @@ export class VoucherController {
             price: voucherProduct?.price,
             amount: voucherProduct?.amount,
             discount: voucherProduct?.discount,
-            // godown: voucherProduct?.godown,
-            // _godown: voucherProduct?._godown,
+            uom: voucherProduct?.uom,
+            taxRate: voucherProduct?.taxRate,
             notes: voucherProduct?.notes,
           };
         }),
@@ -443,6 +443,10 @@ export class VoucherController {
   async updateVoucher(@requestBody({}) voucherData: any): Promise<any> {
     const repo = new DefaultTransactionalRepository(Voucher, this.dataSource);
     const tx = await repo.beginTransaction(IsolationLevel.READ_COMMITTED);
+    console.log(
+      '🚀 ~ file: voucher.controller.ts:451 ~ VoucherController ~ updateVoucher ~ voucher:',
+      voucherData,
+    );
     try {
       const voucher = await this.voucherRepository.findById(
         parseInt(voucherData.voucherNumber),
@@ -467,13 +471,13 @@ export class VoucherController {
 
       for (const product of voucherData.products) {
         totalQuantityData += product.quantity;
-        totalAmountData += product.quantity * product.sellPrice;
+        totalAmountData += product.quantity * product.price;
       }
 
       const voucherUpdateData = {
-        voucherDate: voucherData.date,
-        Saletype: voucherData.Saletype,
-        McName: voucherData.McName,
+        voucherDate: voucherData.date || ' ',
+        Saletype: voucherData.Saletype || ' ',
+        McName: voucherData.McName || ' ',
         // voucher_type: 'Sales',
         // _voucher_type: 'e5a9b5a7-7f09-4ac0-a2cd-f5aa3ad03acf-00000026',
         partyName: party.name,
@@ -512,7 +516,7 @@ export class VoucherController {
             price: product.price,
             amount: product.price * product.quantity, // Calculate the total amount for each product
             discount: product.discount || 0,
-            uom: product.uom,
+            uom: product.uom || ' ',
             taxRate: product.taxRate,
             taxAmt: taxAmt,
             taxableAMt: taxableAmt,

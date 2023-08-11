@@ -9,12 +9,7 @@ import { LoadingScreen } from 'src/components/loading-screen';
 // voucher
 // import VoucherEditPage from 'src/pages/dashboard/voucher/edit';
 // import VoucherCreatePage from 'src/pages/dashboard/voucher/new';
-import {
-  VoucherCreateView,
-  VoucherDetailsView,
-  VoucherEditView,
-  VoucherListView,
-} from '../../sections/voucher/view';
+import { VoucherDetailsView, VoucherEditView, VoucherListView } from '../../sections/voucher/view';
 // ----------------------------------------------------------------------
 
 // OVERVIEW
@@ -30,6 +25,7 @@ const UserCreatePage = lazy(() => import('src/pages/dashboard/user/new'));
 const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
 
 // BLANK PAGE
+const VoucherCreatePage = lazy(() => import('src/pages/dashboard/voucher/new'));
 
 // ----------------------------------------------------------------------
 
@@ -76,7 +72,7 @@ export const dashboardRoutes = [
         children: [
           { element: <VoucherListView />, index: true },
           { path: 'list', element: <VoucherListView /> },
-          { path: 'new', element: <VoucherCreateView /> },
+          { path: 'new', element: <VoucherCreatePage /> },
           { path: ':id', element: <VoucherDetailsView /> },
           { path: ':id/edit', element: <VoucherEditView /> },
         ],

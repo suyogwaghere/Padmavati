@@ -14,7 +14,7 @@ import Scrollbar from 'src/components/scrollbar';
 // ----------------------------------------------------------------------
 
 export default function VoucherDetailsItems({
-  items,
+  products,
   shipping,
   discount,
   taxes,
@@ -78,7 +78,7 @@ export default function VoucherDetailsItems({
         }}
       >
         <Scrollbar>
-          {items.map((item) => (
+          {products.map((item) => (
             <Stack
               key={item.id}
               direction="row"
@@ -101,10 +101,13 @@ export default function VoucherDetailsItems({
                 }}
               />
 
+              <Box sx={{ width: 210, textAlign: 'left', typography: 'body2' }}>
+                Note: {item.notes}
+              </Box>
               <Box sx={{ typography: 'body2' }}>x{item.quantity}</Box>
 
               <Box sx={{ width: 110, textAlign: 'right', typography: 'subtitle2' }}>
-                {fCurrency(item.rate)}
+                {fCurrency(item.price)}
               </Box>
             </Stack>
           ))}
@@ -118,7 +121,7 @@ export default function VoucherDetailsItems({
 
 VoucherDetailsItems.propTypes = {
   discount: PropTypes.number,
-  items: PropTypes.array,
+  products: PropTypes.array,
   shipping: PropTypes.number,
   subTotal: PropTypes.number,
   taxes: PropTypes.number,

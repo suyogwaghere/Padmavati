@@ -6,10 +6,13 @@ import { endpoints, fetcher } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
-export function useGetProducts() {
+export function useGetProducts(parentId) {
   const URL = endpoints.product.list;
+  const queryParams = `filter[where][parentId]=${parentId}`;
+  const urlWithParams = `${URL}?${queryParams}`;
+  const { data, isLoading, error, isValidating } = useSWR(urlWithParams, fetcher);
 
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+  // const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(
     () => ({
@@ -18,6 +21,25 @@ export function useGetProducts() {
       productsError: error,
       productsValidating: isValidating,
       productsEmpty: !isLoading && !data?.length,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  return memoizedValue;
+}
+export function useGetProductParents() {
+  const URL = endpoints.product.parent;
+  // const queryParams = `filter[limit]=${lmt}`;
+  // const urlWithParams = `${URL}?${queryParams}`;
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      parents: data || [],
+      parentsLoading: isLoading,
+      parentsError: error,
+      parentsValidating: isValidating,
+      parentsEmpty: !isLoading && !data?.length,
     }),
     [data, error, isLoading, isValidating]
   );

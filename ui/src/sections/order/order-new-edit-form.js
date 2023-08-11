@@ -35,7 +35,7 @@ export default function OrderNewEditForm({ currentCategory }) {
   const mdUp = useResponsive('up', 'md');
 
   const { enqueueSnackbar } = useSnackbar();
-  const { products, productsLoading, productsEmpty } = useGetProducts();
+  // const { products, productsLoading, productsEmpty } = useGetProducts(5);
 
   const NewCategorySchema = Yup.object().shape({
     categoryName: Yup.string().required('Category Name is required'),

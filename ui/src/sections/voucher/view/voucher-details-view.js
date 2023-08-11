@@ -52,7 +52,7 @@ export default function VoucherDetailsView() {
           <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' }}>
             {currentVoucher && (
               <VoucherDetailsItems
-                items={currentVoucher.products}
+                products={currentVoucher.products}
                 taxes={currentVoucher.taxes || 0}
                 shipping={currentVoucher.shipping}
                 discount={currentVoucher.discount}
@@ -66,7 +66,7 @@ export default function VoucherDetailsView() {
         </Grid>
 
         <Grid xs={12} md={4}>
-          {currentVoucher && <VoucherDetailsInfo party_name={currentVoucher.party_name} />}
+          {currentVoucher && <VoucherDetailsInfo partyName={currentVoucher.partyName} />}
         </Grid>
       </Grid>
     </Container>

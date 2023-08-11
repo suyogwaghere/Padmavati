@@ -1,18 +1,19 @@
 import isEqual from 'lodash/isEqual';
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // @mui
-import Card from '@mui/material/Card';
-import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
+import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
-import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
+import Tooltip from '@mui/material/Tooltip';
+
 // routes
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
 import { RouterLink } from 'src/routes/components';
+import { useRouter } from 'src/routes/hook';
+import { paths } from 'src/routes/paths';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // _mock
@@ -20,26 +21,26 @@ import { PRODUCT_STOCK_OPTIONS } from 'src/_mock';
 // api
 import { useGetProducts } from 'src/api/product';
 // components
-import { useSettingsContext } from 'src/components/settings';
-import {
-  useTable,
-  getComparator,
-  emptyRows,
-  TableNoData,
-  TableSkeleton,
-  TableEmptyRows,
-  TableHeadCustom,
-  TableSelectedAction,
-  TablePaginationCustom,
-} from 'src/components/table';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { useSettingsContext } from 'src/components/settings';
+import {
+  TableEmptyRows,
+  TableHeadCustom,
+  TableNoData,
+  TablePaginationCustom,
+  TableSelectedAction,
+  TableSkeleton,
+  emptyRows,
+  getComparator,
+  useTable,
+} from 'src/components/table';
 //
+import ProductTableFiltersResult from '../product-table-filters-result';
 import ProductTableRow from '../product-table-row';
 import ProductTableToolbar from '../product-table-toolbar';
-import ProductTableFiltersResult from '../product-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -73,10 +74,12 @@ export default function ProductListView() {
   const settings = useSettingsContext();
 
   const [tableData, setTableData] = useState([]);
+  const [visibleProducts, setVisibleProducts] = useState(10);
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const { products, productsLoading, productsEmpty } = useGetProducts();
+  // const products = useSelector((state) => state.products.fetchedProducts);
+  const { products, productsLoading, productsEmpty } = useGetProducts(visibleProducts);
 
   const confirm = useBoolean();
 
@@ -102,6 +105,7 @@ export default function ProductListView() {
   const canReset = !isEqual(defaultFilters, filters);
 
   const notFound = (!dataFiltered.length && canReset) || productsEmpty;
+  // const productsLoading = false;
 
   const handleFilters = useCallback(
     (name, value) => {
@@ -285,6 +289,11 @@ export default function ProductListView() {
             onChangeDense={table.onChangeDense}
           />
         </Card>
+        {visibleProducts < 915 && (
+          <button type="button" onClick={() => setVisibleProducts(visibleProducts + 10)}>
+            Load More
+          </button>
+        )}
       </Container>
 
       <ConfirmDialog

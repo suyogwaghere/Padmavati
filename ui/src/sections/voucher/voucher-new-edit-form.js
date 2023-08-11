@@ -25,12 +25,8 @@ import VoucherNewEditStatusDate from './voucher-new-edit-status-date';
 
 export default function VoucherNewEditForm({ currentVoucher }) {
   const router = useRouter();
-  const [selectedParent, setSelectedParent] = useState();
+  const [selectedParent, setSelectedParent] = useState(null);
 
-  console.log(
-    '🚀 ~ file: voucher-new-edit-form.js:30 ~ VoucherNewEditForm ~ selectedParent:',
-    selectedParent
-  );
   // selectedParent={selectedParent}
   const loadingSave = useBoolean();
 
@@ -48,21 +44,24 @@ export default function VoucherNewEditForm({ currentVoucher }) {
   });
   const defaultValues = useMemo(
     () => ({
-      party_name: currentVoucher?.guid || '',
+      partyName: currentVoucher?.partyName || '',
       voucherNumber: currentVoucher?.id || 'INV-1990',
       createdAt: currentVoucher?.createdAt || new Date(),
       taxes: currentVoucher?.taxes || 0,
       shipping: currentVoucher?.shipping || 0,
       status: currentVoucher?.is_synced || 0,
       discount: currentVoucher?.discount || 0,
-      items: currentVoucher?.products || [
+      products: currentVoucher?.products || [
         {
           productName: '',
           notes: '',
           description: '',
           service: '',
+          uom: '',
+          taxRate: 1,
           quantity: 1,
-          rate: 0,
+          discount: 0,
+          price: 0,
           total: 0,
         },
       ],
@@ -125,25 +124,29 @@ export default function VoucherNewEditForm({ currentVoucher }) {
     if (currentVoucher) {
       const {
         id,
-        createdAt,
-        _party_name,
-        taxes,
-        shipping,
-        status,
-        is_synced,
-        discount,
-        products,
+        partyName,
+        partyId,
         totalAmount,
+        totalQuantity,
+        createdAt,
+        McName,
+        Saletype,
+        is_synced,
+        taxes,
+        adminNote,
+        products,
       } = currentVoucher;
       const updatedValues = {
-        party_name: _party_name,
+        partyName,
+        partyId,
+        McName,
+        Saletype,
+        adminNote,
         voucherNumber: id || 'INV-1990',
         createdAt: createdAt || new Date(),
         taxes: taxes || 0,
-        shipping: shipping || 0,
         status: is_synced || 0,
-        discount: discount || 0,
-        items: products || [{ name: '', notes: '', quantity: 1, rate: 0, total: 0 }],
+        products: products || [{ name: '', notes: '', quantity: 1, price: 0, total: 0 }],
         totalAmount: totalAmount || 0,
       };
       // Set the form values using the setValue method from react-hook-form
@@ -156,9 +159,9 @@ export default function VoucherNewEditForm({ currentVoucher }) {
   return (
     <FormProvider methods={methods}>
       <Card>
-        <VoucherNewEditStatusDate setSelectedParent />
+        <VoucherNewEditStatusDate setSelectedParent={setSelectedParent} />
 
-        <VoucherNewEditDetails />
+        <VoucherNewEditDetails selectedParent={selectedParent} />
       </Card>
       {currentVoucher && currentVoucher.is_synced === 0 ? (
         <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>

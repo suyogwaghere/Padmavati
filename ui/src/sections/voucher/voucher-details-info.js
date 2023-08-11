@@ -15,7 +15,7 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function VoucherDetailsInfo({ party_name }) {
+export default function VoucherDetailsInfo({ partyName }) {
   const renderCustomer = (
     <>
       <CardHeader
@@ -28,7 +28,7 @@ export default function VoucherDetailsInfo({ party_name }) {
       />
       <Stack direction="row" sx={{ p: 3 }}>
         <Stack spacing={0.5} alignItems="flex-start" sx={{ typography: 'body2' }}>
-          <Typography variant="subtitle2">{party_name}</Typography>
+          <Typography variant="subtitle2">{partyName}</Typography>
         </Stack>
       </Stack>
     </>
@@ -137,5 +137,5 @@ export default function VoucherDetailsInfo({ party_name }) {
 }
 
 VoucherDetailsInfo.propTypes = {
-  party_name: PropTypes.string,
+  partyName: PropTypes.string,
 };

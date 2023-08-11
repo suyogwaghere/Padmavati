@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import useSWR from 'swr';
 import { useMemo } from 'react';
+import useSWR from 'swr';
 // utils
-import { fetcher, endpoints } from 'src/utils/axios';
+import { endpoints, fetcher } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -43,4 +43,23 @@ export function useGetVoucher(voucherId) {
   );
 
   return memoizedValue;
+}
+export function useGetUserVouchers() {
+  // const URL = partyId ? [endpoints.voucher.details(partyId)] : null;
+  const URL = endpoints.voucher.user;
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+  const refreshVouchers = () => {
+    // Use the `mutate` function to trigger a revalidation
+    mutate();
+  };
+
+  return {
+    vouchers: data || [],
+    vouchersLoading: isLoading,
+    vouchersError: error,
+    vouchersValidating: isValidating,
+    vouchersEmpty: !isLoading && !data?.length,
+    refreshVouchers, // Include the refresh function separately
+  };
 }

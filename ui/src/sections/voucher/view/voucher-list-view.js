@@ -1,50 +1,45 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // @mui
-import { alpha } from '@mui/material/styles';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import Card from '@mui/material/Card';
-import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
+import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
-import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
+import Tooltip from '@mui/material/Tooltip';
 // routes
-import { paths } from 'src/routes/paths';
 import { usePathname, useRouter } from 'src/routes/hook';
+import { paths } from 'src/routes/paths';
 // _mock
-import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
 // utils
 import { fTimestamp } from 'src/utils/format-time';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
-import Label from 'src/components/label';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {
-  useTable,
-  getComparator,
   emptyRows,
-  TableNoData,
+  getComparator,
   TableEmptyRows,
   TableHeadCustom,
-  TableSelectedAction,
+  TableNoData,
   TablePaginationCustom,
+  TableSelectedAction,
   TableSkeleton,
+  useTable,
 } from 'src/components/table';
 //
-import { useGetVouchers } from 'src/api/voucher';
-import axiosInstance from 'src/utils/axios';
 import { useSnackbar } from 'notistack';
-import VoucherTableToolbar from '../voucher-table-toolbar';
+import { useGetUserVouchers } from 'src/api/voucher';
+import axiosInstance from 'src/utils/axios';
 import VoucherTableFiltersResult from '../voucher-table-filters-result';
 import VoucherTableRow from '../voucher-table-row';
+import VoucherTableToolbar from '../voucher-table-toolbar';
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }];
@@ -61,15 +56,17 @@ const TABLE_HEAD = [
 ];
 
 const defaultFilters = {
-  party_name: '',
+  partyName: '',
   status: 'all',
-  startDate: new Date(),
-  endDate: new Date(),
+  // startDate: new Date(),
+  // endDate: new Date(),
 };
 
 // ----------------------------------------------------------------------
 
 export default function VoucherListView() {
+  const { vouchers, vouchersLoading, vouchersError, vouchersEmpty, refreshVouchers } =
+    useGetUserVouchers();
   const table = useTable({ defaultOrderBy: 'id', defaultOrder: 'desc' });
 
   const settings = useSettingsContext();
@@ -80,8 +77,6 @@ export default function VoucherListView() {
   const confirm = useBoolean();
   const { enqueueSnackbar } = useSnackbar();
   const [tableData, setTableData] = useState([]);
-
-  const { vouchers, vouchersLoading, vouchersEmpty, refreshVouchers } = useGetVouchers();
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -110,11 +105,11 @@ export default function VoucherListView() {
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   const handleFilters = useCallback(
-    (party_name, value) => {
+    (partyName, value) => {
       table.onResetPage();
       setFilters((prevState) => ({
         ...prevState,
-        [party_name]: value,
+        [partyName]: value,
       }));
     },
     [table]
@@ -143,7 +138,7 @@ export default function VoucherListView() {
 
   const handleResetFilters = useCallback(() => {
     setFilters({
-      party_name: '',
+      partyName: '',
       status: 'all',
       startDate: null,
       endDate: null,
@@ -159,7 +154,7 @@ export default function VoucherListView() {
 
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.voucher.edit(id));
+      router.push(paths.dashboard.voucher.details(id));
     },
     [router]
   );
@@ -185,7 +180,6 @@ export default function VoucherListView() {
     },
     [enqueueSnackbar, refreshVouchers]
   );
-
   const handleFilterStatus = useCallback(
     (event, newValue) => {
       handleFilters('status', newValue);
@@ -193,11 +187,20 @@ export default function VoucherListView() {
     [handleFilters]
   );
 
+  console.log('🚀 ~ file: voucher-list-view.js:194 ~ useEffect ~ vouchers:', vouchers);
+
   useEffect(() => {
-    if (vouchers.length) {
+    if (vouchers && vouchers.length) {
       setTableData(vouchers);
+      enqueueSnackbar('Ledgers fetched successfully!', {
+        variant: 'success',
+      });
+    } else {
+      enqueueSnackbar('Error fetching ledgers', {
+        variant: 'error',
+      });
     }
-  }, [vouchers]);
+  }, [enqueueSnackbar, vouchers]);
 
   return (
     <>
@@ -422,7 +425,7 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
     inputData = inputData.filter(
       (order) =>
         `${order.id}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.party_name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.partyName.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

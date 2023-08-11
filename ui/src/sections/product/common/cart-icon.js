@@ -17,7 +17,7 @@ export default function CartIcon({ totalItems }) {
       href={paths.dashboard.product.checkout}
       sx={{
         right: 0,
-        top: 112,
+        top: 135,
         zIndex: 999,
         display: 'flex',
         cursor: 'pointer',
@@ -29,7 +29,7 @@ export default function CartIcon({ totalItems }) {
         padding: (theme) => theme.spacing(1, 3, 1, 2),
         boxShadow: (theme) => theme.customShadows.dropdown,
         transition: (theme) => theme.transitions.create(['opacity']),
-        '&:hover': { opacity: 0.72 },
+        '&:hover': { opacity: 0.65 },
       }}
     >
       <Badge showZero badgeContent={totalItems} color="error" max={99}>

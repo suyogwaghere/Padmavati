@@ -20,7 +20,6 @@ import { getComparator, useTable } from 'src/components/table';
 // import { useGetCategories } from 'src/api/category';
 import { useGetProducts } from 'src/api/product';
 import { useSnackbar } from 'src/components/snackbar';
-import axiosInstance from 'src/utils/axios';
 import OrderTableToolbar from '../order-table-toolbar';
 // ----------------------------------------------------------------------
 
@@ -48,12 +47,13 @@ export default function OrderListView() {
   const settings = useSettingsContext();
 
   const [tableData, setTableData] = useState([]);
+  const [visibleProducts, setVisibleProducts] = useState(10);
 
   const [filters, setFilters] = useState(defaultFilters);
 
   // const { categories, categoriesLoading, categoriesEmpty, refreshCategories } = useGetCategories();
 
-  const { products, productsLoading, productsEmpty } = useGetProducts();
+  const { products, productsLoading, productsEmpty } = useGetProducts(visibleProducts);
 
   const confirm = useBoolean();
 
@@ -263,6 +263,11 @@ export default function OrderListView() {
             onChangeDense={table.onChangeDense}
           /> */}
         </Card>
+        {/* {visibleProducts < 915 && (
+          <button type="button" onClick={() => setVisibleProducts(visibleProducts + 10)}>
+            Load More
+          </button>
+        )} */}
       </Container>
 
       {/* <ConfirmDialog

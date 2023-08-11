@@ -25,30 +25,33 @@ import Iconify from 'src/components/iconify';
 export default function ProductItem({ product }) {
   const {
     id,
+    productId,
     productName,
     coverUrl,
-    // colors,
-    // available,
-    // sizes,
+    uom,
+    taxRate,
+    notes,
     sellPrice,
     purchasePrice,
     MRP,
   } = product;
 
-  const dispatch = useDispatch();
-
   const linkTo = paths.product.details(id);
+
+  const dispatch = useDispatch();
 
   const handleAddCart = async () => {
     const newProduct = {
       id,
+      productId,
       productName,
       coverUrl,
-      // available,
+      uom,
       sellPrice,
-      // colors,
+      taxRate,
       MRP,
       quantity: 1,
+      notes,
     };
     try {
       dispatch(addToCart(newProduct));
