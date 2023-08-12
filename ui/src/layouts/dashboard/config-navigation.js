@@ -182,7 +182,7 @@ export function useNavData() {
     [t]
   );
 
-  if (user.permissions !== null) {
+  if (user !== null) {
     return user.permissions.includes('admin') ? dataAdmin : data;
   }
   return data;
