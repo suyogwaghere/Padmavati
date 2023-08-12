@@ -35,8 +35,9 @@ import {
 } from 'src/components/table';
 //
 import { useSnackbar } from 'notistack';
-import { useGetUserVouchers } from 'src/api/voucher';
+import { useGetUserVouchers, useGetVouchers } from 'src/api/voucher';
 import axiosInstance from 'src/utils/axios';
+import { useAuthContext } from '../../../auth/hooks';
 import VoucherTableFiltersResult from '../voucher-table-filters-result';
 import VoucherTableRow from '../voucher-table-row';
 import VoucherTableToolbar from '../voucher-table-toolbar';
@@ -65,8 +66,17 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function VoucherListView() {
+  const { user } = useAuthContext();
+  const isAdmin = user.permissions.includes('admin');
+  let vouchersHook = useGetUserVouchers;
+
+  if (isAdmin) {
+    vouchersHook = useGetVouchers;
+  }
+
   const { vouchers, vouchersLoading, vouchersError, vouchersEmpty, refreshVouchers } =
-    useGetUserVouchers();
+    vouchersHook();
+
   const table = useTable({ defaultOrderBy: 'id', defaultOrder: 'desc' });
 
   const settings = useSettingsContext();
@@ -192,7 +202,7 @@ export default function VoucherListView() {
   useEffect(() => {
     if (vouchers && vouchers.length) {
       setTableData(vouchers);
-      enqueueSnackbar('Ledgers fetched successfully!', {
+      enqueueSnackbar('Vouchers fetched successfully!', {
         variant: 'success',
       });
     } else {
@@ -291,21 +301,21 @@ export default function VoucherListView() {
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
               dense={table.dense}
-              numSelected={table.selected.length}
+              // numSelected={table.selected.length}
               rowCount={tableData.length}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  tableData.map((row) => row.id)
-                )
-              }
-              action={
-                <Tooltip title="Delete">
-                  <IconButton color="primary" onClick={confirm.onTrue}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                  </IconButton>
-                </Tooltip>
-              }
+              // onSelectAllRows={(checked) =>
+              //   table.onSelectAllRows(
+              //     checked,
+              //     tableData.map((row) => row.id)
+              //   )
+              // }
+              // action={
+              //   <Tooltip title="Delete">
+              //     <IconButton color="primary" onClick={confirm.onTrue}>
+              //       <Iconify icon="solar:trash-bin-trash-bold" />
+              //     </IconButton>
+              //   </Tooltip>
+              // }
             />
 
             <Scrollbar>
