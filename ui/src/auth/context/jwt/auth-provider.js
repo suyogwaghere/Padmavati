@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { getPartyId } from 'src/redux/slices/checkout';
 //
 import { AuthContext } from './auth-context';
-import { isValidToken, setRole, setSession } from './utils';
+import { isValidToken, setSession } from './utils';
 
 // ----------------------------------------------------------------------
 
@@ -68,7 +68,6 @@ export function AuthProvider({ children }) {
       const userRole = sessionStorage.getItem(ROLE_KEY);
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken, rememberMe);
-        setRole(userRole);
         const response = await axios.get(endpoints.auth.me);
 
         const user = response.data;
@@ -132,9 +131,7 @@ export function AuthProvider({ children }) {
     if (!hasAdminPermission) {
       throw new Error('You do not have admin permission.');
     }
-    setRole(hasAdminPermission);
     setSession(accessToken, rememberMe);
-    // setSession(hasAdminPermission);
 
     dispatch({
       type: 'LOGIN',
@@ -171,7 +168,6 @@ export function AuthProvider({ children }) {
   // LOGOUT
   const logout = useCallback(async () => {
     setSession(null);
-    setRole(null);
     dispatch({
       type: 'LOGOUT',
     });

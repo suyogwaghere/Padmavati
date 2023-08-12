@@ -50,8 +50,6 @@ const ICONS = {
 export function useNavData() {
   const { t } = useLocales();
   const { user } = useAuthContext();
-  const ROLE_KEY = 'userRole';
-  const userRole = sessionStorage.getItem(ROLE_KEY);
   const data = useMemo(
     () => [
       // OVERVIEW
@@ -184,8 +182,8 @@ export function useNavData() {
     [t]
   );
 
-  if (userRole !== null) {
-    return userRole.includes('admin') ? dataAdmin : data;
+  if (user.permissions !== null) {
+    return user.permissions.includes('admin') ? dataAdmin : data;
   }
   return data;
 }

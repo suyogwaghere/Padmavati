@@ -27,13 +27,13 @@ export default function OverviewAppView() {
         <Grid xs={12} md={12}>
           <AppWelcome
             title={`Welcome back 👋 \n ${user?.displayName}`}
-            description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
+            // description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
             img={<SeoIllustration />}
-            action={
-              <Button variant="contained" color="primary">
-                Go Now
-              </Button>
-            }
+            // action={
+            //   <Button variant="contained" color="primary">
+            //     Go Now
+            //   </Button>
+            // }
           />
         </Grid>
         {/* 

@@ -37,13 +37,13 @@ export default function OverviewAppViewAdmin() {
         <Grid xs={12} md={12}>
           <AppWelcome
             title={`Welcome back 👋 \n ${user?.displayName}`}
-            description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
+            // description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
             img={<SeoIllustration />}
-            action={
-              <Button variant="contained" color="primary">
-                Go Now
-              </Button>
-            }
+            // action={
+            //   <Button variant="contained" color="primary">
+            //     Go Now
+            //   </Button>
+            // }
           />
         </Grid>
 
@@ -82,7 +82,7 @@ export default function OverviewAppViewAdmin() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={4}>
+        {/* <Grid xs={12} md={6} lg={4}>
           <AppCurrentDownload
             title="Current Download"
             chart={{
@@ -194,7 +194,7 @@ export default function OverviewAppViewAdmin() {
               }}
             />
           </Stack>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Container>
   );
