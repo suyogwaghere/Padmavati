@@ -19,8 +19,9 @@ export class ProductRepository extends TimeStampRepositoryMixin<
     super(Product, dataSource);
   }
   async searchByName(query: string): Promise<Product[]> {
+    const modelName = this.entityClass.modelName; // Get the model name
     const querys = `
-    SELECT * FROM product WHERE productName LIKE '%${query}%'
+    SELECT * FROM  ${modelName} WHERE productName LIKE '%${query}%'
   `;
     return this.dataSource.execute(querys);
   }
