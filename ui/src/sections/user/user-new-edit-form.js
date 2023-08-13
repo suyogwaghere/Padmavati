@@ -33,7 +33,7 @@ import axiosInstance from 'src/utils/axios';
 // ----------------------------------------------------------------------
 const userOptions = ['admin', 'customer'];
 export default function UserNewEditForm({ currentUser }) {
-  const [userType, setUserType] = useState(userOptions[0]);
+  const [userType, setUserType] = useState(userOptions[1]);
   // const [partyId, setPartyId] = useState(0);
   // const [val1, setValue] = useState();
   const [searchQuery, setSearchQuery] = useState('');

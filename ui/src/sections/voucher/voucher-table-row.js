@@ -53,11 +53,11 @@ export default function VoucherTableRow({
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
+      {/* <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
+      </TableCell> */}
 
-      <TableCell>
+      <TableCell align="center">
         <Box
           onClick={onViewRow}
           sx={{
@@ -78,7 +78,7 @@ export default function VoucherTableRow({
           secondaryTypographyProps={{ component: 'span', color: 'text.disabled' }}
         />
       </TableCell>
-      <TableCell>
+      <TableCell align="center">
         <ListItemText
           primary={format(new Date(voucherDate), 'yyyy MM dd')}
           // secondary={format(new Date(createdAt), 'p')}
@@ -91,9 +91,9 @@ export default function VoucherTableRow({
         />
       </TableCell>
       <TableCell align="center"> {totalQuantity} </TableCell>
-      <TableCell> {fCurrency(totalAmount)} </TableCell>
+      <TableCell align="center"> {fCurrency(totalAmount)} </TableCell>
 
-      <TableCell>
+      <TableCell align="center">
         <Label
           variant="soft"
           color={(is_synced === 1 && 'success') || (is_synced === 0 && 'warning') || 'default'}
@@ -101,7 +101,7 @@ export default function VoucherTableRow({
           {(is_synced === 1 && 'synced') || (is_synced === 0 && 'not synced') || ''}
         </Label>
       </TableCell>
-      <TableCell>
+      <TableCell align="center">
         <ListItemText
           primary={format(new Date(createdAt), 'yyyy MM dd')}
           secondary={format(new Date(createdAt), 'p')}
@@ -220,7 +220,7 @@ export default function VoucherTableRow({
           <Iconify icon="material-symbols:edit" />
           Edit
         </MenuItem>
-        {row.is_synced === 0 ? (
+        {/* {row.is_synced === 0 ? (
           <MenuItem
             onClick={() => {
               onSyncVoucher();
@@ -230,7 +230,7 @@ export default function VoucherTableRow({
             <Iconify icon="ic:outline-sync" />
             Sync to Tally
           </MenuItem>
-        ) : null}
+        ) : null} */}
       </CustomPopover>
 
       <ConfirmDialog

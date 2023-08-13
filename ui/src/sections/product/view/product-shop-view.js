@@ -172,7 +172,12 @@ export default function ProductShopView() {
   );
 
   const renderParents = (
-    <Box sx={{ maxWidth: { xs: 320, sm: 480 }, bgcolor: 'background.paper' }}>
+    <Box
+      sx={{
+        maxWidth: { xs: '100%', sm: '100%' },
+        bgcolor: 'background.paper',
+      }}
+    >
       <Tabs
         value={parentSelected || parents[0]?.parentId}
         onChange={handleChange}

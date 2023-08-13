@@ -2,16 +2,16 @@
 import PropTypes from 'prop-types';
 import { useCallback } from 'react';
 // @mui
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { DatePicker } from '@mui/x-date-pickers';
-import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import { DatePicker } from '@mui/x-date-pickers';
 // components
-import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import Iconify from 'src/components/iconify';
+import { useAuthContext } from '../../auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +23,8 @@ export default function VoucherTableToolbar({
   onResetFilters,
 }) {
   const popover = usePopover();
-
+  const { user } = useAuthContext();
+  const isAdmin = user.permissions.includes('admin');
   const handleFilterName = useCallback(
     (event) => {
       onFilters('name', event.target.value);
@@ -72,7 +73,6 @@ export default function VoucherTableToolbar({
             maxWidth: { md: 200 },
           }}
         />
-
         <DatePicker
           label="End date"
           value={filters.endDate}
@@ -82,9 +82,29 @@ export default function VoucherTableToolbar({
             maxWidth: { md: 200 },
           }}
         />
+        {isAdmin ? (
+          <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
+            <TextField
+              fullWidth
+              value={filters.name}
+              onChange={handleFilterName}
+              placeholder="Search customer or order number..."
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-        <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
-          <TextField
+            {/* <IconButton onClick={popover.onOpen}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton> */}
+          </Stack>
+        ) : (
+          <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
+            {/* <TextField
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
@@ -96,13 +116,13 @@ export default function VoucherTableToolbar({
                 </InputAdornment>
               ),
             }}
-          />
+          /> */}
 
-          {/* <IconButton onClick={popover.onOpen}>
+            {/* <IconButton onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton> */}
-        </Stack>
-
+          </Stack>
+        )}
         {canReset && (
           <Button
             color="error"

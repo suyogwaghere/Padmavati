@@ -43,20 +43,19 @@ import BrandTableToolbar from '../ledger-table-toolbar';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'L_ID', label: 'L_id' },
-  { id: 'name', label: 'Name' },
-  { id: 'group', label: 'Group', width: 160 },
-  { id: 'openingValue', label: 'Current Balance', width: 160 },
-  { id: 'address', label: 'Address ', width: 160 },
-  { id: 'country', label: 'Country', width: 160 },
-  { id: 'state', label: 'State', width: 160 },
-  { id: 'gstIn', label: 'GST-IN', width: 160 },
-  { id: 'whatsapp_no', label: 'WhatsApp No', width: 160 },
-  { id: 'mobile_no', label: 'Mobile No', width: 160 },
-  { id: 'pincode', label: 'Pincode', width: 160 },
-  { id: 'station', label: 'Station', width: 160 },
+  { id: 'id', label: 'ID', width: 80, minWidth: 80 }, // Adjust minWidth as needed
+  { id: 'name', label: 'Name', width: 220, minWidth: 260 },
+  { id: 'group', label: 'Group', width: 160, minWidth: 140 },
+  { id: 'openingValue', label: 'Current Balance', width: 160, minWidth: 140 },
+  { id: 'address', label: 'Address', width: 190, minWidth: 190 },
+  { id: 'country', label: 'Country', width: 160, minWidth: 120 },
+  { id: 'state', label: 'State', width: 160, minWidth: 120 },
+  { id: 'gstIn', label: 'GST-IN', width: 170, minWidth: 170 },
+  { id: 'whatsapp_no', label: 'WhatsApp No', width: 160, minWidth: 140 },
+  { id: 'mobile_no', label: 'Mobile No', width: 160, minWidth: 140 },
+  { id: 'pincode', label: 'Pincode', width: 160, minWidth: 120 },
+  { id: 'station', label: 'Station', width: 170, minWidth: 170 },
 ];
-
 const defaultFilters = {
   name: '',
 };
@@ -177,18 +176,18 @@ export default function LedgerListView() {
             },
             { name: 'List' },
           ]}
-          action={
-            <Button
-              component={RouterLink}
-              onClick={() => {
-                handleLedgerSyncFromTally();
-              }}
-              variant="contained"
-              startIcon={<Iconify icon="ci:arrows-reload-01" />}
-            >
-              Sync
-            </Button>
-          }
+          // action={
+          //   <Button
+          //     component={RouterLink}
+          //     onClick={() => {
+          //       handleLedgerSyncFromTally();
+          //     }}
+          //     variant="contained"
+          //     startIcon={<Iconify icon="ci:arrows-reload-01" />}
+          //   >
+          //     Sync
+          //   </Button>
+          // }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 

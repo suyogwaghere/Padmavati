@@ -46,13 +46,13 @@ import VoucherTableToolbar from '../voucher-table-toolbar';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }];
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'Order', width: 116 },
-  { id: 'name', label: 'Customer' },
-  { id: 'date', label: 'Voucher Date', width: 140 },
-  { id: 'totalQuantity', label: 'Quantity', width: 140 },
-  { id: 'totalAmount', label: 'Price', width: 140 },
-  { id: 'is_synced', label: 'Synced', width: 110 },
-  { id: 'createdAt', label: 'Created At', width: 140 },
+  { id: 'id', label: 'Voucher No', width: 110, align: 'center' },
+  { id: 'name', label: 'Customer Name', align: 'center' },
+  { id: 'date', label: 'Date', align: 'center', width: 110 },
+  { id: 'totalQuantity', label: 'Quantity', align: 'center', width: 80 },
+  { id: 'totalAmount', label: 'Price', align: 'center', width: 100 },
+  { id: 'is_synced', label: 'Synced', align: 'center', width: 110 },
+  { id: 'createdAt', label: 'Created At', align: 'center', width: 110 },
   { id: '', width: 88 },
 ];
 
@@ -120,6 +120,8 @@ export default function VoucherListView() {
       setFilters((prevState) => ({
         ...prevState,
         [partyName]: value,
+        orderBy: partyName === 'name' ? 'partyName' : prevState.orderBy,
+        sortingOrder: 'asc', // You can set a default sorting order here
       }));
     },
     [table]
@@ -196,8 +198,6 @@ export default function VoucherListView() {
     },
     [handleFilters]
   );
-
-  console.log('🚀 ~ file: voucher-list-view.js:194 ~ useEffect ~ vouchers:', vouchers);
 
   useEffect(() => {
     if (vouchers && vouchers.length) {
@@ -326,7 +326,7 @@ export default function VoucherListView() {
                   headLabel={TABLE_HEAD}
                   rowCount={tableData.length}
                   numSelected={table.selected.length}
-                  onSort={table.onSort}
+                  onSort={(orderBy, sortingOrder) => table.onSort(orderBy, sortingOrder)}
                   onSelectAllRows={(checked) => {
                     const syncedRows = tableData.filter((row) => row.is_synced === 0);
                     const syncedIds = syncedRows.map((row) => row.id);
@@ -419,7 +419,7 @@ export default function VoucherListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { status, name, startDate, endDate } = filters;
+  const { orderBy, sortingOrder, status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -430,6 +430,14 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   });
 
   inputData = stabilizedThis.map((el) => el[0]);
+
+  if (orderBy) {
+    inputData.sort((a, b) => {
+      const aValue = a[orderBy];
+      const bValue = b[orderBy];
+      return (sortingOrder === 'asc' ? 1 : -1) * comparator(aValue, bValue);
+    });
+  }
 
   if (name) {
     inputData = inputData.filter(
