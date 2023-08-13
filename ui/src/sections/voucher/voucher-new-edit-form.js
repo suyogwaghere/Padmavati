@@ -10,6 +10,7 @@ import Stack from '@mui/material/Stack';
 // routes
 import { useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
+import { useCheckout } from 'src/sections/product/hooks';
 // _mock
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -31,7 +32,17 @@ export default function VoucherNewEditForm({ currentVoucher }) {
   const loadingSave = useBoolean();
 
   const loadingSend = useBoolean();
+
   const { enqueueSnackbar } = useSnackbar();
+
+  const { checkout } = useCheckout();
+
+  const createVoucherSchema = Yup.object().shape({
+    // Define the validation rules for creating a new voucher
+    // partyName: Yup.string().required('Party name is required'),
+    // Add validation rules for other fields...
+  });
+
   const NewInvoiceSchema = Yup.object().shape({
     createdAt: Yup.mixed().nullable().required('Create date is required'),
     // not required
@@ -42,10 +53,12 @@ export default function VoucherNewEditForm({ currentVoucher }) {
     totalAmount: Yup.number(),
     voucherNumber: Yup.string(),
   });
+
   const defaultValues = useMemo(
     () => ({
+      partyId: currentVoucher?.partyId || checkout.partyId.partyId,
       partyName: currentVoucher?.partyName || '',
-      voucherNumber: currentVoucher?.id || 'INV-1990',
+      voucherNumber: currentVoucher?.id || '',
       createdAt: currentVoucher?.createdAt || new Date(),
       taxes: currentVoucher?.taxes || 0,
       shipping: currentVoucher?.shipping || 0,
@@ -54,9 +67,10 @@ export default function VoucherNewEditForm({ currentVoucher }) {
       products: currentVoucher?.products || [
         {
           productName: '',
+          productId: '',
           notes: '',
-          description: '',
-          service: '',
+          // description: '',
+          // service: '',
           uom: '',
           taxRate: 1,
           quantity: 1,
@@ -66,8 +80,21 @@ export default function VoucherNewEditForm({ currentVoucher }) {
         },
       ],
       totalAmount: currentVoucher?.totalAmount || 0,
+      adminNote: currentVoucher?.adminNote || 'testAdminNote',
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentVoucher]
+  );
+
+  const defaultCreateValues = useMemo(
+    () => ({
+      // Set default values for creating a new voucher
+      partyName: '',
+      voucherNumber: '',
+      createdAt: new Date(),
+      // Set default values for other fields...
+    }),
+    []
   );
 
   const methods = useForm({
@@ -80,6 +107,7 @@ export default function VoucherNewEditForm({ currentVoucher }) {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
+
   const handleCreateAndSend = handleSubmit(async (data) => {
     loadingSend.onTrue();
     console.log(data);
@@ -88,7 +116,7 @@ export default function VoucherNewEditForm({ currentVoucher }) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
+    const formattedDate = `${day}-${month}-${year}`;
 
     const updatedVoucherData = {
       ...data,
@@ -100,7 +128,45 @@ export default function VoucherNewEditForm({ currentVoucher }) {
         .then((res) => {
           if (res.data.success) {
             reset();
-            enqueueSnackbar('Update success!');
+            enqueueSnackbar('Voucher Updated Successfully!');
+            router.push(paths.dashboard.voucher.root);
+          } else {
+            enqueueSnackbar('something went wrong!', { variant: 'error' });
+          }
+        })
+        .catch((err) => {
+          enqueueSnackbar(
+            err.response.data.error.message
+              ? err.response.data.error.message
+              : 'something went wrong!',
+            { variant: 'error' }
+          );
+        });
+    } catch (error) {
+      console.error(error);
+      loadingSend.onFalse();
+    }
+  });
+
+  const handleCreateVoucher = handleSubmit(async (data) => {
+    loadingSend.onTrue();
+    console.log('Voucher Create Data : ', data);
+    // const date = new Date(data.createdAt);
+    // const year = date.getFullYear();
+    // const month = String(date.getMonth() + 1).padStart(2, '0');
+    // const day = String(date.getDate()).padStart(2, '0');
+    // const formattedDate = `${day}-${month}-${year}`;
+
+    const voucherData = {
+      ...data,
+    };
+    try {
+      await axiosInstance
+        .post(`/api/voucher/create`, voucherData)
+        .then((res) => {
+          if (res.data.success) {
+            reset();
+            enqueueSnackbar('Voucher Created Successfully!');
             router.push(paths.dashboard.voucher.root);
           } else {
             enqueueSnackbar('something went wrong!', { variant: 'error' });
@@ -142,7 +208,7 @@ export default function VoucherNewEditForm({ currentVoucher }) {
         McName,
         Saletype,
         adminNote,
-        voucherNumber: id || 'INV-1990',
+        voucherNumber: id || '',
         createdAt: createdAt || new Date(),
         taxes: taxes || 0,
         status: is_synced || 0,
@@ -185,7 +251,7 @@ export default function VoucherNewEditForm({ currentVoucher }) {
             loading={loadingSend.value && isSubmitting}
             onClick={() => {
               console.log('here');
-              handleCreateAndSend();
+              handleCreateVoucher();
             }}
           >
             Create Voucher

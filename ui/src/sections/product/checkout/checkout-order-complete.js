@@ -33,15 +33,15 @@ export default function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) 
       <OrderCompleteIllustration sx={{ height: 260 }} />
 
       <Typography>
-        Thanks for placing order
-        <br />
-        <br />
-        <Link>01dc1370-3df6-11eb-b378-0242ac130002</Link>
-        <br />
-        <br />
-        We will send you a notification within 5 days when it ships.
-        <br /> If you have any question or queries then fell to get in contact us. <br /> <br />
-        All the best,
+        {/* Thanks for placing order */}
+        {/* <br /> */}
+        {/* <br /> */}
+        {/* <Link>01dc1370-3df6-11eb-b378-0242ac130002</Link> */}
+        {/* <br /> */}
+        {/* <br /> */}
+        {/* We will send you a notification within 5 days when it ships. */}
+        {/* <br /> If you have any question or queries then fell to get in contact us. <br /> <br /> */}
+        {/* All the best, */}
       </Typography>
 
       <Divider sx={{ borderStyle: 'dashed' }} />
@@ -62,7 +62,7 @@ export default function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) 
           Continue Shopping
         </Button>
 
-        <Button
+        {/* <Button
           fullWidth
           size="large"
           variant="contained"
@@ -70,7 +70,7 @@ export default function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) 
           onClick={onDownloadPDF}
         >
           Download as PDF
-        </Button>
+        </Button> */}
       </Stack>
     </Stack>
   );
@@ -86,8 +86,8 @@ export default function CheckoutOrderComplete({ open, onReset, onDownloadPDF }) 
             <Box
               component={m.div}
               {...varFade({
-                distance: 120,
-                durationIn: 0.32,
+                distance: 220,
+                durationIn: 0.52,
                 durationOut: 0.24,
                 easeIn: 'easeInOut',
               }).inUp}

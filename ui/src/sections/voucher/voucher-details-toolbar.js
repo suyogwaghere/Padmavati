@@ -80,6 +80,7 @@ export default function VoucherDetailsToolbar({
           justifyContent="flex-end"
         >
           <Button
+            disabled
             color="inherit"
             variant="outlined"
             endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
@@ -91,13 +92,13 @@ export default function VoucherDetailsToolbar({
               (status === 2 && 'Cancelled')}
           </Button>
 
-          <Button
+          {/* <Button
             color="inherit"
             variant="outlined"
             startIcon={<Iconify icon="solar:printer-minimalistic-bold" />}
           >
             Print
-          </Button>
+          </Button> */}
 
           <Button
             color="inherit"

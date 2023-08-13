@@ -20,11 +20,11 @@ export default function VoucherDetailsInfo({ partyName }) {
     <>
       <CardHeader
         title="Customer Info"
-        action={
-          <IconButton>
-            <Iconify icon="solar:pen-bold" />
-          </IconButton>
-        }
+        // action={
+        //   <IconButton>
+        //     <Iconify icon="solar:pen-bold" />
+        //   </IconButton>
+        // }
       />
       <Stack direction="row" sx={{ p: 3 }}>
         <Stack spacing={0.5} alignItems="flex-start" sx={{ typography: 'body2' }}>

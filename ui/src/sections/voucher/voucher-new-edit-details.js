@@ -79,7 +79,11 @@ export default function VoucherNewEditDetails({ selectedParent }) {
       notes: '',
       quantity: 1,
       discount: 0,
+      price: ' ',
       total: 0,
+      productId: '',
+      taxRate: 0,
+      uom: ' ',
     });
   };
 
@@ -100,7 +104,12 @@ export default function VoucherNewEditDetails({ selectedParent }) {
 
   const handleChangePrice = useCallback(
     (event, index) => {
+      console.log('price update');
       setValue(`products[${index}].price`, Number(event.target.value));
+      console.log(
+        '🚀 ~ file: voucher-new-edit-details.js:107 ~ VoucherNewEditDetails ~ event.target.value:',
+        event.target.value
+      );
       setValue(
         `products[${index}].total`,
         values.products.map((item) => item.quantity * item.price)[index]
@@ -186,15 +195,25 @@ export default function VoucherNewEditDetails({ selectedParent }) {
                   setSelectedProduct(selectedProductObject); // Store the selected product object in the statee in the state
                   // Update the form's value with the selected product's details
                   setValue(`products[${index}].productName`, selectedProductObject.productName);
-                  setValue(`products[${index}].notes`, selectedProductObject.notes);
-                  setValue(`products[${index}].quantity`, selectedProductObject.quantity);
+                  setValue(`products[${index}].productId`, selectedProductObject.productId);
+                  setValue(`products[${index}].total`, selectedProductObject.total);
+                  setValue(`products[${index}].notes`, 'New product added ');
+                  setValue(`products[${index}].uom`, selectedProductObject.uom);
+                  setValue(`products[${index}].taxRate`, selectedProductObject.taxRate);
+                  setValue(`products[${index}].quantity`, 1);
+                  setValue(`products[${index}].discount`, selectedProductObject.discount);
                   setValue(`products[${index}].price`, selectedProductObject.sellPrice);
 
                   // ... other fields you want to update
-
+                  const qq = { target: { value: 1 } };
+                  const pr = { target: { value: selectedProductObject.sellPrice } };
+                  console.log(
+                    '🚀 ~ file: voucher-new-edit-details.js:273 ~ VoucherNewEditDetails ~ event:',
+                    pr.target.value
+                  );
                   // Trigger the change event for the other fields if needed
-                  handleChangeQuantity(event, index); // Update quantity-related calculations
-                  handleChangePrice(event, index); // Update price-related calculations
+                  handleChangeQuantity(qq, index); // Update quantity-related calculations
+                  handleChangePrice(pr, index); // Update price-related calculations
                 }}
                 options={products ? products.map((product) => product.productName) : []}
                 getOptionLabel={(option) => option}

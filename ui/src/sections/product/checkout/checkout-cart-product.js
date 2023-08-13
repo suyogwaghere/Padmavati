@@ -127,7 +127,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         </Box>
       </TableCell>
 
-      <TableCell align="center">
+      {/* <TableCell align="center">
         <TextField
           label="discount"
           variant="outlined"
@@ -138,10 +138,12 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
           inputProps={{ min: 0, max: 99 }}
           // onChange={handleTextInputChange}
         />
-        {/* <Typography variant="outlined" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
+         <Typography variant="outlined" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
           {discount}
-        </Typography> */}
-      </TableCell>
+        </Typography> 
+      </TableCell> */}
+
+      <TableCell align="center">{discount || `0%`}</TableCell>
       <TableCell align="right">{fCurrency(sellPrice * quantity)}</TableCell>
 
       <TableCell align="right" sx={{ px: 1 }}>

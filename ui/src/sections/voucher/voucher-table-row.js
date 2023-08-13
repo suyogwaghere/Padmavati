@@ -80,7 +80,8 @@ export default function VoucherTableRow({
       </TableCell>
       <TableCell align="center">
         <ListItemText
-          primary={format(new Date(voucherDate), 'yyyy MM dd')}
+          primary={voucherDate}
+          // primary={format(new Date(voucherDate), 'yyyy MM dd')}
           // secondary={format(new Date(createdAt), 'p')}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{

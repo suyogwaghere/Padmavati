@@ -202,7 +202,7 @@ export default function ProductShopView() {
         mb: 15,
       }}
     >
-      <CartIcon totalItems={checkout.totalItems} />
+      <CartIcon totalItems={checkout.cart.length} />
       <Typography
         variant="h4"
         sx={{
