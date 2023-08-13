@@ -26,10 +26,7 @@ export default function VoucherNewEditDetails({ selectedParent }) {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  console.log(
-    '🚀 ~ file: voucher-new-edit-details.js:29 ~ VoucherNewEditDetails ~ selectedProduct:',
-    selectedProduct
-  );
+  console.log('🚀 selectedParent  :', selectedParent);
 
   const { control, setValue, watch, resetField } = useFormContext();
 

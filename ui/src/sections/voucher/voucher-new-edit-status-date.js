@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
 // @mui
+import Autocomplete from '@mui/material/Autocomplete';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // components
-import { useGetLedgers } from 'src/api/ledger';
-import { useGetProducts, useGetProductParents } from 'src/api/product';
+import { useGetProductParents } from 'src/api/product';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
@@ -14,55 +15,48 @@ import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 export default function VoucherNewEditStatusDate({ setSelectedParent }) {
   const { control, watch } = useFormContext();
 
-  const { ledgers, ledgersLoading, ledgersEmpty, refreshLedgers } = useGetLedgers();
-  const { products, productsLoading, productsEmpty } = useGetProducts();
   const { parents, parentsLoading, parentsEmpty } = useGetProductParents();
-  // const products = useSelector((state) => state.products.fetchedProducts);
 
   const values = watch();
 
-  // const uniqueParents = {};
-  const uniqueProducts = products.filter((product) => {
-    if (!parents[product.parentName]) {
-      // If parentName is not already in the uniqueParents object, add it and mark it as seen
-      parents[product.parentName] = true;
-      return true; // Include this product in the filtered array
-    }
-    return false; // Skip this product as its parentName has already been seen
-  });
-
-  const handleSelectChange = (event) => {
-    const newValue = event.target.value;
-    setSelectedParent(newValue);
-  };
   return (
     <Stack
       spacing={2}
       direction={{ xs: 'column', sm: 'row' }}
       sx={{ p: 3, bgcolor: 'background.neutral' }}
     >
-      <RHFTextField name="voucherNumber" label="Voucher number" value={values.voucherNumber} />
-
-      <RHFSelect
+      {values.voucherNumber && (
+        <RHFTextField name="voucherNumber" label="Voucher number" value={values.voucherNumber} />
+      )}
+      <Autocomplete
         fullWidth
         name="parent_name"
         label="Parent Name"
-        InputLabelProps={{ shrink: true }}
-        onChange={handleSelectChange}
-        PaperPropsSx={{ textTransform: 'capitalize' }}
-      >
-        {parents.map((option) => (
-          <MenuItem
-            key={option.parentName ? option.parentName : ' '}
-            value={option.parentId ? option.parentId : ' '}
-          >
-            {option.parentName ? option.parentName : ''}
-          </MenuItem>
-        ))}
-      </RHFSelect>
+        clearOnEscape
+        id="clear-on-escape"
+        onInputChange={(event, newValue) => newValue}
+        onChange={(event, newInputValue) => {
+          const selectedOption = parents.find((option) => option.parentName === newInputValue);
 
+          if (selectedOption) {
+            setSelectedParent(selectedOption.parentId);
+          } else {
+            setSelectedParent(newInputValue);
+          }
+        }}
+        // Filter and sanitize parents
+        options={
+          parents
+            ? parents
+                .filter((option) => option && option.parentName)
+                .map((option) => option.parentName)
+            : []
+        }
+        renderInput={(params) => <TextField {...params} label="Parent Name" />}
+      />
       <RHFSelect
         fullWidth
+        disabled
         name="status"
         label="Status"
         InputLabelProps={{ shrink: true }}
@@ -78,27 +72,28 @@ export default function VoucherNewEditStatusDate({ setSelectedParent }) {
           </MenuItem>
         ))}
       </RHFSelect>
-
-      <Controller
-        name="createdAt"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <DatePicker
-            label="Date create"
-            value={new Date(field.value)}
-            onChange={(newValue) => {
-              field.onChange(newValue);
-            }}
-            slotProps={{
-              textField: {
-                fullWidth: true,
-                error: !!error,
-                helperText: error?.message,
-              },
-            }}
-          />
-        )}
-      />
+      {values.voucherNumber && (
+        <Controller
+          name="createdAt"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <DatePicker
+              label="Date create"
+              value={new Date(field.value)}
+              onChange={(newValue) => {
+                field.onChange(newValue);
+              }}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                  error: !!error,
+                  helperText: error?.message,
+                },
+              }}
+            />
+          )}
+        />
+      )}
     </Stack>
   );
 }
