@@ -3,11 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
-import IconButton from '@mui/material/IconButton';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
-import Tooltip from '@mui/material/Tooltip';
 // routes
 import { usePathname, useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
@@ -19,7 +17,6 @@ import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { useSettingsContext } from 'src/components/settings';
 import {
@@ -59,8 +56,8 @@ const TABLE_HEAD = [
 const defaultFilters = {
   partyName: '',
   status: 'all',
-  // startDate: new Date(),
-  // endDate: new Date(),
+  startDate: new Date(),
+  endDate: new Date(),
 };
 
 // ----------------------------------------------------------------------
@@ -117,6 +114,15 @@ export default function VoucherListView() {
   const handleFilters = useCallback(
     (partyName, value) => {
       table.onResetPage();
+      if (partyName === 'startDate' || partyName === 'endDate') {
+        const now = new Date();
+        if (partyName === 'startDate' && value > now) {
+          value = now;
+        }
+        if (partyName === 'endDate' && value < filters.startDate) {
+          value = filters.startDate;
+        }
+      }
       setFilters((prevState) => ({
         ...prevState,
         [partyName]: value,
@@ -124,7 +130,7 @@ export default function VoucherListView() {
         sortingOrder: 'asc', // You can set a default sorting order here
       }));
     },
-    [table]
+    [filters, table]
   );
 
   const handleDeleteRow = useCallback(
@@ -206,7 +212,7 @@ export default function VoucherListView() {
         variant: 'success',
       });
     } else {
-      enqueueSnackbar('Error fetching ledgers', {
+      enqueueSnackbar('Error fetching Vouchers', {
         variant: 'error',
       });
     }
@@ -453,13 +459,36 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter(
-        (order) =>
-          fTimestamp(order.createdAt) >= fTimestamp(startDate) &&
-          fTimestamp(order.createdAt) <= fTimestamp(endDate)
-      );
+      inputData = filterInputData(startDate, endDate, inputData);
+    } else {
+      inputData = filterInputData(startDate, endDate, inputData);
     }
   }
-
   return inputData;
+}
+function filterInputData(startDate, endDate, inputData) {
+  const filteredVouchers = inputData.filter((voucher) => {
+    if (voucher.createdAt) {
+      const createdAtDate = formatDate(new Date(voucher.createdAt));
+      if (createdAtDate) {
+        const isWithinDateRange =
+          createdAtDate >= formatDate(startDate) && createdAtDate <= formatDate(endDate);
+        const isSameStartDate = createdAtDate === formatDate(startDate);
+
+        return formatDate(startDate) === formatDate(endDate) ? isSameStartDate : isWithinDateRange;
+      }
+    }
+
+    return false;
+  });
+
+  return filteredVouchers;
+}
+function formatDate(inputDate) {
+  const date = new Date(inputDate);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+
+  return `${year}${month}${day}`;
 }

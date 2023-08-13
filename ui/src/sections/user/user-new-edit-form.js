@@ -79,6 +79,13 @@ export default function UserNewEditForm({ currentUser }) {
       .max(10, 'Must be less than 10 characters'),
   });
 
+  const handleContactNoChange = (event) => {
+    const input = event.target.value;
+    const digitsOnly = input.replace(/\D/g, ''); // Remove non-digit characters
+    const truncatedValue = digitsOnly.slice(0, 10); // Limit to 10 digits
+    event.target.value = truncatedValue;
+  };
+
   const defaultValues = useMemo(
     () => ({
       name: currentUser?.name || '',
@@ -185,9 +192,9 @@ export default function UserNewEditForm({ currentUser }) {
           <Stack spacing={3} sx={{ p: 3 }}>
             {!currentUser ? (
               <RHFSelect
-                sx={{ width: 300 }}
                 name="userType"
                 label="User Type"
+                sx={{ width: 300 }}
                 value={userType}
                 key={userType}
                 InputLabelProps={{ shrink: true }}
@@ -271,7 +278,12 @@ export default function UserNewEditForm({ currentUser }) {
                 }}
               />
             ) : null}
-            <RHFTextField name="contactNo" label="Contact" />
+            <RHFTextField
+              name="contactNo"
+              type="tel"
+              label="Contact"
+              inputProps={{ maxLength: 10, onInput: handleContactNoChange }}
+            />
           </Stack>
         </Card>
       </Grid>

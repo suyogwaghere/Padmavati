@@ -123,7 +123,7 @@ export default function VoucherTableToolbar({
           </IconButton> */}
           </Stack>
         )}
-        {canReset && (
+        {/* {canReset && (
           <Button
             color="error"
             sx={{ flexShrink: 0 }}
@@ -132,7 +132,7 @@ export default function VoucherTableToolbar({
           >
             Clear
           </Button>
-        )}
+        )} */}
       </Stack>
 
       <CustomPopover
