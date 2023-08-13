@@ -150,7 +150,7 @@ export class VoucherController {
             productId: voucherProduct?.productId,
             quantity: voucherProduct?.quantity,
             price: voucherProduct?.price,
-            amount: voucherProduct?.amount,
+            total: voucherProduct?.total,
             discount: voucherProduct?.discount,
             uom: voucherProduct?.uom,
             taxRate: voucherProduct?.taxRate,
@@ -247,7 +247,7 @@ export class VoucherController {
                 ProductName: productData?.productName,
                 Quantity: voucherProduct?.quantity,
                 Price: voucherProduct?.price,
-                Amount: voucherProduct?.amount,
+                Total: voucherProduct?.total,
                 Discount: voucherProduct?.discount,
                 Unit: voucherProduct?.uom,
                 TaxRate: voucherProduct?.taxRate,
@@ -324,6 +324,10 @@ export class VoucherController {
       if (!voucher || typeof voucher !== 'object') {
         throw new Error('Invalid voucher data');
       }
+      console.log(
+        '🚀 ~ file: voucher.controller.ts:326 ~ VoucherController ~ voucher:',
+        voucher,
+      );
 
       // Check if the required properties exist in the voucher object
       const requiredProperties = ['partyId'];
@@ -356,7 +360,7 @@ export class VoucherController {
       let totalQuantity = 0;
 
       for (const product of voucher.products) {
-        totalAmount += product.quantity * product.sellPrice;
+        totalAmount += product.quantity * product.sellPrice || product.price;
         totalQuantity += product.quantity;
       }
 
@@ -392,18 +396,18 @@ export class VoucherController {
       const voucherProducts = voucher.products.map((product: any) => {
         const taxRate = parseFloat(product.taxRate);
         const quantity = parseInt(product.quantity);
-        const price = parseFloat(product.sellPrice);
+        const price = parseFloat(product.sellPrice || product.price);
 
-        const amount = quantity * price;
-        const taxAmt = (amount * taxRate) / 100;
-        const taxableAmt = amount - taxAmt;
-        const netAmt = amount + taxAmt;
+        const total = quantity * price;
+        const taxAmt = (total * taxRate) / 100;
+        const taxableAmt = total - taxAmt;
+        const netAmt = total + taxAmt;
         return {
           voucherId: newVoucher.id,
           productId: product.productId,
           quantity: product.quantity,
-          price: product.sellPrice,
-          amount: amount,
+          price: product.sellPrice || product.price,
+          total: total,
           discount: product.discount || '',
           uom: product.uom,
           taxRate: product.taxRate,
@@ -505,16 +509,16 @@ export class VoucherController {
           const quantity = parseInt(product.quantity);
           const price = parseFloat(product.price);
 
-          const amount = quantity * price;
-          const taxAmt = (amount * taxRate) / 100;
-          const taxableAmt = amount - taxAmt;
-          const netAmt = amount + taxAmt;
+          const total = quantity * price;
+          const taxAmt = (total * taxRate) / 100;
+          const taxableAmt = total - taxAmt;
+          const netAmt = total + taxAmt;
           return {
             voucherId: voucher.id,
             productId: productData?.productId,
             quantity: product.quantity,
             price: product.price,
-            amount: product.price * product.quantity, // Calculate the total amount for each product
+            total: product.price * product.quantity, // Calculate the total total for each product
             discount: product.discount || 0,
             uom: product.uom || ' ',
             taxRate: product.taxRate,
@@ -596,7 +600,7 @@ export class VoucherController {
                 productGuid: voucherProduct?.productId,
                 quantity: voucherProduct?.quantity,
                 price: voucherProduct?.price,
-                amount: voucherProduct?.amount,
+                total: voucherProduct?.total,
                 discount: voucherProduct?.discount,
                 // godown: voucherProduct?.godown,
                 // _godown: voucherProduct?._godown,
@@ -657,7 +661,7 @@ export class VoucherController {
                 productId: voucherProduct?.productId,
                 quantity: voucherProduct?.quantity,
                 price: voucherProduct?.price,
-                amount: voucherProduct?.amount,
+                total: voucherProduct?.total,
                 discount: voucherProduct?.discount,
                 // godown: voucherProduct?.godown,
                 // _godown: voucherProduct?._godown,

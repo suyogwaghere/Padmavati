@@ -48,7 +48,7 @@ export class VoucherProduct extends Entity {
     precision: 30,
     scale: 2,
   })
-  amount: number;
+  total: number;
 
   @property({
     type: 'number',
