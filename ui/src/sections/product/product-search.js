@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import Iconify from 'src/components/iconify';
 import SearchNotFound from 'src/components/search-not-found';
 // redux
+import { Fab } from '@mui/material';
 import { addToCart } from 'src/redux/slices/checkout';
 import { useDispatch } from 'src/redux/store';
 // ----------------------------------------------------------------------
@@ -102,7 +103,18 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
         const parts = parse(product.productName, matches);
 
         return (
-          <Box component="li" {...props} onClick={() => handleClick(product)} key={product.id}>
+          <Box
+            component="li"
+            sx={{
+              width: '100% !important',
+              // alignItems: 'center !important', // Align items along the center vertically
+              display: 'flex !important', // Use flex display
+              // justifyContent: 'space-between !important', // Distribute items along the horizontal axis
+            }}
+            {...props}
+            onClick={() => handleClick(product)}
+            key={product.id}
+          >
             <Avatar
               key={product.id}
               alt={product.productName}
@@ -126,6 +138,31 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
                 </Typography>
               ))}
             </div>
+            {/* <Fab
+              color="warning"
+              size="medium"
+              className="add-cart-btn"
+              // onClick={handleAddCart}
+              sx={{
+                // right: 5,
+                // left: 5,
+                alignSelf: 'flex-end !important',
+                // up: 0,
+                // alignItems: 'flex-end',
+                // bottom: 5,
+                // display: 'flex',
+                // zIndex: 9,
+                // opacity: 0,
+                // position: 'absolute',
+                // transition: (theme) =>
+                //   theme.transitions.create('all', {
+                //     easing: theme.transitions.easing.easeInOut,
+                //     duration: theme.transitions.duration.shorter,
+                //   }),
+              }}
+            >
+              <Iconify icon="solar:cart-plus-bold" width={24} />
+            </Fab> */}
           </Box>
         );
       }}

@@ -43,7 +43,7 @@ export const tokenExpired = (exp) => {
 
   // Test token expires after 10s 2592000000
   // const timeLeft = currentTime + 10000 - currentTime; // ~10s
-  const timeLeft = exp * 1000 - currentTime;
+  const timeLeft = exp * 1000;
 
   clearTimeout(expiredTimer);
 
@@ -65,7 +65,8 @@ export const setSession = (accessToken, rememberMe) => {
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
     const { exp } = jwtDecode(accessToken);
     // This function below will handle when token is expired
-    const currentTime = Date.now() / 1000; // Convert to seconds
+    const currentTime = Date.now(); // Convert to seconds
+    console.log('🚀 ~ file: utils.js:70 ~ setSession ~ ̥:', currentTime);
     const expirationTime = !rememberMe
       ? currentTime + 7 * 60 * 60 // 30 days in seconds
       : currentTime + 10 * 24 * 60 * 60; // 7 hours in seconds

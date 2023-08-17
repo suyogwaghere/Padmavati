@@ -313,130 +313,131 @@ export class VoucherController {
   })
   @post('/api/voucher/create')
   async create(
-    @inject(AuthenticationBindings.CURRENT_USER) currnetUser: UserProfile,
-    @requestBody({})
-    voucher: any,
+    @inject(AuthenticationBindings.CURRENT_USER) currentUser: UserProfile,
+    @requestBody() voucher: any,
   ): Promise<any> {
-    const repo = new DefaultTransactionalRepository(Voucher, this.dataSource);
-    const tx = await repo.beginTransaction(IsolationLevel.READ_COMMITTED);
+    const tx = await this.dataSource.beginTransaction(
+      IsolationLevel.READ_COMMITTED,
+    );
+
     try {
-      // Check if the voucher object is valid
-      if (!voucher || typeof voucher !== 'object') {
-        throw new Error('Invalid voucher data');
-      }
-      console.log(
-        '🚀 ~ file: voucher.controller.ts:326 ~ VoucherController ~ voucher:',
+      this.validateVoucherData(voucher);
+
+      const party = await this.fetchPartyFromLedger(voucher.partyId);
+
+      const voucherCreateData = this.prepareVoucherCreateData(
         voucher,
+        party,
+        currentUser,
       );
-
-      // Check if the required properties exist in the voucher object
-      const requiredProperties = ['partyId'];
-      for (const property of requiredProperties) {
-        if (!(property in voucher)) {
-          throw new Error(`Missing required property: ${property}`);
-        }
-      }
-
-      // Fetch the party data from the ledger repository
-      const party = await this.ledgerRepository.findOne({
-        where: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          l_ID: voucher.partyId,
-        },
-      });
-
-      // Check if the party exists
-      if (!party) {
-        throw new Error('Party not found');
-      }
-
-      const currentDate = new Date();
-      const year = currentDate.getFullYear();
-      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-      const day = String(currentDate.getDate()).padStart(2, '0');
-      const formattedDate = `${day}-${month}-${year}`;
-
-      let totalAmount = 0;
-      let totalQuantity = 0;
-
-      for (const product of voucher.products) {
-        totalAmount += product.quantity * product.sellPrice || product.price;
-        totalQuantity += product.quantity;
-      }
-
-      const voucherCreateData = {
-        voucherDate: formattedDate,
-        // voucherSeries: 'S',
-        // voucherNo: 'S-1101',
-        Saletype: 'L/GST-TaxIncl',
-        McName: 'Santacruz East',
-        // voucher_type: 'Sales',
-        // _voucher_type: 'e5a9b5a7-7f09-4ac0-a2cd-f5aa3ad03acf-00000026',
-        partyName: party.name,
-        partyId: party.l_ID,
-        // place_of_supply: 'Goa',
-        // is_invoice: true,
-        // is_accounting_voucher: true,
-        // is_inventory_voucher: false,
-        // is_order_voucher: false,
-        adminNote: voucher.adminNote || ' ',
-        is_synced: 0,
-        totalAmount: totalAmount,
-        totalQuantity: totalQuantity,
-        userId: currnetUser.id,
-      };
 
       const newVoucher = await this.voucherRepository.create(
         voucherCreateData,
-        {
-          transaction: tx,
-        },
+        {transaction: tx},
       );
 
-      const voucherProducts = voucher.products.map((product: any) => {
-        const taxRate = parseFloat(product.taxRate);
-        const quantity = parseInt(product.quantity);
-        const price = parseFloat(product.sellPrice || product.price);
-
-        const total = quantity * price;
-        const taxAmt = (total * taxRate) / 100;
-        const taxableAmt = total - taxAmt;
-        const netAmt = total + taxAmt;
-        return {
-          voucherId: newVoucher.id,
-          productId: product.productId,
-          quantity: product.quantity,
-          price: product.sellPrice || product.price,
-          total: total,
-          discount: product.discount || '',
-          uom: product.uom,
-          taxRate: product.taxRate,
-          taxAmt: taxAmt,
-          taxableAMt: taxableAmt,
-          netAmt: netAmt,
-          // godown: 'Main Location',
-          // _godown: 'e5a9b5a7-7f09-4ac0-a2cd-f5aa3ad03acf-0000003a',
-          notes: product.notes,
-        };
-      });
+      const voucherProducts = this.prepareVoucherProducts(
+        voucher.id,
+        voucher.products,
+      );
       await this.voucherProductRepository.createAll(voucherProducts, {
         transaction: tx,
       });
-      await tx.commit();
-      // return newVoucher;
 
-      return await Promise.resolve({
+      await tx.commit();
+
+      return {
         newVoucher,
         success: true,
         message: 'Voucher products created successfully',
-      });
+      };
     } catch (error) {
       await tx.rollback();
-
-      // Handle errors and return appropriate response
       console.error('Error creating voucher:', error);
       throw new Error('Failed to create voucher');
     }
+  }
+
+  private validateVoucherData(voucher: any): void {
+    if (!voucher || typeof voucher !== 'object') {
+      throw new Error('Invalid voucher data');
+    }
+
+    const requiredProperties = ['partyId', 'products'];
+    for (const property of requiredProperties) {
+      if (!(property in voucher)) {
+        throw new Error(`Missing required property: ${property}`);
+      }
+    }
+  }
+
+  private async fetchPartyFromLedger(partyId: string): Promise<any> {
+    const party = await this.ledgerRepository.findOne({where: {l_ID: partyId}});
+    if (!party) {
+      throw new Error('Party not found');
+    }
+    return party;
+  }
+
+  private prepareVoucherCreateData(
+    voucher: any,
+    party: any,
+    currentUser: UserProfile,
+  ): any {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const formattedDate = `${day}-${month}-${year}`;
+
+    let totalAmount = 0;
+    let totalQuantity = 0;
+
+    for (const product of voucher.products) {
+      totalAmount += product.quantity * product.sellPrice;
+      totalQuantity += product.quantity;
+    }
+
+    return {
+      voucherDate: formattedDate,
+      Saletype: 'L/GST-TaxIncl',
+      McName: 'Santacruz East',
+      partyName: party.name,
+      partyId: party.l_ID,
+      adminNote: voucher.adminNote || ' ',
+      is_synced: 0,
+      totalAmount: totalAmount || 0,
+      totalQuantity: totalQuantity,
+      userId: currentUser.id,
+    };
+  }
+
+  private prepareVoucherProducts(voucherId: string, products: any[]): any[] {
+    return products.map(product => {
+      const taxRate = parseFloat(product.taxRate);
+      const quantity = parseInt(product.quantity);
+      const price = parseFloat(product.sellPrice);
+
+      const total = quantity * price;
+      const taxAmt = (total * taxRate) / 100;
+      const taxableAmt = total - taxAmt;
+      const netAmt = total + taxAmt;
+
+      return {
+        voucherId: voucherId, // Add the voucherId
+        productId: product.productId,
+        quantity: quantity,
+        price: price,
+        total: total,
+        discount: product.discount || '',
+        uom: product.uom,
+        taxRate: taxRate,
+        taxAmt: taxAmt,
+        taxableAMt: taxableAmt,
+        netAmt: netAmt,
+        notes: product.notes,
+      };
+    });
   }
 
   @authenticate({

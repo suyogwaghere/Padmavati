@@ -15,8 +15,9 @@ export class LedgerRepository extends TimeStampRepositoryMixin<
     super(Ledger, dataSource);
   }
   async searchByName(query: string): Promise<Ledger[]> {
+    const modelName = this.entityClass.modelName; // Get the model name
     const querys = `
-    SELECT * FROM ledger WHERE name LIKE '%${query}%'
+    SELECT * FROM ${modelName} WHERE name LIKE '%${query}%'
   `;
     return this.dataSource.execute(querys);
   }
