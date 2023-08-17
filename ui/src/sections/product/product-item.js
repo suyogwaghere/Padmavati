@@ -102,7 +102,7 @@ export default function ProductItem({ product }) {
         onClick={handleAddCart}
         sx={{
           right: 12,
-          up: 12,
+          // up: 12,
           // zIndex: 9,
           // opacity: 0,
           position: 'absolute',
@@ -115,22 +115,22 @@ export default function ProductItem({ product }) {
       >
         <Iconify icon="solar:cart-plus-bold" width={24} />
       </Fab>
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        {/* <ColorPreview colors={colors} /> */}
+      {/* <Stack direction="row" alignItems="center" justifyContent="space-between">
+         <ColorPreview colors={colors} /> 
         <Typography variant="caption" component="div" sx={{ color: 'text.primary', mt: 1 }}>
           Price: ₹
-          {purchasePrice && (
+          {sellPrice && (
             <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
-              {fCurrency(purchasePrice)}
+              {fCurrency(sellPrice)}
             </Box>
           )}{' '}
         </Typography>
         <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle1' }}>
           <Typography variant="caption" component="div" sx={{ color: 'text.primary', mt: 1 }}>
-            MRP: ₹ <Box component="span">{fCurrency(sellPrice)}</Box>
+            MRP: ₹ <Box component="span">{fCurrency(MRP)}</Box>
           </Typography>
         </Stack>
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 

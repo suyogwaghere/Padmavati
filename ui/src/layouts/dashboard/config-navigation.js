@@ -107,7 +107,7 @@ export function useNavData() {
             icon: ICONS.invoice,
             children: [
               { title: t('list'), path: paths.dashboard.voucher.root },
-              { title: t('create'), path: paths.dashboard.voucher.new },
+              // { title: t('create'), path: paths.dashboard.voucher.new },
             ],
           },
         ],

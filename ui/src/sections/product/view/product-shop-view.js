@@ -50,7 +50,34 @@ const defaultFilters = {
 
 export default function ProductShopView() {
   // const products = useSelector((state) => state.products.fetchedProducts);
-  const { parents, parentsLoading, parentsEmpty } = useGetProductParents();
+  // const { parents, parentsLoading, parentsEmpty } = useGetProductParents();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const parents = [
+    {
+      parentId: '1333',
+      parentName: 'Farmina Pet Food',
+    },
+    {
+      parentId: '1338',
+      parentName: 'Khanal Foods Private Ltd',
+    },
+    {
+      parentId: '1351',
+      parentName: 'Pura Premium',
+    },
+    {
+      parentId: '5247',
+      parentName: 'MANKIND PETSTAR',
+    },
+    {
+      parentId: '4932',
+      parentName: 'HIMALAYA PET PRODUCTS',
+    },
+    {
+      parentId: '1358',
+      parentName: 'Venttura Feed Supplement',
+    },
+  ];
   let firstParent = 0;
   if (parents.length > 0) {
     firstParent = parents[0].parentId;

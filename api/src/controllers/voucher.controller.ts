@@ -336,8 +336,9 @@ export class VoucherController {
         {transaction: tx},
       );
 
+      const voucherId = newVoucher.id;
       const voucherProducts = this.prepareVoucherProducts(
-        voucher.id,
+        voucherId,
         voucher.products,
       );
       await this.voucherProductRepository.createAll(voucherProducts, {
@@ -412,7 +413,7 @@ export class VoucherController {
     };
   }
 
-  private prepareVoucherProducts(voucherId: string, products: any[]): any[] {
+  private prepareVoucherProducts(voucherId: any, products: any[]): any[] {
     return products.map(product => {
       const taxRate = parseFloat(product.taxRate);
       const quantity = parseInt(product.quantity);
@@ -670,13 +671,14 @@ export class VoucherController {
               };
             }),
           );
-
+          console.log('updatedVoucherProducts ', updatedVoucherProducts);
           return {
             ...voucher,
             products: updatedVoucherProducts,
           };
         }),
       );
+      console.log('users updated ', updatedVouchers);
 
       return updatedVouchers;
     } catch (error) {
