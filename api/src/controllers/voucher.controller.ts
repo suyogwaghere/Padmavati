@@ -322,6 +322,7 @@ export class VoucherController {
 
     try {
       this.validateVoucherData(voucher);
+      console.log('voucher data:', voucher);
 
       const party = await this.fetchPartyFromLedger(voucher.partyId);
 
@@ -395,8 +396,16 @@ export class VoucherController {
     let totalQuantity = 0;
 
     for (const product of voucher.products) {
-      totalAmount += product.quantity * product.sellPrice;
-      totalQuantity += product.quantity;
+      // let price = product.price;
+      if (product.sellPrice) {
+        const price = product.sellPrice;
+        totalAmount += product.quantity * price;
+        totalQuantity += product.quantity;
+      } else {
+        const price = product.price;
+        totalAmount += product.quantity * price;
+        totalQuantity += product.quantity;
+      }
     }
 
     return {
@@ -417,7 +426,7 @@ export class VoucherController {
     return products.map(product => {
       const taxRate = parseFloat(product.taxRate);
       const quantity = parseInt(product.quantity);
-      const price = parseFloat(product.sellPrice);
+      const price = parseFloat(product.price);
 
       const total = quantity * price;
       const taxAmt = (total * taxRate) / 100;

@@ -116,7 +116,7 @@ export function AuthProvider({ children }) {
     // const partyId = currentUser?.name;
     const partyId = user.ledgerId;
 
-    console.log('🚀 ~ file: auth-provider.js:120 ~ login ~ partyId:', partyId);
+    // console.log('🚀 ~ file: auth-provider.js:120 ~ login ~ partyId:', partyId);
 
     const newPartyId = {
       partyId,

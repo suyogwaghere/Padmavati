@@ -26,7 +26,7 @@ export default function VoucherNewEditDetails({ selectedParent }) {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  console.log('🚀 selectedParent  :', selectedParent);
+  // console.log('🚀 selectedParent  :', selectedParent);
 
   const { control, setValue, watch, resetField } = useFormContext();
 
@@ -36,10 +36,10 @@ export default function VoucherNewEditDetails({ selectedParent }) {
   });
   const values = watch();
 
-  console.log(
-    '🚀 ~ file: voucher-new-edit-details.js:35 ~ VoucherNewEditDetails ~ values:',
-    values
-  );
+  // console.log(
+  //   '🚀 ~ file: voucher-new-edit-details.js:35 ~ VoucherNewEditDetails ~ values:',
+  //   values
+  // );
 
   const totalOnRow = values.products.map((product) => product.quantity * product.price);
 
@@ -199,11 +199,11 @@ export default function VoucherNewEditDetails({ selectedParent }) {
                   setValue(`products[${index}].taxRate`, selectedProductObject.taxRate);
                   setValue(`products[${index}].quantity`, 1);
                   setValue(`products[${index}].discount`, selectedProductObject.discount);
-                  setValue(`products[${index}].price`, selectedProductObject.sellPrice);
+                  setValue(`products[${index}].price`, selectedProductObject.MRP);
 
                   // ... other fields you want to update
                   const qq = { target: { value: 1 } };
-                  const pr = { target: { value: selectedProductObject.sellPrice } };
+                  const pr = { target: { value: selectedProductObject.MRP } };
                   console.log(
                     '🚀 ~ file: voucher-new-edit-details.js:273 ~ VoucherNewEditDetails ~ event:',
                     pr.target.value

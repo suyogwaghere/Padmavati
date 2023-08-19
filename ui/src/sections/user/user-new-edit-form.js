@@ -37,7 +37,7 @@ export default function UserNewEditForm({ currentUser }) {
   // const [partyId, setPartyId] = useState(0);
   // const [val1, setValue] = useState();
   const [searchQuery, setSearchQuery] = useState('');
-  const debouncedQuery = useDebounce(searchQuery, 1000);
+  const debouncedQuery = useDebounce(searchQuery, 500);
   // const { ledgers } = useSearchLedgers(query);
   const { searchResults } = useSearchLedgers(debouncedQuery);
 

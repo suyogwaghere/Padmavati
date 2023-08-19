@@ -1,10 +1,9 @@
 import isEqual from 'lodash/isEqual';
 import orderBy from 'lodash/orderBy';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // @mui
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import Fab from '@mui/material/Fab';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -15,26 +14,18 @@ import { useDebounce } from 'src/hooks/use-debounce';
 // routes
 import { paths } from 'src/routes/paths';
 // _mock
-import {
-  PRODUCT_CATEGORY_OPTIONS,
-  PRODUCT_COLOR_OPTIONS,
-  PRODUCT_GENDER_OPTIONS,
-  PRODUCT_RATING_OPTIONS,
-  PRODUCT_SORT_OPTIONS,
-} from 'src/_mock';
 // api
-import { useGetProductParents, useGetProducts, useSearchProducts } from 'src/api/product';
+import { useGetProducts, useSearchProducts } from 'src/api/product';
 // components
 import EmptyContent from 'src/components/empty-content';
 import { useSettingsContext } from 'src/components/settings';
 //
 import CartIcon from '../common/cart-icon';
 import { useCheckout } from '../hooks';
-import ProductFilters from '../product-filters';
 import ProductFiltersResult from '../product-filters-result';
 import ProductList from '../product-list';
+import ProductOffersCarousel from '../product-offers-carousel';
 import ProductSearch from '../product-search';
-import ProductSort from '../product-sort';
 
 // ----------------------------------------------------------------------
 
@@ -77,6 +68,24 @@ export default function ProductShopView() {
       parentId: '1358',
       parentName: 'Venttura Feed Supplement',
     },
+  ];
+  const offers = [
+    {
+      img: 'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
+      title: 'Special Offer 1',
+      subtitle: 'Save 20% on selected items!',
+    },
+    {
+      img: 'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
+      title: 'Flash Sale!',
+      subtitle: 'Limited-time offer: Up to 50% off!',
+    },
+    {
+      img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250',
+      title: 'New Arrival',
+      subtitle: 'Discover our latest collection now!',
+    },
+    // Add more offers as needed
   ];
   let firstParent = 0;
   if (parents.length > 0) {
@@ -238,6 +247,7 @@ export default function ProductShopView() {
       >
         Shop
       </Typography>
+      <ProductOffersCarousel offers={offers} />
       <Stack
         spacing={2.5}
         sx={{

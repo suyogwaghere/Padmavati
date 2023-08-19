@@ -1,5 +1,14 @@
 import PropTypes from 'prop-types';
+import { useCallback, useState, useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
+// hooks
+import { useDebounce } from 'src/hooks/use-debounce';
+// API
+import { useSearchLedgers } from 'src/api/ledger';
+// redux
+import { useDispatch } from 'react-redux';
+import { getPartyId } from 'src/redux/slices/checkout';
+
 // @mui
 import Autocomplete from '@mui/material/Autocomplete';
 import MenuItem from '@mui/material/MenuItem';
@@ -13,11 +22,50 @@ import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 // ----------------------------------------------------------------------
 
 export default function VoucherNewEditStatusDate({ setSelectedParent }) {
-  const { control, watch } = useFormContext();
+  const { control, setValue, watch } = useFormContext();
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [partyId, setPartyId] = useState();
+
+  const debouncedQuery = useDebounce(searchQuery, 500);
+  const { searchResults } = useSearchLedgers(debouncedQuery);
 
   const { parents, parentsLoading, parentsEmpty } = useGetProductParents();
 
+  const dispatch = useDispatch();
   const values = watch();
+
+  const handleSearch = useCallback((input) => {
+    setSearchQuery(input);
+  }, []);
+  const handlePartyNameChange = (event, newInputValue) => {
+    const selectedLedger = searchResults.find((ledger) => ledger.name === newInputValue);
+    if (selectedLedger) {
+      setPartyId(selectedLedger.l_ID);
+    } else {
+      setPartyId(null); // Set partyId to null if ledger is not found
+    }
+  };
+  // console.log('🚀 ~ file: auth-provider.js:120 ~ login ~ partyId:', partyId);
+
+  // const newPartyId = {
+  //   partyId,
+  // };
+  useEffect(() => {
+    if (partyId !== null) {
+      dispatch(getPartyId({ partyId }));
+    }
+  }, [dispatch, partyId]);
+  useEffect(() => {
+    if (partyId !== null) {
+      setValue('partyId', partyId);
+    }
+  }, [setValue, partyId]);
+  // try {
+  //   // dis(getPartyId(newPartyId));
+  // } catch (error) {
+  //   console.error(error);
+  // }
 
   return (
     <Stack
@@ -28,6 +76,22 @@ export default function VoucherNewEditStatusDate({ setSelectedParent }) {
       {values.voucherNumber && (
         <RHFTextField name="voucherNumber" label="Voucher number" value={values.voucherNumber} />
       )}
+      <Autocomplete
+        fullWidth
+        name="partyName"
+        label="Party A/c Name"
+        onInputChange={(event, newValue) => handleSearch(newValue)}
+        onChange={handlePartyNameChange}
+        // Filter and sanitize searchResults
+        options={
+          searchResults
+            ? searchResults.filter((ledger) => ledger && ledger.name).map((ledger) => ledger.name)
+            : []
+        }
+        getOptionLabel={(option) => option}
+        isOptionEqualToValue={(option, value) => option === value}
+        renderInput={(params) => <TextField {...params} label="Party A/c Name" />}
+      />
       <Autocomplete
         fullWidth
         name="parent_name"

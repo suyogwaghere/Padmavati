@@ -94,6 +94,21 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
       </TableCell>
 
       <TableCell>
+        <Box sx={{ width: 88, textAlign: 'right' }}>
+          <IncrementerButton
+            quantity={quantity}
+            onDecrease={onDecrease}
+            onIncrease={onIncrease}
+            disabledDecrease={quantity <= 1}
+            disabledIncrease={quantity >= available}
+          />
+
+          {/* <Typography variant="caption" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
+            available:{available} 
+          </Typography> */}
+        </Box>
+      </TableCell>
+      <TableCell>
         <Accordion align="center" sx={{ m: 1, width: '15ch' }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>Note</Typography>
@@ -110,22 +125,6 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         </Accordion>
       </TableCell>
       <TableCell>{fCurrency(sellPrice)}</TableCell>
-
-      <TableCell>
-        <Box sx={{ width: 88, textAlign: 'right' }}>
-          <IncrementerButton
-            quantity={quantity}
-            onDecrease={onDecrease}
-            onIncrease={onIncrease}
-            disabledDecrease={quantity <= 1}
-            disabledIncrease={quantity >= available}
-          />
-
-          {/* <Typography variant="caption" component="div" sx={{ color: 'text.secondary', mt: 1 }}>
-            available:{available} 
-          </Typography> */}
-        </Box>
-      </TableCell>
 
       {/* <TableCell align="center">
         <TextField
