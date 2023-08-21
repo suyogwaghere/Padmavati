@@ -215,7 +215,7 @@ export default function UserNewEditForm({ currentUser }) {
             <Autocomplete
               fullWidth
               name="partyName"
-              disabled={!currentUser}
+              disabled={currentUser}
               label="Party A/c Name"
               onInputChange={(event, newValue) => handleSearch(newValue)}
               onChange={(event, newInputValue) => {
@@ -243,7 +243,11 @@ export default function UserNewEditForm({ currentUser }) {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label={currentUser ? currentUser?.ledger[0].name : 'Party A/c Name'}
+                  label={currentUser ? currentUser?.ledger[0]?.name : 'Party A/c Name'}
+                  inputProps={{
+                    ...params.inputProps,
+                    disabled: currentUser, // Disable the input field conditionally
+                  }}
                 />
               )}
             />
