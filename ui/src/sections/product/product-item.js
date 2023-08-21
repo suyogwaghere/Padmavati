@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Fab from '@mui/material/Fab';
+import IncrementerButton from 'src/sections/product/common/incrementer-button';
 // import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -31,7 +32,7 @@ export default function ProductItem({ product }) {
     uom,
     taxRate,
     notes,
-    sellPrice,
+    // sellPrice,
     purchasePrice,
     MRP,
   } = product;
@@ -47,7 +48,7 @@ export default function ProductItem({ product }) {
       productName,
       coverUrl,
       uom,
-      sellPrice,
+      // sellPrice,
       taxRate,
       MRP,
       quantity: 1,
@@ -115,22 +116,37 @@ export default function ProductItem({ product }) {
       >
         <Iconify icon="solar:cart-plus-bold" width={24} />
       </Fab>
-      {/* <Stack direction="row" alignItems="center" justifyContent="space-between">
-         <ColorPreview colors={colors} /> 
-        <Typography variant="caption" component="div" sx={{ color: 'text.primary', mt: 1 }}>
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
+        {/* <ColorPreview colors={colors} /> */}
+        {/* <Box sx={{ width: 88, textAlign: 'right' }}>
+          <IncrementerButton
+            quantity={quantity}
+            onDecrease={onDecrease}
+            onIncrease={onIncrease}
+            disabledDecrease={quantity <= 1}
+            disabledIncrease={quantity >= available}
+          />
+
+          
+        </Box> */}
+        {/* <Typography variant="caption" component="div" sx={{ color: 'text.primary', mt: 1 }}>
           Price: ₹
-          {sellPrice && (
+          {MRP !== 0 ? (
             <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
-              {fCurrency(sellPrice)}
+              {fCurrency(MRP)}
             </Box>
-          )}{' '}
-        </Typography>
+          ) : (
+            <Box component="span" sx={{ color: 'text.disabled', textDecoration: 'line-through' }}>
+              NA
+            </Box>
+          )}
+        </Typography> */}
         <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle1' }}>
           <Typography variant="caption" component="div" sx={{ color: 'text.primary', mt: 1 }}>
-            MRP: ₹ <Box component="span">{fCurrency(MRP)}</Box>
+            MRP: ₹ <Box component="span">{MRP ? fCurrency(MRP) : 'NA'}</Box>
           </Typography>
         </Stack>
-      </Stack> */}
+      </Stack>
     </Stack>
   );
 

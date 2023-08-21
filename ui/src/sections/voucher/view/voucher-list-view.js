@@ -59,7 +59,8 @@ const defaultFilters = {
   startDate: new Date(),
   endDate: new Date(),
 };
-
+defaultFilters.startDate.setHours(0, 0, 0, 0);
+defaultFilters.endDate.setHours(23, 59, 59, 999);
 // ----------------------------------------------------------------------
 
 export default function VoucherListView() {
@@ -425,7 +426,7 @@ export default function VoucherListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { orderBy, sortingOrder, status, name, startDate, endDate } = filters;
+  const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -437,19 +438,11 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (orderBy) {
-    inputData.sort((a, b) => {
-      const aValue = a[orderBy];
-      const bValue = b[orderBy];
-      return (sortingOrder === 'asc' ? 1 : -1) * comparator(aValue, bValue);
-    });
-  }
-
   if (name) {
     inputData = inputData.filter(
       (order) =>
         `${order.id}`.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.partyName.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.party_name.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
@@ -459,36 +452,15 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = filterInputData(startDate, endDate, inputData);
-    } else {
-      inputData = filterInputData(startDate, endDate, inputData);
+      inputData = inputData.filter((order) => {
+        const orderDate = new Date(order.createdAt);
+
+        const isWithinRange = orderDate >= startDate && orderDate <= endDate;
+
+        return isWithinRange;
+      });
     }
   }
+
   return inputData;
-}
-function filterInputData(startDate, endDate, inputData) {
-  const filteredVouchers = inputData.filter((voucher) => {
-    if (voucher.createdAt) {
-      const createdAtDate = formatDate(new Date(voucher.createdAt));
-      if (createdAtDate) {
-        const isWithinDateRange =
-          createdAtDate >= formatDate(startDate) && createdAtDate <= formatDate(endDate);
-        const isSameStartDate = createdAtDate === formatDate(startDate);
-
-        return formatDate(startDate) === formatDate(endDate) ? isSameStartDate : isWithinDateRange;
-      }
-    }
-
-    return false;
-  });
-
-  return filteredVouchers;
-}
-function formatDate(inputDate) {
-  const date = new Date(inputDate);
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-
-  return `${year}${month}${day}`;
 }

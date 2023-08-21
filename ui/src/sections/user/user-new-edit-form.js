@@ -31,7 +31,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { useRouter } from 'src/routes/hook';
 import axiosInstance from 'src/utils/axios';
 // ----------------------------------------------------------------------
-const userOptions = ['admin', 'customer'];
+const userOptions = ['admin', 'customer', 'sales'];
 export default function UserNewEditForm({ currentUser }) {
   const [userType, setUserType] = useState(userOptions[1]);
   // const [partyId, setPartyId] = useState(0);
@@ -119,7 +119,7 @@ export default function UserNewEditForm({ currentUser }) {
       if (currentUser) {
         const inputData = {
           name: data.name,
-          ledgerId: data.partyId,
+          ledgerId: data.partyId ? data.partyId : 0,
           email: data.email,
           contactNo: data.contactNo,
           permissions: [userType],
@@ -142,7 +142,7 @@ export default function UserNewEditForm({ currentUser }) {
       } else {
         const inputData = {
           name: data.name,
-          ledgerId: data.partyId * 1,
+          ledgerId: data.partyId ? data.partyId * 1 : 0,
           email: data.email,
           password: data.password,
           contactNo: data.contactNo,

@@ -47,73 +47,6 @@ export class VoucherController {
     public voucherRepository: VoucherRepository,
   ) {}
 
-  // @post('/api/vouchers')
-  // @response(200, {
-  //   description: 'Voucher model instance',
-  //   content: {'application/json': {schema: getModelSchemaRef(Voucher)}},
-  // })
-  // async create(
-  //   @requestBody({
-  //     content: {
-  //       'application/json': {
-  //         schema: getModelSchemaRef(Voucher, {
-  //           title: 'NewVoucher',
-  //           exclude: ['id'],
-  //         }),
-  //       },
-  //     },
-  //   })
-  //   voucher: Omit<Voucher, 'id'>,
-  // ): Promise<Voucher> {
-  //   return this.voucherRepository.create(voucher);
-  // }
-
-  // @get('/api/vouchers/count')
-  // @response(200, {
-  //   description: 'Voucher model count',
-  //   content: {'application/json': {schema: CountSchema}},
-  // })
-  // async count(@param.where(Voucher) where?: Where<Voucher>): Promise<Count> {
-  //   return this.voucherRepository.count(where);
-  // }
-
-  // @get('/api/vouchers')
-  // @response(200, {
-  //   description: 'Array of Voucher model instances',
-  //   content: {
-  //     'application/json': {
-  //       schema: {
-  //         type: 'array',
-  //         items: getModelSchemaRef(Voucher, {includeRelations: true}),
-  //       },
-  //     },
-  //   },
-  // })
-  // async find(
-  //   @param.filter(Voucher) filter?: Filter<Voucher>,
-  // ): Promise<Voucher[]> {
-  //   return this.voucherRepository.find(filter);
-  // }
-
-  // @patch('/api/vouchers')
-  // @response(200, {
-  //   description: 'Voucher PATCH success count',
-  //   content: {'application/json': {schema: CountSchema}},
-  // })
-  // async updateAll(
-  //   @requestBody({
-  //     content: {
-  //       'application/json': {
-  //         schema: getModelSchemaRef(Voucher, {partial: true}),
-  //       },
-  //     },
-  //   })
-  //   voucher: Voucher,
-  //   @param.where(Voucher) where?: Where<Voucher>,
-  // ): Promise<Count> {
-  //   return this.voucherRepository.updateAll(voucher, where);
-  // }
-
   @get('/api/vouchers/{id}')
   @response(200, {
     description: 'Voucher model instance',
@@ -169,47 +102,6 @@ export class VoucherController {
     }
   }
 
-  // @patch('/api/vouchers/{id}')
-  // @response(204, {
-  //   description: 'Voucher PATCH success',
-  // })
-  // async updateById(
-  //   @param.path.number('id') id: number,
-  //   @requestBody({
-  //     content: {
-  //       'application/json': {
-  //         schema: getModelSchemaRef(Voucher, {partial: true}),
-  //       },
-  //     },
-  //   })
-  //   voucher: Voucher,
-  // ): Promise<void> {
-  //   await this.voucherRepository.updateById(id, voucher);
-  // }
-
-  // @put('/api/vouchers/{id}')
-  // @response(204, {
-  //   description: 'Voucher PUT success',
-  // })
-  // async replaceById(
-  //   @param.path.number('id') id: number,
-  //   @requestBody() voucher: Voucher,
-  // ): Promise<void> {
-  //   await this.voucherRepository.replaceById(id, voucher);
-  // }
-
-  // @del('/api/vouchers/{id}')
-  // @response(204, {
-  //   description: 'Voucher DELETE success',
-  // })
-  // async deleteById(@param.path.number('id') id: number): Promise<void> {
-  //   await this.voucherRepository.deleteById(id);
-  // }
-  // NEW UPDATES
-  // @authenticate({
-  //   strategy: 'jwt',
-  //   // options: {required: [PermissionKeys.SALES]},
-  // })
   @get('/api/vouchers/syncToBusy')
   async syncVouchersToBusy(
     @param.filter(Voucher) filter?: Filter<Voucher>,
@@ -437,14 +329,14 @@ export class VoucherController {
         voucherId: voucherId, // Add the voucherId
         productId: product.productId,
         quantity: quantity,
-        price: price,
-        total: total,
+        price: price || 0,
+        total: total || 0,
         discount: product.discount || '',
         uom: product.uom,
         taxRate: taxRate,
-        taxAmt: taxAmt,
-        taxableAMt: taxableAmt,
-        netAmt: netAmt,
+        taxAmt: taxAmt || 0,
+        taxableAMt: taxableAmt || 0,
+        netAmt: netAmt || 0,
         notes: product.notes,
       };
     });

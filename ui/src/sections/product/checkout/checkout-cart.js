@@ -1,24 +1,34 @@
-import PropTypes from 'prop-types';
 import sum from 'lodash/sum';
+import PropTypes from 'prop-types';
+import { useCallback, useEffect, useState } from 'react';
+// hooks
+import { useDebounce } from 'src/hooks/use-debounce';
+// redux
+import { useDispatch } from 'react-redux';
+import { getPartyId } from 'src/redux/slices/checkout';
+// API
+import { useSearchLedgers } from 'src/api/ledger';
 // @mui
-import Card from '@mui/material/Card';
 import LoadingButton from '@mui/lab/LoadingButton';
+import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Unstable_Grid2';
+import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Unstable_Grid2';
 import { useSnackbar } from 'src/components/snackbar';
-import { useRouter } from 'src/routes/hook';
 import axiosInstance from 'src/utils/axios';
 // routes
 import { paths } from 'src/routes/paths';
 // components
+import EmptyContent from 'src/components/empty-content';
 import Iconify from 'src/components/iconify';
 import { RouterLink } from 'src/routes/components';
-import EmptyContent from 'src/components/empty-content';
 //
-import CheckoutSummary from './checkout-summary';
+import { useAuthContext } from '../../../auth/hooks';
 import CheckoutCartProductList from './checkout-cart-product-list';
+import CheckoutSummary from './checkout-summary';
 
 // ----------------------------------------------------------------------
 
@@ -34,10 +44,34 @@ export default function CheckoutCart({
   const { cart, total, discount, subTotal, adminNote } = checkout;
 
   const totalItems = sum(cart.map((item) => item.quantity));
+  const { user } = useAuthContext();
+  const isSales = user.permissions.includes('sales');
+  const dispatch = useDispatch();
 
   const empty = !cart.length;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [partyId, setPartyId] = useState();
+
+  const debouncedQuery = useDebounce(searchQuery, 500);
+  const { searchResults } = useSearchLedgers(debouncedQuery);
 
   const { enqueueSnackbar } = useSnackbar();
+  const handleSearch = useCallback((input) => {
+    setSearchQuery(input);
+  }, []);
+  const handlePartyNameChange = (event, newInputValue) => {
+    const selectedLedger = searchResults.find((ledger) => ledger.name === newInputValue);
+    if (selectedLedger) {
+      setPartyId(selectedLedger.l_ID);
+    } else {
+      setPartyId(null); // Set partyId to null if ledger is not found
+    }
+  };
+  useEffect(() => {
+    if (partyId !== null) {
+      dispatch(getPartyId({ partyId }));
+    }
+  }, [dispatch, partyId]);
   //  const {
   //    handleSubmit,
   //    formState: { isSubmitting },
@@ -78,6 +112,28 @@ export default function CheckoutCart({
   return (
     <Grid container spacing={3}>
       <Grid xs={12} md={8}>
+        <Card sx={{ mb: 3, p: 2 }}>
+          {isSales ? (
+            <Autocomplete
+              fullWidth
+              name="partyName"
+              label="Party A/c Name"
+              onInputChange={(event, newValue) => handleSearch(newValue)}
+              onChange={handlePartyNameChange}
+              // Filter and sanitize searchResults
+              options={
+                searchResults
+                  ? searchResults
+                      .filter((ledger) => ledger && ledger.name)
+                      .map((ledger) => ledger.name)
+                  : []
+              }
+              getOptionLabel={(option) => option}
+              isOptionEqualToValue={(option, value) => option === value}
+              renderInput={(params) => <TextField {...params} label="Party A/c Name" />}
+            />
+          ) : null}
+        </Card>
         <Card sx={{ mb: 3 }}>
           <CardHeader
             title={
