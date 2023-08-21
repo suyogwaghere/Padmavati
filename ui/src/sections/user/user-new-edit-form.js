@@ -215,6 +215,7 @@ export default function UserNewEditForm({ currentUser }) {
             <Autocomplete
               fullWidth
               name="partyName"
+              disabled={!currentUser}
               label="Party A/c Name"
               onInputChange={(event, newValue) => handleSearch(newValue)}
               onChange={(event, newInputValue) => {
@@ -239,7 +240,12 @@ export default function UserNewEditForm({ currentUser }) {
               }
               getOptionLabel={(option) => option}
               isOptionEqualToValue={(option, value) => option === value}
-              renderInput={(params) => <TextField {...params} label="Party A/c Name" />}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={currentUser ? currentUser?.ledger[0].name : 'Party A/c Name'}
+                />
+              )}
             />
             <RHFTextField name="name" label="Name" />
             {/* !currentUser.permissions.includes('admin')  */}

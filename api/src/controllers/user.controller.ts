@@ -21,7 +21,7 @@ import {
   UserServiceBindings,
 } from '../keys';
 import {User} from '../models';
-import {Credentials, UserRepository} from '../repositories';
+import {Credentials, LedgerRepository, UserRepository} from '../repositories';
 import {BcryptHasher} from '../services/hash.password.bcrypt';
 import {JWTService} from '../services/jwt-service';
 import {MyUserService} from '../services/user-service';
@@ -31,6 +31,8 @@ export class SignupController {
   constructor(
     @repository(UserRepository)
     public userRepository: UserRepository,
+    @repository(LedgerRepository)
+    public ledgerRepository: LedgerRepository,
     @inject(PasswordHasherBindings.PASSWORD_HASHER)
     public hasher: BcryptHasher,
     @inject(UserServiceBindings.USER_SERVICE)
@@ -183,19 +185,31 @@ export class SignupController {
   })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getSingleUser(@param.path.number('id') id: number): Promise<any> {
-    const user = await this.userRepository.findOne({
-      where: {
-        id: id,
-      },
+    const user = await this.userRepository.findById(id, {
       fields: {
         password: false,
-        // otp: false,
-        // otpExpireAt: false,
+        createdAt: false,
+        updatedAt: false,
       },
     });
-    return Promise.resolve({
-      ...user,
-    });
+
+    if (!user) {
+      throw new HttpErrors.NotFound('User not found');
+    }
+    let ledger = {};
+    if (user.ledgerId) {
+      ledger = await this.ledgerRepository.find({
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        where: {l_ID: user.ledgerId.toString()},
+        fields: {
+          name: true, // Include only the 'name' property
+        },
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+      });
+    }
+    const newUser = {...user, ledger};
+
+    return newUser;
   }
 
   @authenticate({
