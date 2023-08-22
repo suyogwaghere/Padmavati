@@ -112,8 +112,8 @@ export default function CheckoutCart({
   return (
     <Grid container spacing={3}>
       <Grid xs={12} md={8}>
-        <Card sx={{ mb: 3, p: 2 }}>
-          {isSales ? (
+        {isSales ? (
+          <Card sx={{ mb: 3, p: 2 }}>
             <Autocomplete
               fullWidth
               name="partyName"
@@ -132,8 +132,8 @@ export default function CheckoutCart({
               isOptionEqualToValue={(option, value) => option === value}
               renderInput={(params) => <TextField {...params} label="Party A/c Name" />}
             />
-          ) : null}
-        </Card>
+          </Card>
+        ) : null}
         <Card sx={{ mb: 3 }}>
           <CardHeader
             title={

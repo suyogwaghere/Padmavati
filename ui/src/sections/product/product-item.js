@@ -32,9 +32,9 @@ export default function ProductItem({ product }) {
     uom,
     taxRate,
     notes,
-    // sellPrice,
+    sellPrice,
     purchasePrice,
-    MRP,
+    // MRP,
   } = product;
 
   const linkTo = paths.product.details(id);
@@ -48,9 +48,9 @@ export default function ProductItem({ product }) {
       productName,
       coverUrl,
       uom,
-      // sellPrice,
+      sellPrice,
       taxRate,
-      MRP,
+      // MRP,
       quantity: 1,
       notes,
     };
@@ -143,7 +143,7 @@ export default function ProductItem({ product }) {
         </Typography> */}
         <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle1' }}>
           <Typography variant="caption" component="div" sx={{ color: 'text.primary', mt: 1 }}>
-            MRP: ₹ <Box component="span">{MRP ? fCurrency(MRP) : 'NA'}</Box>
+            MRP: ₹ <Box component="span">{sellPrice ? fCurrency(sellPrice) : 'NA'}</Box>
           </Typography>
         </Stack>
       </Stack>
