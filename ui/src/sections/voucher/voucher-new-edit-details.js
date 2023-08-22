@@ -189,7 +189,8 @@ export default function VoucherNewEditDetails({ selectedParent }) {
                   const selectedProductObject = products.find(
                     (product) => product.productName === newValue
                   );
-                  setSelectedProduct(selectedProductObject); // Store the selected product object in the statee in the state
+                  setSelectedProduct(selectedProductObject);
+                  console.log('selectedProductObject ', selectedProductObject); // Store the selected product object in the statee in the state
                   // Update the form's value with the selected product's details
                   setValue(`products[${index}].productName`, selectedProductObject.productName);
                   setValue(`products[${index}].productId`, selectedProductObject.productId);
@@ -199,7 +200,7 @@ export default function VoucherNewEditDetails({ selectedParent }) {
                   setValue(`products[${index}].taxRate`, selectedProductObject.taxRate);
                   setValue(`products[${index}].quantity`, 1);
                   setValue(`products[${index}].discount`, selectedProductObject.discount);
-                  setValue(`products[${index}].price`, selectedProductObject.MRP);
+                  setValue(`products[${index}].price`, selectedProductObject.sellPrice);
 
                   // ... other fields you want to update
                   const qq = { target: { value: 1 } };
