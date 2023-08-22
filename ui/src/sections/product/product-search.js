@@ -53,7 +53,7 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
 
   return (
     <Autocomplete
-      sx={{ width: { xs: 1, sm: 460 } }}
+      fullWidth
       loading={loading}
       autoHighlight
       popupIcon={null}

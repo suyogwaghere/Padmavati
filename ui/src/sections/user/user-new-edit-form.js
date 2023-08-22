@@ -194,7 +194,7 @@ export default function UserNewEditForm({ currentUser }) {
               <RHFSelect
                 name="userType"
                 label="User Type"
-                sx={{ width: 300 }}
+                fullWidth
                 value={userType}
                 key={userType}
                 InputLabelProps={{ shrink: true }}

@@ -74,7 +74,12 @@ export default function VoucherNewEditStatusDate({ setSelectedParent }) {
       sx={{ p: 3, bgcolor: 'background.neutral' }}
     >
       {values.voucherNumber && (
-        <RHFTextField name="voucherNumber" label="Voucher number" value={values.voucherNumber} />
+        <RHFTextField
+          name="voucherNumber"
+          disabled
+          label="Voucher number"
+          value={values.voucherNumber}
+        />
       )}
       <Autocomplete
         fullWidth

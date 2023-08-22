@@ -11,7 +11,6 @@ import { usePathname, useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
 // _mock
 // utils
-import { fTimestamp } from 'src/utils/format-time';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
@@ -44,8 +43,8 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }];
 
 const TABLE_HEAD = [
   { id: 'id', label: 'Voucher No', width: 110, align: 'center' },
-  { id: 'name', label: 'Customer Name', align: 'center' },
-  { id: 'date', label: 'Date', align: 'center', width: 110 },
+  { id: 'partyName', label: 'Customer Name', align: 'center' },
+  { id: 'voucherDate', label: 'Date', align: 'center', width: 110 },
   { id: 'totalQuantity', label: 'Quantity', align: 'center', width: 80 },
   { id: 'totalAmount', label: 'Price', align: 'center', width: 100 },
   { id: 'is_synced', label: 'Synced', align: 'center', width: 110 },
@@ -113,25 +112,14 @@ export default function VoucherListView() {
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   const handleFilters = useCallback(
-    (partyName, value) => {
+    (party_name, value) => {
       table.onResetPage();
-      if (partyName === 'startDate' || partyName === 'endDate') {
-        const now = new Date();
-        if (partyName === 'startDate' && value > now) {
-          value = now;
-        }
-        if (partyName === 'endDate' && value < filters.startDate) {
-          value = filters.startDate;
-        }
-      }
       setFilters((prevState) => ({
         ...prevState,
-        [partyName]: value,
-        orderBy: partyName === 'name' ? 'partyName' : prevState.orderBy,
-        sortingOrder: 'asc', // You can set a default sorting order here
+        [party_name]: value,
       }));
     },
-    [filters, table]
+    [table]
   );
 
   const handleDeleteRow = useCallback(
@@ -189,15 +177,15 @@ export default function VoucherListView() {
 
         if (data.HEADER.STATUS[0] === '1') {
           refreshVouchers();
-          enqueueSnackbar('voucher synced successfully!');
+          // enqueueSnackbar('voucher synced successfully!');
         } else {
-          enqueueSnackbar('Voucher sync failed!', {
-            variant: 'error',
-          });
+          // enqueueSnackbar('Voucher sync failed!', {
+          //   variant: 'error',
+          // });
         }
       });
     },
-    [enqueueSnackbar, refreshVouchers]
+    [refreshVouchers]
   );
   const handleFilterStatus = useCallback(
     (event, newValue) => {
@@ -209,19 +197,22 @@ export default function VoucherListView() {
   useEffect(() => {
     if (vouchers && vouchers.length) {
       setTableData(vouchers);
-      enqueueSnackbar('Vouchers fetched successfully!', {
-        variant: 'success',
-      });
+      // enqueueSnackbar('Vouchers fetched successfully!', {
+      //   variant: 'success',
+      // });
     } else {
-      enqueueSnackbar('Error fetching Vouchers', {
-        variant: 'error',
-      });
+      // enqueueSnackbar('Error fetching Vouchers', {
+      //   variant: 'error',
+      // });
     }
   }, [enqueueSnackbar, vouchers]);
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <Container
+        maxWidth={settings.themeStretch ? false : 'lg'}
+        style={pathname === '/dashboard' ? { padding: 0, maxWidth: 'initial' } : {}}
+      >
         {pathname === '/dashboard' ? null : (
           <CustomBreadcrumbs
             heading="List"

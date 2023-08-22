@@ -218,7 +218,7 @@ export default function ProductShopView() {
         value={parentSelected || parents[0]?.parentId}
         onChange={handleChange}
         variant="scrollable"
-        scrollButtons="auto"
+        scrollButtons
         aria-label="scrollable auto tabs example"
         sx={{ width: '100%' }}
       >

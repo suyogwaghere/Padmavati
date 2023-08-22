@@ -93,7 +93,11 @@ export default function ProductItem({ product }) {
       {/* <Link component={RouterLink} href={linkTo} color="inherit" variant="subtitle2" noWrap>
         {productName}
       </Link> */}
-      <Typography variant="caption" component="div" sx={{ color: 'text.primary', mt: 1 }}>
+      <Typography
+        variant="caption"
+        component="div"
+        sx={{ color: 'text.primary', mt: 1, width: '90%' }}
+      >
         {productName}
       </Typography>
       <Fab

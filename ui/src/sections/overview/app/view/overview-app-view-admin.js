@@ -10,6 +10,7 @@ import { _appAuthors, _appInstalled, _appInvoices, _appRelated } from 'src/_mock
 // assets
 import { useAuthContext } from 'src/auth/hooks';
 import { useSettingsContext } from 'src/components/settings';
+import { VoucherListView } from 'src/sections/voucher/view';
 import { SeoIllustration } from '../../../../assets/illustrations';
 //
 import AppAreaInstalled from '../app-area-installed';
@@ -21,7 +22,6 @@ import AppTopRelated from '../app-top-related';
 import AppWelcome from '../app-welcome';
 import AppWidget from '../app-widget';
 import AppWidgetSummary from '../app-widget-summary';
-
 // ----------------------------------------------------------------------
 
 export default function OverviewAppViewAdmin() {
@@ -81,7 +81,9 @@ export default function OverviewAppViewAdmin() {
             }}
           />
         </Grid>
-
+        <Grid xs={12} md={12}>
+          <VoucherListView />
+        </Grid>
         {/* <Grid xs={12} md={6} lg={4}>
           <AppCurrentDownload
             title="Current Download"

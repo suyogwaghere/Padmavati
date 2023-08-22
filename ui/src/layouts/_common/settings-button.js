@@ -17,7 +17,7 @@ export default function SettingsButton({ sx }) {
   return (
     <Badge
       color="error"
-      variant="dot"
+      // variant="dot"
       invisible={!settings.canReset}
       sx={{
         [`& .${badgeClasses.badge}`]: {
