@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { yupResolver } from '@hookform/resolvers/yup';
 import PropTypes from 'prop-types';
 import { useEffect, useMemo, useState } from 'react';
@@ -232,20 +233,22 @@ export default function VoucherNewEditForm({ currentVoucher }) {
 
         <VoucherNewEditDetails selectedParent={selectedParent} />
       </Card>
-      {currentVoucher && currentVoucher.is_synced === 0 ? (
-        <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>
-          <LoadingButton
-            size="large"
-            variant="contained"
-            loading={loadingSend.value && isSubmitting}
-            onClick={() => {
-              console.log('here');
-              handleCreateAndSend();
-            }}
-          >
-            Update
-          </LoadingButton>
-        </Stack>
+      {currentVoucher ? (
+        currentVoucher.is_synced === 0 ? (
+          <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>
+            <LoadingButton
+              size="large"
+              variant="contained"
+              loading={loadingSend.value && isSubmitting}
+              onClick={() => {
+                console.log('here');
+                handleCreateAndSend();
+              }}
+            >
+              Update
+            </LoadingButton>
+          </Stack>
+        ) : null
       ) : (
         <Stack justifyContent="flex-end" direction="row" spacing={2} sx={{ mt: 3 }}>
           <LoadingButton

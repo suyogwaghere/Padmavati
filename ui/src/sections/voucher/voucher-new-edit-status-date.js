@@ -22,7 +22,6 @@ import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 // ----------------------------------------------------------------------
 
 export default function VoucherNewEditStatusDate({ setSelectedParent, currentVoucher }) {
-  console.log('currentVoucher ', currentVoucher.partyName);
   const { control, setValue, watch } = useFormContext();
 
   const [searchQuery, setSearchQuery] = useState('');
