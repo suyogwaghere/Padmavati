@@ -30,8 +30,18 @@ import IncrementerButton from '../common/incrementer-button';
 // ----------------------------------------------------------------------
 
 export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
-  const { id, productId, productName, uom, sellPrice, coverUrl, quantity, discount, available } =
-    row;
+  const {
+    id,
+    productId,
+    productName,
+    uom,
+    // sellPrice,
+    MRP,
+    coverUrl,
+    quantity,
+    discount,
+    available,
+  } = row;
   const [notes, setTextInputValue] = useState('');
   const [disc, setDiscount] = useState(discount);
 
@@ -124,7 +134,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
           </AccordionDetails>
         </Accordion>
       </TableCell>
-      <TableCell>{fCurrency(sellPrice)}</TableCell>
+      <TableCell>{fCurrency(MRP)}</TableCell>
 
       {/* <TableCell align="center">
         <TextField
@@ -143,7 +153,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
       </TableCell> */}
 
       <TableCell align="center">{discount || `0%`}</TableCell>
-      <TableCell align="right">{fCurrency(sellPrice * quantity)}</TableCell>
+      <TableCell align="right">{fCurrency(MRP * quantity)}</TableCell>
 
       <TableCell align="right" sx={{ px: 1 }}>
         <IconButton onClick={onDelete}>

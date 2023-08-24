@@ -40,7 +40,8 @@ export default function ProductDetailsSummary({
     id,
     name,
     sizes,
-    sellPrice,
+    // sellPrice,
+    MRP,
     coverUrl,
     colors,
     newLabel,
@@ -63,7 +64,8 @@ export default function ProductDetailsSummary({
     name,
     coverUrl,
     available,
-    sellPrice,
+    // sellPrice,
+    MRP,
     colors: colors[0],
     size: sizes[4],
     quantity: available < 1 ? 0 : 1,
@@ -90,7 +92,7 @@ export default function ProductDetailsSummary({
         onAddCart({
           ...data,
           colors: [values.colors],
-          subTotal: data.sellPrice * data.quantity,
+          subTotal: data.MRP * data.quantity,
         });
       }
       onGotoStep(0);
@@ -105,7 +107,7 @@ export default function ProductDetailsSummary({
       onAddCart({
         ...values,
         colors: [values.colors],
-        subTotal: values.sellPrice * values.quantity,
+        subTotal: values.MRP * values.quantity,
       });
     } catch (error) {
       console.error(error);
@@ -125,7 +127,7 @@ export default function ProductDetailsSummary({
         </Box>
       )}
 
-      {fCurrency(sellPrice)}
+      {fCurrency(MRP)}
     </Box>
   );
 

@@ -289,8 +289,8 @@ export class VoucherController {
 
     for (const product of voucher.products) {
       // let price = product.price;
-      if (product.sellPrice) {
-        const price = product.sellPrice;
+      if (product.MRP) {
+        const price = product.MRP;
         totalAmount += product.quantity * price;
         totalQuantity += product.quantity;
       } else {

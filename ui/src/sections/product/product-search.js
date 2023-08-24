@@ -24,13 +24,20 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
   const dispatch = useDispatch();
   const handleClick = (product) => {
     // router.push(hrefItem(id));
-    const { id, productName, coverUrl, sellPrice, purchasePrice, MRP } = product;
+    const {
+      id,
+      productName,
+      coverUrl,
+      // sellPrice,
+      purchasePrice,
+      MRP,
+    } = product;
     const newProduct = {
       id,
       productName,
       coverUrl,
       purchasePrice,
-      sellPrice,
+      // sellPrice,
       MRP,
       quantity: 1,
     };
