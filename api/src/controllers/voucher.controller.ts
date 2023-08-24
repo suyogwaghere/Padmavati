@@ -318,7 +318,7 @@ export class VoucherController {
     return products.map(product => {
       const taxRate = parseFloat(product.taxRate);
       const quantity = parseInt(product.quantity);
-      const price = parseFloat(product.price);
+      const price = parseFloat(product.MRP);
 
       const total = quantity * price;
       const taxAmt = (total * taxRate) / 100;
