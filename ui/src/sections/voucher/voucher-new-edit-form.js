@@ -225,7 +225,10 @@ export default function VoucherNewEditForm({ currentVoucher }) {
   return (
     <FormProvider methods={methods}>
       <Card>
-        <VoucherNewEditStatusDate setSelectedParent={setSelectedParent} />
+        <VoucherNewEditStatusDate
+          setSelectedParent={setSelectedParent}
+          currentVoucher={currentVoucher}
+        />
 
         <VoucherNewEditDetails selectedParent={selectedParent} />
       </Card>

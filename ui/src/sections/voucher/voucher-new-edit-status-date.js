@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 // hooks
 import { useDebounce } from 'src/hooks/use-debounce';
@@ -21,7 +21,8 @@ import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-export default function VoucherNewEditStatusDate({ setSelectedParent }) {
+export default function VoucherNewEditStatusDate({ setSelectedParent, currentVoucher }) {
+  console.log('currentVoucher ', currentVoucher.partyName);
   const { control, setValue, watch } = useFormContext();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -85,6 +86,7 @@ export default function VoucherNewEditStatusDate({ setSelectedParent }) {
         fullWidth
         name="partyName"
         label="Party A/c Name"
+        disabled={currentVoucher !== null}
         onInputChange={(event, newValue) => handleSearch(newValue)}
         onChange={handlePartyNameChange}
         // Filter and sanitize searchResults
@@ -95,7 +97,16 @@ export default function VoucherNewEditStatusDate({ setSelectedParent }) {
         }
         getOptionLabel={(option) => option}
         isOptionEqualToValue={(option, value) => option === value}
-        renderInput={(params) => <TextField {...params} label="Party A/c Name" />}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label={currentVoucher ? currentVoucher?.partyName : 'Party A/c Name'}
+            inputProps={{
+              ...params.inputProps,
+              disabled: currentVoucher, // Disable the input field conditionally
+            }}
+          />
+        )}
       />
       <Autocomplete
         fullWidth
@@ -168,4 +179,5 @@ export default function VoucherNewEditStatusDate({ setSelectedParent }) {
 }
 VoucherNewEditStatusDate.propTypes = {
   setSelectedParent: PropTypes.func,
+  currentVoucher: PropTypes.object,
 };

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Fab from '@mui/material/Fab';
-import IncrementerButton from 'src/sections/product/common/incrementer-button';
 // import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -15,6 +14,7 @@ import { fCurrency } from 'src/utils/format-number';
 import { addToCart } from 'src/redux/slices/checkout';
 import { useDispatch } from 'src/redux/store';
 // components
+import { useSnackbar } from 'src/components/snackbar';
 
 // components
 // import Label from 'src/components/label';
@@ -24,6 +24,7 @@ import Iconify from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function ProductItem({ product }) {
+  const { enqueueSnackbar } = useSnackbar();
   const {
     id,
     productId,
@@ -56,6 +57,7 @@ export default function ProductItem({ product }) {
     };
     try {
       dispatch(addToCart(newProduct));
+      enqueueSnackbar(`${newProduct.productName} added in cart`);
     } catch (error) {
       console.error(error);
     }
