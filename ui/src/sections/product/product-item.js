@@ -55,9 +55,16 @@ export default function ProductItem({ product }) {
       quantity: 1,
       notes,
     };
+    const modifiedProduct = {
+      ...product, // Copy all properties from the original product
+      price: product.MRP, // Rename sellPrice to price
+      quantity: 1,
+    };
+    // Remove the sellPrice property from the modifiedProduct
+    delete modifiedProduct.sellPrice;
     try {
-      dispatch(addToCart(newProduct));
-      enqueueSnackbar(`${newProduct.productName} added in cart`);
+      dispatch(addToCart(modifiedProduct));
+      enqueueSnackbar(`${modifiedProduct.productName} added in cart`);
     } catch (error) {
       console.error(error);
     }
