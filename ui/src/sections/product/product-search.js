@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 // routes
 // import { useRouter } from 'src/routes/hook';
 // components
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import Iconify from 'src/components/iconify';
 import SearchNotFound from 'src/components/search-not-found';
 // redux
@@ -24,14 +24,10 @@ import { useDispatch } from 'src/redux/store';
 export default function ProductSearch({ query, results, onSearch, hrefItem, loading }) {
   // const router = useRouter();
   const [itemClicked, setItemClicked] = useState(false);
-  const inputRef = useRef();
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
   const handleClick = (product) => {
     // router.push(hrefItem(id));
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    }
     const {
       id,
       productId,
@@ -89,7 +85,7 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
       fullWidth
       loading={loading}
       autoHighlight
-      clearOnEscape={itemClicked}
+      clearOnEscape
       popupIcon={null}
       options={results}
       onInputChange={(event, newValue) => {
@@ -122,7 +118,6 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
           {...params}
           placeholder="Search..."
           onKeyUp={handleKeyUp}
-          inputRef={inputRef}
           InputProps={{
             ...params.InputProps,
             startAdornment: (

@@ -20,6 +20,7 @@ import { useGetProducts, useSearchProducts } from 'src/api/product';
 import EmptyContent from 'src/components/empty-content';
 import { useSettingsContext } from 'src/components/settings';
 //
+import { useAuthContext } from 'src/auth/hooks';
 import CartIcon from '../common/cart-icon';
 import { useCheckout } from '../hooks';
 import ProductFiltersResult from '../product-filters-result';
@@ -91,6 +92,7 @@ export default function ProductShopView() {
   if (parents.length > 0) {
     firstParent = parents[0].parentId;
   }
+  const { user } = useAuthContext();
 
   const settings = useSettingsContext();
 
@@ -156,6 +158,11 @@ export default function ProductShopView() {
 
     setParentSelected(newValue);
   };
+
+  const renderOffers =
+    user != null && user.permissions.includes('sales') ? null : (
+      <ProductOffersCarousel offers={offers} />
+    );
 
   const renderFilters = (
     <Stack
@@ -247,7 +254,8 @@ export default function ProductShopView() {
       >
         Shop
       </Typography>
-      <ProductOffersCarousel offers={offers} />
+      {renderOffers}
+      {/* <ProductOffersCarousel offers={offers} /> */}
       <Stack
         spacing={2.5}
         sx={{
