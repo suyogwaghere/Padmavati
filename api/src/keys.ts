@@ -3,7 +3,7 @@ import {BindingKey} from '@loopback/core';
 import {User} from './models';
 import {Credentials} from './repositories/user.repository';
 import {PasswordHasher} from './services/hash.password.bcrypt';
-
+import {FileUploadHandler} from './types';
 export namespace TokenServiceConstants {
   export const TOKEN_SECRET_VALUE = '138asda8213';
   export const TOKEN_EXPIRES_IN_VALUE = '7h';
@@ -21,9 +21,8 @@ export namespace TokenServiceBindings {
 }
 
 export namespace PasswordHasherBindings {
-  export const PASSWORD_HASHER = BindingKey.create<PasswordHasher>(
-    'services.hasher',
-  );
+  export const PASSWORD_HASHER =
+    BindingKey.create<PasswordHasher>('services.hasher');
   export const ROUNDS = BindingKey.create<number>('services.hasher.rounds');
 }
 
@@ -32,3 +31,13 @@ export namespace UserServiceBindings {
     'services.user.service',
   );
 }
+/**
+ * Binding key for the storage directory
+ */
+export const STORAGE_DIRECTORY = BindingKey.create<string>('storage.directory');
+/**
+ * Binding key for the file upload service
+ */
+export const FILE_UPLOAD_SERVICE = BindingKey.create<FileUploadHandler>(
+  'services.FileUpload',
+);
