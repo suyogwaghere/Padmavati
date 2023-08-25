@@ -302,7 +302,7 @@ export class VoucherController {
 
     return {
       voucherDate: formattedDate,
-      Saletype: 'L/GST-TaxIncl',
+      Saletype: 'L/GST-TaxIncl.',
       McName: 'Santacruz East',
       partyName: party.name,
       partyId: party.l_ID,
