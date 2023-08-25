@@ -11,38 +11,64 @@ import Typography from '@mui/material/Typography';
 // routes
 // import { useRouter } from 'src/routes/hook';
 // components
+import { useState, useRef } from 'react';
 import Iconify from 'src/components/iconify';
 import SearchNotFound from 'src/components/search-not-found';
 // redux
-import { Fab } from '@mui/material';
+import { useSnackbar } from 'src/components/snackbar';
 import { addToCart } from 'src/redux/slices/checkout';
 import { useDispatch } from 'src/redux/store';
+
 // ----------------------------------------------------------------------
 
 export default function ProductSearch({ query, results, onSearch, hrefItem, loading }) {
   // const router = useRouter();
+  const [itemClicked, setItemClicked] = useState(false);
+  const inputRef = useRef();
+  const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
   const handleClick = (product) => {
     // router.push(hrefItem(id));
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
     const {
       id,
+      productId,
       productName,
       coverUrl,
+      uom,
+      taxRate,
+      notes,
       // sellPrice,
       purchasePrice,
       MRP,
     } = product;
     const newProduct = {
       id,
+      productId,
       productName,
       coverUrl,
-      purchasePrice,
+      uom,
       // sellPrice,
+      taxRate,
       MRP,
       quantity: 1,
+      notes,
     };
+    const modifiedProduct = {
+      ...product, // Copy all properties from the original product
+      price: product.MRP, // Rename sellPrice to price
+      quantity: 1,
+    };
+    setItemClicked(true);
+    console.log('itemClicked ', itemClicked);
+
+    // Remove the sellPrice property from the modifiedProduct
+    delete modifiedProduct.sellPrice;
     try {
-      dispatch(addToCart(newProduct));
+      dispatch(addToCart(modifiedProduct));
+      enqueueSnackbar(`${modifiedProduct.productName} added in cart`);
     } catch (error) {
       console.error(error);
     }
@@ -63,9 +89,16 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
       fullWidth
       loading={loading}
       autoHighlight
+      clearOnEscape={itemClicked}
       popupIcon={null}
       options={results}
-      onInputChange={(event, newValue) => onSearch(newValue)}
+      onInputChange={(event, newValue) => {
+        if (itemClicked) {
+          setItemClicked(false);
+          console.log('itemClicked ', itemClicked);
+        }
+        onSearch(newValue);
+      }}
       getOptionLabel={(option) => option.productName}
       noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
       isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -89,6 +122,7 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
           {...params}
           placeholder="Search..."
           onKeyUp={handleKeyUp}
+          inputRef={inputRef}
           InputProps={{
             ...params.InputProps,
             startAdornment: (
