@@ -1,9 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { useMemo } from 'react';
 import useSWR from 'swr';
 // utils
 import { endpoints, fetcher } from 'src/utils/axios';
-
+import { useEffect, useState, useMemo } from 'react';
 // ----------------------------------------------------------------------
 
 export function useGetProducts(parentId) {
@@ -69,26 +68,48 @@ export function useGetProduct(productId) {
 
 // ----------------------------------------------------------------------
 
-export function useSearchProducts(query) {
-  const URL = query ? [endpoints.product.search, { params: { query } }] : null;
+export function useSearchProducts(products, debouncedQuery) {
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setLoading] = useState(false);
 
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher, {
-    keepPreviousData: true,
-  });
+  useEffect(() => {
+    setLoading(true);
 
-  const memoizedValue = useMemo(
-    () => ({
-      searchResults: data || [],
-      searchLoading: isLoading,
-      searchError: error,
-      searchValidating: isValidating,
-      searchEmpty: !isLoading && !data?.length,
-    }),
-    [data, error, isLoading, isValidating]
-  );
+    if (debouncedQuery.trim() === '') {
+      setSearchResults([]);
+      setLoading(false);
+    } else {
+      const filteredResults = products.filter((product) =>
+        product.productName.toLowerCase().includes(debouncedQuery.toLowerCase())
+      );
+      setSearchResults(filteredResults);
+      setLoading(false);
+    }
+  }, [products, debouncedQuery]);
 
-  return memoizedValue;
+  return { searchResults, searchLoading };
 }
+
+// export function useSearchProducts(query) {
+//   const URL = query ? [endpoints.product.search, { params: { query } }] : null;
+
+//   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher, {
+//     keepPreviousData: true,
+//   });
+
+//   const memoizedValue = useMemo(
+//     () => ({
+//       searchResults: data || [],
+//       searchLoading: isLoading,
+//       searchError: error,
+//       searchValidating: isValidating,
+//       searchEmpty: !isLoading && !data?.length,
+//     }),
+//     [data, error, isLoading, isValidating]
+//   );
+
+//   return memoizedValue;
+// }
 // import useSWR from 'swr';
 // import { useMemo } from 'react';
 // // utils

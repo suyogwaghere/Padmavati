@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Snackbar from '@mui/material/Snackbar';
+// import Snackbar from '@mui/material/Snackbar';
 // routes
 // import { useRouter } from 'src/routes/hook';
 // components
@@ -74,7 +74,9 @@ export default function ProductSearch({
     delete modifiedProduct.sellPrice;
     try {
       dispatch(addToCart(modifiedProduct));
-      enqueueSnackbar(`${modifiedProduct.productName} added in cart`);
+      enqueueSnackbar(`${modifiedProduct.productName} added in cart`, {
+        anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+      });
     } catch (error) {
       console.error(error);
     }

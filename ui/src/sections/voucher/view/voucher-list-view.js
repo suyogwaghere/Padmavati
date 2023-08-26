@@ -6,6 +6,8 @@ import Container from '@mui/material/Container';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 // routes
 import { usePathname, useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
@@ -33,6 +35,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { useGetUserVouchers, useGetVouchers } from 'src/api/voucher';
 import axiosInstance from 'src/utils/axios';
+import { warning } from 'framer-motion';
 import { useAuthContext } from '../../../auth/hooks';
 import VoucherTableFiltersResult from '../voucher-table-filters-result';
 import VoucherTableRow from '../voucher-table-row';
@@ -232,7 +235,16 @@ export default function VoucherListView() {
             }}
           />
         )}
+        <Paper variant="" sx={{ p: 2, mb: { xs: 2, md: 3 }, borderRadius: 1 }}>
+          <Typography gutterBottom variant="subtitle1" sx={{ color: `warning.main` }}>
+            warning
+          </Typography>
 
+          <Typography gutterBottom variant="body2" sx={{ color: `warning.main` }}>
+            Cras ultricies mi eu turpis hendrerit fringilla. Fusce vel dui. Pellentesque auctor
+            neque nec urna. Sed cursus turpis vitae tortor. Curabitur suscipit suscipit tellus.
+          </Typography>
+        </Paper>
         <Card>
           {/* <Tabs
             value={filters.status}
