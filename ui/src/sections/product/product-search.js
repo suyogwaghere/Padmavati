@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 // routes
 // import { useRouter } from 'src/routes/hook';
 // components
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import Iconify from 'src/components/iconify';
 import SearchNotFound from 'src/components/search-not-found';
 // redux
@@ -21,13 +21,24 @@ import { useDispatch } from 'src/redux/store';
 
 // ----------------------------------------------------------------------
 
-export default function ProductSearch({ query, results, onSearch, hrefItem, loading }) {
+export default function ProductSearch({
+  query,
+  results,
+  onSearch,
+  setClearedResults,
+  hrefItem,
+  loading,
+}) {
   // const router = useRouter();
-  const [itemClicked, setItemClicked] = useState(false);
+  const [inputV, setInputValue] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
   const handleClick = (product) => {
     // router.push(hrefItem(id));
+    setClearedResults([]);
+    // onSearch('');
+    // setInputValue('');
+
     const {
       id,
       productId,
@@ -57,8 +68,6 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
       price: product.MRP, // Rename sellPrice to price
       quantity: 1,
     };
-    setItemClicked(true);
-    console.log('itemClicked ', itemClicked);
 
     // Remove the sellPrice property from the modifiedProduct
     delete modifiedProduct.sellPrice;
@@ -85,17 +94,14 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
       fullWidth
       loading={loading}
       autoHighlight
-      clearOnEscape
+      value={inputV}
+      // clearOnEscape
       popupIcon={null}
       options={results}
       onInputChange={(event, newValue) => {
-        if (itemClicked) {
-          setItemClicked(false);
-          console.log('itemClicked ', itemClicked);
-        }
         onSearch(newValue);
       }}
-      getOptionLabel={(option) => option.productName}
+      getOptionLabel={(option) => option?.productName || ''}
       noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       slotProps={{
@@ -209,6 +215,7 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
 ProductSearch.propTypes = {
   hrefItem: PropTypes.func,
   loading: PropTypes.bool,
+  setClearedResults: PropTypes.func,
   onSearch: PropTypes.func,
   query: PropTypes.string,
   results: PropTypes.array,

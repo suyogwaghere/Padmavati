@@ -110,9 +110,15 @@ export default function ProductShopView() {
 
   const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
 
+  const [clearedResults, setClearedResults] = useState([]);
+
   const [filters, setFilters] = useState(defaultFilters);
 
   // const [visibleProducts, setVisibleProducts] = useState(10);
+
+  useEffect(() => {
+    setClearedResults(searchResults);
+  }, [searchResults, setClearedResults]);
 
   const { products, productsLoading, productsEmpty } = useGetProducts(
     parentSelected || firstParent
@@ -173,7 +179,8 @@ export default function ProductShopView() {
     >
       <ProductSearch
         query={debouncedQuery}
-        results={searchResults}
+        results={clearedResults}
+        setClearedResults={setClearedResults}
         onSearch={handleSearch}
         loading={searchLoading}
         hrefItem={(_id) => paths.product.details(_id)}
