@@ -11,6 +11,7 @@ import { LoadingScreen } from 'src/components/loading-screen';
 // import VoucherCreatePage from 'src/pages/dashboard/voucher/new';
 import { VoucherDetailsView, VoucherEditView, VoucherListView } from '../../sections/voucher/view';
 // ----------------------------------------------------------------------
+const MaintenancePage = lazy(() => import('src/pages/maintenance'));
 
 // OVERVIEW
 const IndexPage = lazy(() => import('src/pages/dashboard/app'));
@@ -75,6 +76,13 @@ export const dashboardRoutes = [
           { path: 'new', element: <VoucherCreatePage /> },
           { path: ':id', element: <VoucherDetailsView /> },
           { path: ':id/edit', element: <VoucherEditView /> },
+        ],
+      },
+      {
+        path: 'maintenance',
+        children: [
+          { element: <MaintenancePage />, index: true },
+          // { path: 'maintenance', element: <MaintenancePage /> },
         ],
       },
     ],

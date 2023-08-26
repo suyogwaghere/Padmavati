@@ -53,5 +53,8 @@ export const paths = {
       details: (id) => `${ROOTS.DASHBOARD}/voucher/${id}`,
       edit: (id) => `${ROOTS.DASHBOARD}/voucher/${id}/edit`,
     },
+    maintenance: {
+      root: `${ROOTS.DASHBOARD}/maintenance`,
+    },
   },
 };

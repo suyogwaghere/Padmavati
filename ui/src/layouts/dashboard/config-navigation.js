@@ -110,6 +110,15 @@ export function useNavData() {
               // { title: t('create'), path: paths.dashboard.voucher.new },
             ],
           },
+          {
+            title: t('Raise Query'),
+            path: paths.dashboard.voucher.root,
+            icon: ICONS.file,
+            children: [
+              { title: t('raised queries'), path: paths.dashboard.maintenance.root },
+              { title: t('create query'), path: paths.dashboard.maintenance.root },
+            ],
+          },
         ],
       },
     ],
