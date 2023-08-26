@@ -85,7 +85,8 @@ export default function VoucherNewEditStatusDate({ setSelectedParent, currentVou
         fullWidth
         name="partyName"
         label="Party A/c Name"
-        disabled={currentVoucher !== null}
+        clearOnEscape
+        // disabled={currentVoucher == null}
         onInputChange={(event, newValue) => handleSearch(newValue)}
         onChange={handlePartyNameChange}
         // Filter and sanitize searchResults
