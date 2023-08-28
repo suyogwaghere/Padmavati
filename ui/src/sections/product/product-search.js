@@ -34,7 +34,8 @@ export default function ProductSearch({
   const [inputV, setInputValue] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
-  const handleClick = (product) => {
+  const handleClick = (e, product) => {
+    e.preventDefault();
     // router.push(hrefItem(id));
     setClearedResults([]);
     // onSearch('');
@@ -75,7 +76,7 @@ export default function ProductSearch({
     try {
       dispatch(addToCart(modifiedProduct));
       enqueueSnackbar(`${modifiedProduct.productName} added in cart`, {
-        anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+        anchorOrigin: { vertical: 'top', horizontal: 'center' },
       });
     } catch (error) {
       console.error(error);
@@ -157,7 +158,7 @@ export default function ProductSearch({
               // justifyContent: 'space-between !important', // Distribute items along the horizontal axis
             }}
             {...props}
-            onClick={() => handleClick(product)}
+            onClick={(e) => handleClick(e, product)}
             key={product.id}
           >
             <Avatar
