@@ -157,24 +157,3 @@ export function useSearchProducts(products, debouncedQuery) {
 // }
 
 // // ----------------------------------------------------------------------
-
-// export function useSearchProducts(query) {
-//   const URL = query ? [endpoints.product.search, { params: { query } }] : null;
-
-//   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher, {
-//     keepPreviousData: true,
-//   });
-
-//   const memoizedValue = useMemo(
-//     () => ({
-//       searchResults: data?.results || [],
-//       searchLoading: isLoading,
-//       searchError: error,
-//       searchValidating: isValidating,
-//       searchEmpty: !isLoading && !data?.results.length,
-//     }),
-//     [data?.results, error, isLoading, isValidating]
-//   );
-
-//   return memoizedValue;
-// }
