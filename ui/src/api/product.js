@@ -155,5 +155,3 @@ export function useSearchProducts(products, debouncedQuery) {
 
 //   return memoizedValue;
 // }
-
-// // ----------------------------------------------------------------------
