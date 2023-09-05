@@ -136,8 +136,6 @@ export function useSearchProducts(products, debouncedQuery) {
 //   return memoizedValue;
 // }
 
-// // ----------------------------------------------------------------------
-
 // export function useGetProduct(productId) {
 //   const URL = productId ? [endpoints.product.details, { params: { productId } }] : null;
 
