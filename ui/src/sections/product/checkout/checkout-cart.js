@@ -1,6 +1,6 @@
 import sum from 'lodash/sum';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 // hooks
 import { useDebounce } from 'src/hooks/use-debounce';
 // redux
@@ -26,6 +26,10 @@ import EmptyContent from 'src/components/empty-content';
 import Iconify from 'src/components/iconify';
 import { RouterLink } from 'src/routes/components';
 //
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+import FormProvider from 'src/components/hook-form/form-provider';
 import { useAuthContext } from '../../../auth/hooks';
 import CheckoutCartProductList from './checkout-cart-product-list';
 import CheckoutSummary from './checkout-summary';
@@ -41,42 +45,52 @@ export default function CheckoutCart({
   onDecreaseQuantity,
   onReset,
 }) {
-  const { cart, total, discount, subTotal, adminNote } = checkout;
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
 
+  const { cart, total, discount, subTotal, adminNote } = checkout;
   const totalItems = sum(cart.map((item) => item.quantity));
+  const empty = !cart.length;
+
   const { user } = useAuthContext();
   const isSales = user.permissions.includes('sales');
-  const dispatch = useDispatch();
 
-  const empty = !cart.length;
   const [searchQuery, setSearchQuery] = useState('');
   const [partyId, setPartyId] = useState();
+  const [partyName, setPartyName] = useState('');
+  const [partyNameError, setPartyNameError] = useState('');
 
   const debouncedQuery = useDebounce(searchQuery, 500);
   const { searchResults } = useSearchLedgers(debouncedQuery);
 
-  const { enqueueSnackbar } = useSnackbar();
   const handleSearch = useCallback((input) => {
     setSearchQuery(input);
   }, []);
+
   const handlePartyNameChange = (event, newInputValue) => {
     const selectedLedger = searchResults.find((ledger) => ledger.name === newInputValue);
     if (selectedLedger) {
       setPartyId(selectedLedger.l_ID);
+      setPartyName(newInputValue); // Update partyName state
+      setPartyNameError(''); // Clear any previous validation error
     } else {
       setPartyId(null); // Set partyId to null if ledger is not found
+      setPartyName(newInputValue);
+      setPartyNameError('Party A/c Name is required'); // Set validation error
     }
   };
+
   useEffect(() => {
     if (partyId !== null) {
       dispatch(getPartyId({ partyId }));
     }
   }, [dispatch, partyId]);
-  //  const {
-  //    handleSubmit,
-  //    formState: { isSubmitting },
-  //  } = methods;
+
   const onSubmit = async (data) => {
+    if (!partyName) {
+      setPartyNameError('Party A/c Name is required'); // Set validation error
+      return; // Prevent form submission if there's an error
+    }
     console.log('data ', data);
     try {
       const inputData = {
@@ -87,20 +101,20 @@ export default function CheckoutCart({
 
       console.log('🚀 ~ file: checkout-payment.js:116 ~ onSubmit ~ inputData:', inputData);
 
-      await axiosInstance
-        .post(`/api/voucher/create`, inputData)
-        .then((res) => {
-          enqueueSnackbar('Create success!');
-        })
-        .catch((err) => {
-          console.error(err.response.data.error.message);
-          enqueueSnackbar(
-            err.response.data.error.message
-              ? err.response.data.error.message
-              : 'something went wrong!',
-            { variant: 'error' }
-          );
-        });
+      // await axiosInstance
+      //   .post(`/api/voucher/create`, inputData)
+      //   .then((res) => {
+      //     enqueueSnackbar('Create success!');
+      //   })
+      //   .catch((err) => {
+      //     console.error(err.response.data.error.message);
+      //     enqueueSnackbar(
+      //       err.response.data.error.message
+      //         ? err.response.data.error.message
+      //         : 'something went wrong!',
+      //       { variant: 'error' }
+      //     );
+      //   });
       onNextStep();
       // onReset();
       console.info('DATA ', data);
@@ -109,6 +123,7 @@ export default function CheckoutCart({
       enqueueSnackbar(error, { variant: 'error' });
     }
   };
+
   return (
     <Grid container spacing={3}>
       <Grid xs={12} md={8}>
@@ -130,7 +145,16 @@ export default function CheckoutCart({
               }
               getOptionLabel={(option) => option}
               isOptionEqualToValue={(option, value) => option === value}
-              renderInput={(params) => <TextField {...params} label="Party A/c Name" />}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  value={searchQuery} // Set the value to the searchQuery state
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  error={!!partyNameError}
+                  helperText={partyNameError || ''}
+                  label="Party A/c Name"
+                />
+              )}
             />
           </Card>
         ) : null}
@@ -201,6 +225,7 @@ export default function CheckoutCart({
           variant="contained"
           disabled={!cart.length}
           onClick={onSubmit}
+          // loading={isSubmitting}
           // onClick={onNextStep}
           // loading={onSubmit}
         >
