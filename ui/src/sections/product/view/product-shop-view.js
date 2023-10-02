@@ -152,6 +152,7 @@ export default function ProductShopView() {
   }, []);
 
   const handleSearch = useCallback((inputValue) => {
+    setClearedResults([]);
     setSearchQuery(inputValue);
   }, []);
 
@@ -179,7 +180,7 @@ export default function ProductShopView() {
     >
       <ProductSearch
         query={debouncedQuery}
-        results={searchResults}
+        results={clearedResults}
         setClearedResults={setClearedResults}
         onSearch={handleSearch}
         loading={searchLoading}

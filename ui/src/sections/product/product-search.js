@@ -98,31 +98,38 @@ export default function ProductSearch({
       fullWidth
       loading={loading}
       autoHighlight
+      autoComplete
+      includeInputInList
+      filterSelectedOptions
       value={inputV}
       // clearOnEscape
       popupIcon={null}
       options={results}
+      onOpen={(event, newValue) => {
+        setClearedResults([]);
+      }}
       onInputChange={(event, newValue) => {
         onSearch(newValue);
       }}
       getOptionLabel={(option) => option?.productName || ''}
-      noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
+      // noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
+      noOptionsText="Search Product"
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      slotProps={{
-        popper: {
-          placement: 'bottom-start',
-          sx: {
-            minWidth: 320,
-          },
-        },
-        paper: {
-          sx: {
-            [` .${autocompleteClasses.option}`]: {
-              pl: 0.75,
-            },
-          },
-        },
-      }}
+      // slotProps={{
+      //   popper: {
+      //     placement: 'bottom-start',
+      //     sx: {
+      //       minWidth: 320,
+      //     },
+      //   },
+      //   paper: {
+      //     sx: {
+      //       [` .${autocompleteClasses.option}`]: {
+      //         pl: 0.75,
+      //       },
+      //     },
+      //   },
+      // }}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -161,13 +168,13 @@ export default function ProductSearch({
             onClick={(e) => handleClick(e, product)}
             key={product.id}
           >
-            <Avatar
+            {/* <Avatar
               key={product.id}
               alt={product.productName}
               src={product.coverUrl}
               variant="rounded"
               sx={{ width: 48, height: 48, flexShrink: 0, mr: 1.5, borderRadius: 1 }}
-            />
+            /> */}
 
             <div key={inputValue}>
               {parts.map((part, index) => (
