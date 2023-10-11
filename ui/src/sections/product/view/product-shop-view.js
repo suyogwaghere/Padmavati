@@ -111,7 +111,8 @@ export default function ProductShopView() {
   const { products, productsLoading, productsEmpty } = useGetProducts(
     parentSelected || firstParent
   );
-  const { searchResults, searchLoading } = useSearchProducts(products, debouncedQuery);
+  const { searchResults, searchLoading } = useSearchProducts(products, searchQuery);
+  console.log('🚀 ~ searchResults:', searchResults);
   // const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
 
   const [clearedResults, setClearedResults] = useState([]);
@@ -121,6 +122,8 @@ export default function ProductShopView() {
   // const [visibleProducts, setVisibleProducts] = useState(10);
 
   useEffect(() => {
+    // setClearedResults([]);
+
     setClearedResults(searchResults);
   }, [searchResults, setClearedResults]);
 
@@ -151,10 +154,12 @@ export default function ProductShopView() {
     setSortBy(newValue);
   }, []);
 
-  const handleSearch = useCallback((inputValue) => {
-    setClearedResults([]);
-    setSearchQuery(inputValue);
-  }, []);
+  // const handleSearch = useCallback((inputValue) => {
+  //   if (!inputValue) {
+  //     setClearedResults([]);
+  //   }
+  //   setSearchQuery(inputValue);
+  // }, []);
 
   const handleResetFilters = useCallback(() => {
     setFilters(defaultFilters);
@@ -181,8 +186,9 @@ export default function ProductShopView() {
       <ProductSearch
         query={debouncedQuery}
         results={clearedResults}
+        parentSelected={parentSelected}
         setClearedResults={setClearedResults}
-        onSearch={handleSearch}
+        setSearchQuery={setSearchQuery}
         loading={searchLoading}
         hrefItem={(_id) => paths.product.details(_id)}
       />

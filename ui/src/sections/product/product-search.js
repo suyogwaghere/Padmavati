@@ -2,19 +2,17 @@ import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
 import PropTypes from 'prop-types';
 // @mui
-import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
-import Avatar from '@mui/material/Avatar';
+import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-// import Snackbar from '@mui/material/Snackbar';
 // routes
-// import { useRouter } from 'src/routes/hook';
 // components
 import { useState } from 'react';
+import { useGetProducts, useSearchProducts } from 'src/api/product';
 import Iconify from 'src/components/iconify';
-import SearchNotFound from 'src/components/search-not-found';
+
 // redux
 import { useSnackbar } from 'src/components/snackbar';
 import { addToCart } from 'src/redux/slices/checkout';
@@ -24,22 +22,24 @@ import { useDispatch } from 'src/redux/store';
 
 export default function ProductSearch({
   query,
-  results,
+  parentSelected,
   onSearch,
   setClearedResults,
   hrefItem,
   loading,
 }) {
-  // const router = useRouter();
   const [inputV, setInputValue] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
   const { enqueueSnackbar } = useSnackbar();
+
+  const { products, productsLoading, productsEmpty } = useGetProducts(parentSelected || 1333);
+  const { searchResults, searchLoading } = useSearchProducts(products, searchQuery);
   const dispatch = useDispatch();
+  const results = searchResults;
   const handleClick = (e, product) => {
     e.preventDefault();
-    // router.push(hrefItem(id));
     setClearedResults([]);
-    // onSearch('');
-    // setInputValue('');
 
     const {
       id,
@@ -106,30 +106,18 @@ export default function ProductSearch({
       popupIcon={null}
       options={results}
       onOpen={(event, newValue) => {
+        // setClearedResults([]);
+        // onSearch(newValue);
+      }}
+      onClose={(event, newValue) => {
         setClearedResults([]);
       }}
       onInputChange={(event, newValue) => {
-        onSearch(newValue);
+        setSearchQuery(newValue);
       }}
       getOptionLabel={(option) => option?.productName || ''}
-      // noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
       noOptionsText="Search Product"
       isOptionEqualToValue={(option, value) => option.id === value.id}
-      // slotProps={{
-      //   popper: {
-      //     placement: 'bottom-start',
-      //     sx: {
-      //       minWidth: 320,
-      //     },
-      //   },
-      //   paper: {
-      //     sx: {
-      //       [` .${autocompleteClasses.option}`]: {
-      //         pl: 0.75,
-      //       },
-      //     },
-      //   },
-      // }}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -228,6 +216,8 @@ ProductSearch.propTypes = {
   loading: PropTypes.bool,
   setClearedResults: PropTypes.func,
   onSearch: PropTypes.func,
+  setSearchQuery: PropTypes.func,
   query: PropTypes.string,
   results: PropTypes.array,
+  parentSelected: PropTypes.array,
 };

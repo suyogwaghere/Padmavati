@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import useSWR from 'swr';
 // utils
+import { useEffect, useMemo, useState } from 'react';
 import { endpoints, fetcher } from 'src/utils/axios';
-import { useEffect, useState, useMemo } from 'react';
 // ----------------------------------------------------------------------
 
 export function useGetProducts(parentId) {
@@ -69,6 +69,7 @@ export function useGetProduct(productId) {
 // ----------------------------------------------------------------------
 
 export function useSearchProducts(products, debouncedQuery) {
+  console.log('🚀 ~ debouncedQuery:', debouncedQuery);
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setLoading] = useState(false);
 
